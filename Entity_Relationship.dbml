@@ -16,12 +16,16 @@ Table "Organism" {
 
 Table "Condition" {
 Condition_id integer [primary key]
+Organism_id integer
 condition_1 text
 condition_2 text
 }
 
 Table "File" {
   File_id integer [primary key]
+  Method_id integer
+  Organism_id integer
+  Condition_id integer
   date text
   mzML text
   scan integer
@@ -29,6 +33,7 @@ Table "File" {
 
 Table "Fragment" {
   Fragment_id integer [primary key]
+  Detection_id integer
   mz real
   intensity real
 }
@@ -42,6 +47,9 @@ Table "Method" {
 
 Table "Detection" {
   Detection_id integer [primary key]
+  Collision_id integer
+  Adduct_id integer
+  File_id integer        
   precursor_MZ real
   Exact_mass real
   Molecular_weight real
@@ -60,3 +68,43 @@ Table "Adducts" {
   Notation text
   Charge integer
 }
+
+Table "Annotation" {
+  Annotation_id integer [primary key]
+  Detection_id integer
+  Lipid_id integer
+  confidence_level text
+}
+
+// Définitions des clés étrangères
+//--------------------------------
+
+// Un précurseur MZ est associé à plusieurs fragments
+Ref: Fragment.Detection_id > Detection.Detection_id
+
+// Un précurseur MZ est associé à un Adduit
+Ref: Detection.Adduct_id > Adducts.Adducts_id
+
+// Une énergie de collision est associée à un précurseur MZ qui génère plusieurs fragments
+Ref: Detection.Collision_id > Collision.Collision_id
+
+// Un fichier mzML est associé à une méthode
+Ref: File.Method_id > Method.Method_id
+
+// Un fichier mzML est associé à un organisme
+Ref: File.Organism_id > Organism.Organism_id
+
+// Un organisme est associé à plusieurs conditions
+Ref: Condition.Organism_id > Organism.Organism_id
+
+// Une détection provient d'un fichier mzML
+Ref: Detection.File_id > File.File_id
+
+// Une annotation relie une détection à un lipide
+Ref: Annotation.Detection_id > Detection.Detection_id
+
+// Une annotation est associée à un lipide identifié
+Ref: Annotation.Lipid_id > Lipids.Lipids_id
+
+// Un fichier mzML est associé à une condition expérimentale
+Ref: File.Condition_id > Condition.Condition_id
