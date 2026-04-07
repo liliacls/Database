@@ -1,0 +1,62 @@
+Table "Lipids" {
+  Lipids_id integer [primary key]
+  name text
+  lipid_class text
+  lipid_category text
+  formula text
+}
+
+Table "Organism" {
+  Organism_id integer [primary key]
+  strain text
+  genus text
+  species text
+  full_name text
+}
+
+Table "Condition" {
+Condition_id integer [primary key]
+condition_1 text
+condition_2 text
+}
+
+Table "File" {
+  File_id integer [primary key]
+  date text
+  mzML text
+  scan integer
+}
+
+Table "Fragment" {
+  Fragment_id integer [primary key]
+  mz real
+  intensity real
+}
+
+Table "Method" {
+  Method_id integer [primary key]
+  Instrument text
+  Instrument_type text
+  Polarity text
+}
+
+Table "Detection" {
+  Detection_id integer [primary key]
+  precursor_MZ real
+  Exact_mass real
+  Molecular_weight real
+  mz real
+  RT real
+  CCS real
+}
+
+Table "Collision" {
+  Collision_id integer [primary key]
+  energy_collision real
+}
+
+Table "Adducts" {
+  Adducts_id integer [primary key]
+  Notation text
+  Charge integer
+}
