@@ -1,52 +1,104 @@
+
+// Pour afficher le diagramme --> DBML: Preview
+// Les clés primaires sont indiquées par [primary key] et nommées avec le suffixe "_ID" pour une meilleure lisibilité
+
+// La structure des tables est construite de cette manière :
+//      Table nom_table {
+//        nom_colonne type_données [paramètres]
+//      }
+
+//[primary key] ou [pk]     // clé primaire
+//[not null]                // valeur obligatoire
+//[null]                    // valeur optionnelle (par défaut)
+//[unique]                  // valeur unique
+//[increment]               // auto-incrémentation
+//[default: valeur]         // valeur par défaut
+//[check: `expression`]     // condition à respecter
+//[note: 'texte']           // note descriptive
+
+// There are 4 types of relationships: one-to-one, one-to-many, many-to-one and many-to-many
+
+//    <: one-to-many 
+//    >: many-to-one
+//    -: one-to-one
+//    <>: many-to-many
+
+
+Project Lipids_Database {
+  database_type: 'SQLite'
+  Note: 'Base de données de lipides bactériens issus de données multi-plateformes de spectrométrie de masse'
+}
+
 Table "Lipids" {
-  Lipids_id integer [primary key]
-  name text
+  Lipids_ID integer [primary key, increment]
+  lipid_name text
   lipid_class text
   lipid_category text
   formula text
+
+  note: ''
 }
 
 Table "Organism" {
-  Organism_id integer [primary key]
+  Organism_ID integer [primary key, increment]
   strain text
   genus text
   species text
   full_name text
+
+  note: ''
 }
 
 Table "Condition" {
-Condition_id integer [primary key]
-Organism_id integer
-condition_1 text
-condition_2 text
+  Condition_ID integer [primary key, increment]
+  Organism_id integer
+  condition_1 text
+  condition_2 text
+
+note: ''
 }
 
 Table "File" {
-  File_id integer [primary key]
+  File_ID integer [primary key, increment]
   Method_id integer
   Organism_id integer
   Condition_id integer
   date text
   mzML text
   scan integer
+
+  note: ''
 }
 
 Table "Fragment" {
-  Fragment_id integer [primary key]
+  Fragment_ID integer [primary key, increment]
   Detection_id integer
   mz real
   intensity real
+
+  checks {
+  `mz > 0` [name: 'chk_fragment_mz_positive']
+  `intensity > 0` [name: 'chk_intensity_positive']
+  }
+
+  note: ''
 }
 
 Table "Method" {
-  Method_id integer [primary key]
+  Method_ID integer [primary key, increment]
   Instrument text
   Instrument_type text
   Polarity text
+
+   checks {
+    `Polarity = 'positive' OR Polarity = 'negative'` [name: 'chk_polarity']
+  }
+
+  note: ''
 }
 
 Table "Detection" {
-  Detection_id integer [primary key]
+  Detection_ID integer [primary key, increment]
   Collision_id integer
   Adduct_id integer
   File_id integer        
@@ -56,55 +108,84 @@ Table "Detection" {
   mz real
   RT real
   CCS real
+
+  checks {
+    `precursor_MZ > 0` [name: 'chk_precursor_positive']
+    `Exact_mass > 0` [name: 'chk_exact_mass_positive']
+    `Molecular_weight > 0` [name: 'chk_molecular_weight_positive']
+    `mz > 0` [name: 'chk_mz_positive']
+    `RT >= 0` [name: 'chk_rt_positive']
+    `CCS > 0` [name: 'chk_ccs_positive']
+  }
+
+  note: ''
 }
 
 Table "Collision" {
-  Collision_id integer [primary key]
+  Collision_ID integer [primary key, increment]
   energy_collision real
+
+  checks {
+    `energy_collision > 0` [name: 'chk_energy_positive']
+  }
+
+  note: ''
 }
 
 Table "Adducts" {
-  Adducts_id integer [primary key]
+  Adducts_ID integer [primary key, increment]
   Notation text
   Charge integer
+
+  checks {
+  `Charge != 0` [name: 'chk_charge_not_zero']
+  }
+
+  note: ''
 }
 
 Table "Annotation" {
-  Annotation_id integer [primary key]
+  Annotation_ID integer [primary key, increment]
   Detection_id integer
   Lipid_id integer
   confidence_level text
+
+  checks {
+  `confidence_level >= 1 AND confidence_level <= 5` [name: 'chk_confidence_level']
+  }
+
+  note: ''
 }
 
 // Définitions des clés étrangères
 //--------------------------------
 
 // Un précurseur MZ est associé à plusieurs fragments
-Ref: Fragment.Detection_id > Detection.Detection_id
+Ref: Fragment.Detection_id > Detection.Detection_ID
 
 // Un précurseur MZ est associé à un Adduit
-Ref: Detection.Adduct_id > Adducts.Adducts_id
+Ref: Detection.Adduct_id > Adducts.Adducts_ID
 
 // Une énergie de collision est associée à un précurseur MZ qui génère plusieurs fragments
-Ref: Detection.Collision_id > Collision.Collision_id
+Ref: Detection.Collision_id > Collision.Collision_ID
 
 // Un fichier mzML est associé à une méthode
-Ref: File.Method_id > Method.Method_id
+Ref: File.Method_id > Method.Method_ID
 
 // Un fichier mzML est associé à un organisme
-Ref: File.Organism_id > Organism.Organism_id
+Ref: File.Organism_id > Organism.Organism_ID
 
 // Un organisme est associé à plusieurs conditions
-Ref: Condition.Organism_id > Organism.Organism_id
+Ref: Condition.Organism_id > Organism.Organism_ID
 
 // Une détection provient d'un fichier mzML
-Ref: Detection.File_id > File.File_id
+Ref: Detection.File_id > File.File_ID
 
 // Une annotation relie une détection à un lipide
-Ref: Annotation.Detection_id > Detection.Detection_id
+Ref: Annotation.Detection_id > Detection.Detection_ID
 
 // Une annotation est associée à un lipide identifié
-Ref: Annotation.Lipid_id > Lipids.Lipids_id
+Ref: Annotation.Lipid_id > Lipids.Lipids_ID
 
 // Un fichier mzML est associé à une condition expérimentale
-Ref: File.Condition_id > Condition.Condition_id
+Ref: File.Condition_id > Condition.Condition_ID
