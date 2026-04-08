@@ -20,7 +20,7 @@
 
 //    <: one-to-many 
 //    >: many-to-one
-//    -: one-to-one
+//    -: one-to-one : la deuxième colonne est la clé étrangère 
 //    <>: many-to-many
 
 
@@ -51,7 +51,7 @@ Table "Organism" {
 
 Table "Condition" {
   Condition_ID integer [primary key, increment]
-  Organism_id integer
+  Organism_id integer [ref: > Organism.Organism_ID] // Un organisme est associé à plusieurs conditions
   condition_1 text
   condition_2 text
 
@@ -60,9 +60,9 @@ note: ''
 
 Table "File" {
   File_ID integer [primary key, increment]
-  Method_id integer
-  Organism_id integer
-  Condition_id integer
+  Method_id integer [ref: > Method.Method_ID] // Un fichier mzML est associé à une méthode
+  Organism_id integer [ref: > Organism.Organism_ID] // Un fichier mzML est associé à un organisme
+  Condition_id integer [ref: > Condition.Condition_ID] // Un fichier mzML est associé à une condition expérimentale
   date text
   mzML text
   scan integer
@@ -72,7 +72,7 @@ Table "File" {
 
 Table "Fragment" {
   Fragment_ID integer [primary key, increment]
-  Detection_id integer
+  Detection_id integer [ref: > Detection.Detection_ID] // Un précurseur MZ est associé à plusieurs fragments
   mz real
   intensity real
 
@@ -99,9 +99,9 @@ Table "Method" {
 
 Table "Detection" {
   Detection_ID integer [primary key, increment]
-  Collision_id integer
-  Adduct_id integer
-  File_id integer        
+  Collision_id integer [ref: > Collision.Collision_ID] // Une énergie de collision est associée à un précurseur MZ
+  Adduct_id integer [ref: > Adducts.Adducts_ID] // Un précurseur MZ est associé à un adduct
+  File_id integer [ref: > File.File_ID] // Une détection provient d'un fichier mzML        
   precursor_MZ real
   Exact_mass real
   Molecular_weight real
@@ -146,8 +146,8 @@ Table "Adducts" {
 
 Table "Annotation" {
   Annotation_ID integer [primary key, increment]
-  Detection_id integer
-  Lipid_id integer
+  Detection_id integer [ref: > Detection.Detection_ID] // Une annotation relie une détection à un lipide
+  Lipid_id integer [ref: > Lipids.Lipids_ID] // Une annotation est associée à un lipide identifié
   confidence_level text
 
   checks {
@@ -156,36 +156,3 @@ Table "Annotation" {
 
   note: ''
 }
-
-// Définitions des clés étrangères
-//--------------------------------
-
-// Un précurseur MZ est associé à plusieurs fragments
-Ref: Fragment.Detection_id > Detection.Detection_ID
-
-// Un précurseur MZ est associé à un Adduit
-Ref: Detection.Adduct_id > Adducts.Adducts_ID
-
-// Une énergie de collision est associée à un précurseur MZ qui génère plusieurs fragments
-Ref: Detection.Collision_id > Collision.Collision_ID
-
-// Un fichier mzML est associé à une méthode
-Ref: File.Method_id > Method.Method_ID
-
-// Un fichier mzML est associé à un organisme
-Ref: File.Organism_id > Organism.Organism_ID
-
-// Un organisme est associé à plusieurs conditions
-Ref: Condition.Organism_id > Organism.Organism_ID
-
-// Une détection provient d'un fichier mzML
-Ref: Detection.File_id > File.File_ID
-
-// Une annotation relie une détection à un lipide
-Ref: Annotation.Detection_id > Detection.Detection_ID
-
-// Une annotation est associée à un lipide identifié
-Ref: Annotation.Lipid_id > Lipids.Lipids_ID
-
-// Un fichier mzML est associé à une condition expérimentale
-Ref: File.Condition_id > Condition.Condition_ID
