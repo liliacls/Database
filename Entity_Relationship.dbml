@@ -29,13 +29,12 @@ Project Lipids_Database {
 
 Table "Organism" {
   Organism_ID integer [primary key, increment]
-  strain text
-  genus text
-  species text
-  full_name text
-  note: ''
+  Strain text
+  Genus text
+  Species text
+  Full_name text
 
-  records (strain, genus, species, full_name) {
+  records (Strain, Genus, Species, Full_name) {
   'ATCC 19606', 'Acinetobacter', 'baumannii', 'Acinetobacter baumannii ATCC 19606'
   }
 }
@@ -43,27 +42,30 @@ Table "Organism" {
 Table "Condition" {
   Condition_ID integer [primary key, increment]
   Organism_id integer [ref: > Organism.Organism_ID] // Un organisme est associé à plusieurs conditions
-  condition_1 text
-  condition_2 text
+  Condition_1 text
+  Condition_2 text
 
-  records (Organism_id, condition_1, condition_2) {
+  records (Organism_id, Condition_1, Condition_2) {
   1, 'ciprofloxacin', 'no antibiotic'
   }
 
-note: ''
 }
 
 Table "Method" {
   Method_ID integer [primary key, increment]
   Instrument text
   Instrument_type text
+  Ionization_mode text
   Polarity text
 
    checks {
     `Polarity = 'positive' OR Polarity = 'negative'` [name: 'chk_polarity']
   }
 
-  note: ''
+  records (Instrument, Instrument_type, Ionization_mode, Polarity) {
+  'Orbitrap Exploris 120', 'Orbitrap', 'electrospray ionization', 'negative'
+  }
+
 }
 
 Table "File" {
@@ -71,22 +73,23 @@ Table "File" {
   Method_id integer [ref: > Method.Method_ID] // Un fichier mzML est associé à une méthode
   Organism_id integer [ref: > Organism.Organism_ID] // Un fichier mzML est associé à un organisme
   Condition_id integer [ref: > Condition.Condition_ID] // Un fichier mzML est associé à une condition expérimentale
-  date text
   mzML text
   scan integer
 
-  note: ''
+  records (Method_id, Organism_id, Condition_id, mzML, scan) {
+  1, 1, 1, '230406_025.mzML', 716
+  }
+
 }
 
 Table "Collision" {
   Collision_ID integer [primary key, increment]
-  energy_collision real
+  Energy_collision real
 
   checks {
-    `energy_collision > 0` [name: 'chk_energy_positive']
+    `Energy_collision > 0` [name: 'chk_energy_positive']
   }
 
-  note: ''
 }
 
 Table "Adducts" {
@@ -98,7 +101,9 @@ Table "Adducts" {
   `Charge != 0` [name: 'chk_charge_not_zero']
   }
 
-  note: ''
+  records (Notation, Charge) {
+    '[M-H]-', 1
+  }
 }
 
 Table "Detection" {
@@ -106,56 +111,71 @@ Table "Detection" {
   Collision_id integer [ref: > Collision.Collision_ID] // Une énergie de collision est associée à un précurseur MZ
   Adduct_id integer [ref: > Adducts.Adducts_ID] // Un précurseur MZ est associé à un adduct
   File_id integer [ref: > File.File_ID] // Une détection provient d'un fichier mzML        
-  precursor_MZ real
+  Precursor_MZ real
+  Num_Peaks integer
   Exact_mass real
   Molecular_weight real
-  mz real
+  MZ real
   RT real
   CCS real
 
   checks {
-    `precursor_MZ > 0` [name: 'chk_precursor_positive']
+    `Precursor_MZ > 0` [name: 'chk_precursor_positive']
     `Exact_mass > 0` [name: 'chk_exact_mass_positive']
     `Molecular_weight > 0` [name: 'chk_molecular_weight_positive']
-    `mz > 0` [name: 'chk_mz_positive']
+    `MZ > 0` [name: 'chk_mz_positive']
     `RT >= 0` [name: 'chk_rt_positive']
     `CCS > 0` [name: 'chk_ccs_positive']
   }
 
-  note: ''
 }
 
 Table "Fragment" {
   Fragment_ID integer [primary key, increment]
   Detection_id integer [ref: > Detection.Detection_ID] // Un précurseur MZ est associé à plusieurs fragments
-  mz real
-  intensity real
+  MZ real
+  Intensity real
+
+  records (Detection_id, MZ, Intensity) {
+  1, 78.9591522, 195637
+  1, 79.6148758, 134924
+  1, 140.012024, 173812
+  1, 146.417129, 35530
+  1, 196.038513, 93715
+  1, 201.069885, 110856
+  1, 202.078796, 677803
+  1, 203.086807, 664892
+  1, 210.962326, 37669
+  1, 255.232849, 1164319
+  1, 281.248596, 3514684
+  1, 281.288971, 94824
+  1, 452.280396, 78108
+  1, 716.523376, 2835320
+}
 
   checks {
-  `mz > 0` [name: 'chk_fragment_mz_positive']
-  `intensity > 0` [name: 'chk_intensity_positive']
+  `MZ > 0` [name: 'chk_fragment_mz_positive']
+  `Intensity > 0` [name: 'chk_intensity_positive']
   }
 
-  note: ''
 }
 
 Table "Lipids" {
   Lipids_ID integer [primary key, increment]
-  lipid_name text
-  lipid_class text
-  lipid_category text
-  formula text
+  Lipid_name text
+  Lipid_class text
+  Lipid_category text
+  Formula text
 }
 
 Table "Annotation" {
   Annotation_ID integer [primary key, increment]
   Detection_id integer [ref: > Detection.Detection_ID] // Une annotation relie une détection à un lipide
   Lipid_id integer [ref: > Lipids.Lipids_ID] // Plusieurs annotations peuvent mener au même lipide
-  confidence_level text
+  Confidence_level text
 
   checks {
-  `confidence_level >= 1 AND confidence_level <= 5` [name: 'chk_confidence_level']
+  `Confidence_level >= 1 AND Confidence_level <= 5` [name: 'chk_confidence_level']
   }
 
-  note: ''
 }
