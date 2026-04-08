@@ -2,41 +2,29 @@
 // Pour afficher le diagramme --> DBML: Preview
 // Les clés primaires sont indiquées par [primary key] et nommées avec le suffixe "_ID" pour une meilleure lisibilité
 
-// La structure des tables est construite de cette manière :
-//      Table nom_table {
-//        nom_colonne type_données [paramètres]
-//      }
+//  La structure des tables est construite de cette manière :
+//    Table nom_table {
+//      nom_colonne type_données [paramètres]
+//    }
 
-//[primary key] ou [pk]     // clé primaire
-//[not null]                // valeur obligatoire
-//[null]                    // valeur optionnelle (par défaut)
-//[unique]                  // valeur unique
-//[increment]               // auto-incrémentation
-//[default: valeur]         // valeur par défaut
-//[check: `expression`]     // condition à respecter
-//[note: 'texte']           // note descriptive
+//  [primary key] ou [pk]     // clé primaire
+//  [not null]                // valeur obligatoire
+//  [null]                    // valeur optionnelle (par défaut)
+//  [unique]                  // valeur unique
+//  [increment]               // auto-incrémentation
+//  [default: valeur]         // valeur par défaut
+//  [check: `expression`]     // condition à respecter
+//  [note: 'texte']           // note descriptive
 
-// There are 4 types of relationships: one-to-one, one-to-many, many-to-one and many-to-many
-
+//  Types de relations :
 //    <: one-to-many 
 //    >: many-to-one
-//    -: one-to-one : la deuxième colonne est la clé étrangère 
+//    -: one-to-one 
 //    <>: many-to-many
-
 
 Project Lipids_Database {
   database_type: 'SQLite'
   Note: 'Base de données de lipides bactériens issus de données multi-plateformes de spectrométrie de masse'
-}
-
-Table "Lipids" {
-  Lipids_ID integer [primary key, increment]
-  lipid_name text
-  lipid_class text
-  lipid_category text
-  formula text
-
-  note: ''
 }
 
 Table "Organism" {
@@ -45,8 +33,11 @@ Table "Organism" {
   genus text
   species text
   full_name text
-
   note: ''
+
+  records (strain, genus, species, full_name) {
+  'ATCC 19606', 'Acinetobacter', 'baumannii', 'Acinetobacter baumannii ATCC 19606'
+  }
 }
 
 Table "Condition" {
@@ -55,7 +46,24 @@ Table "Condition" {
   condition_1 text
   condition_2 text
 
+  records (Organism_id, condition_1, condition_2) {
+  1, 'ciprofloxacin', 'no antibiotic'
+  }
+
 note: ''
+}
+
+Table "Method" {
+  Method_ID integer [primary key, increment]
+  Instrument text
+  Instrument_type text
+  Polarity text
+
+   checks {
+    `Polarity = 'positive' OR Polarity = 'negative'` [name: 'chk_polarity']
+  }
+
+  note: ''
 }
 
 Table "File" {
@@ -70,28 +78,24 @@ Table "File" {
   note: ''
 }
 
-Table "Fragment" {
-  Fragment_ID integer [primary key, increment]
-  Detection_id integer [ref: > Detection.Detection_ID] // Un précurseur MZ est associé à plusieurs fragments
-  mz real
-  intensity real
+Table "Collision" {
+  Collision_ID integer [primary key, increment]
+  energy_collision real
 
   checks {
-  `mz > 0` [name: 'chk_fragment_mz_positive']
-  `intensity > 0` [name: 'chk_intensity_positive']
+    `energy_collision > 0` [name: 'chk_energy_positive']
   }
 
   note: ''
 }
 
-Table "Method" {
-  Method_ID integer [primary key, increment]
-  Instrument text
-  Instrument_type text
-  Polarity text
+Table "Adducts" {
+  Adducts_ID integer [primary key, increment]
+  Notation text
+  Charge integer
 
-   checks {
-    `Polarity = 'positive' OR Polarity = 'negative'` [name: 'chk_polarity']
+  checks {
+  `Charge != 0` [name: 'chk_charge_not_zero']
   }
 
   note: ''
@@ -121,33 +125,32 @@ Table "Detection" {
   note: ''
 }
 
-Table "Collision" {
-  Collision_ID integer [primary key, increment]
-  energy_collision real
+Table "Fragment" {
+  Fragment_ID integer [primary key, increment]
+  Detection_id integer [ref: > Detection.Detection_ID] // Un précurseur MZ est associé à plusieurs fragments
+  mz real
+  intensity real
 
   checks {
-    `energy_collision > 0` [name: 'chk_energy_positive']
+  `mz > 0` [name: 'chk_fragment_mz_positive']
+  `intensity > 0` [name: 'chk_intensity_positive']
   }
 
   note: ''
 }
 
-Table "Adducts" {
-  Adducts_ID integer [primary key, increment]
-  Notation text
-  Charge integer
-
-  checks {
-  `Charge != 0` [name: 'chk_charge_not_zero']
-  }
-
-  note: ''
+Table "Lipids" {
+  Lipids_ID integer [primary key, increment]
+  lipid_name text
+  lipid_class text
+  lipid_category text
+  formula text
 }
 
 Table "Annotation" {
   Annotation_ID integer [primary key, increment]
   Detection_id integer [ref: > Detection.Detection_ID] // Une annotation relie une détection à un lipide
-  Lipid_id integer [ref: > Lipids.Lipids_ID] // Une annotation est associée à un lipide identifié
+  Lipid_id integer [ref: > Lipids.Lipids_ID] // Plusieurs annotations peuvent mener au même lipide
   confidence_level text
 
   checks {
