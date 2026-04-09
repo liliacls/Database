@@ -1,13 +1,14 @@
 
 // Pour afficher le diagramme --> DBML: Preview
-// Les clés primaires sont indiquées par [primary key] et nommées avec le suffixe "_ID" pour une meilleure lisibilité
+// Les clés primaires sont indiquées par [primary key] et nommées avec le suffixe "_ID".
+// Les clés étrangères sont indiquées par [ref: > Table.Colonne] et nommées avec le suffixe "_id".
 
 //  La structure des tables est construite de cette manière :
 //    Table nom_table {
 //      nom_colonne type_données [paramètres]
 //    }
 
-//  [primary key] ou [pk]     // clé primaire
+//  [primary key]             // clé primaire
 //  [not null]                // valeur obligatoire
 //  [null]                    // valeur optionnelle (par défaut)
 //  [unique]                  // valeur unique
@@ -29,122 +30,82 @@ Project Lipids_Database {
 
 Table "Organism" {
   Organism_ID integer [primary key, increment]
-  Strain text
-  Genus text
-  Species text
-  Full_name text
-
-  records (Strain, Genus, Species, Full_name) {
-  'ATCC 19606', 'Acinetobacter', 'baumannii', 'Acinetobacter baumannii ATCC 19606'
-  }
+  Strain text [note: 'Souche bactérienne']
+  Genus text  [note: 'Genre bactérien']
+  Species text  [note: 'Espèce bactérienne']
+  Full_name text [note: 'Nom complet']
 }
 
 Table "Experiment" {
   Experiment_ID integer [primary key, increment]
   Organism_id integer [ref: > Organism.Organism_ID]
-  treatment text     
-  culture_mode text
+  treatment text  [note: 'Traitement appliqué']
+  culture_mode text  [note: 'Mode de culture']
+  DOI text  [note: 'Référence de la publication associée']
 }
 
 Table "Method" {
   Method_ID integer [primary key, increment]
-  Instrument text
-  Instrument_type text
-  Source text
-  Polarity text
-  Fragmentation_mode text
-  Fragmentation_energy real
-
+  Instrument text [note: 'Nom de l instrument']
+  Instrument_type text [note: 'Type d instrument']
+  Source text [note: 'Source d ionisation']
+  Polarity text [note: 'Polarité d acquisition']
+  Fragmentation_mode text [note: 'Mode de fragmentation']
    checks {
     `Polarity = 'positive' OR Polarity = 'negative'` [name: 'chk_polarity']
   }
-
-  records (Instrument, Instrument_type, Source, Polarity) {
-  'Orbitrap Exploris 120', 'Orbitrap', 'electrospray ionization', 'negative'
-  }
-
 }
 
 Table "File" {
   File_ID integer [primary key, increment]
-  Method_id integer [ref: > Method.Method_ID] // Un fichier mzML est associé à une méthode
-  Organism_id integer [ref: > Organism.Organism_ID] // Un fichier mzML est associé à un organisme
-  Experiment_id integer [ref: > Experiment.Experiment_ID] // Un fichier mzML est associé à une condition expérimentale
-  Name_file text
-
-  records (Method_id, Organism_id, Experiment_id, Name_file) {
-  1, 1, 1, '230406_025.mzML'
-  }
-
+  Method_id integer [ref: > Method.Method_ID] // Un fichier mzML est associé à une méthode et une méthode peut être reliée à plusieurs fichiers mzML
+  Experiment_id integer [ref: > Experiment.Experiment_ID] // Un fichier mzML est associé à une expérience et une expérience peut être reliée à plusieurs fichiers mzML
+  Name_file text [note: 'Nom du fichier mzML']
 }
 
 Table "Adducts" {
   Adducts_ID integer [primary key, increment]
-  Adduct_type text
-  Charge integer
+  Adduct_type text  [note: 'Notation de l adduct']
+  Charge integer  [note: 'Charge de l adduct']
 
   checks {
   `Charge != 0` [name: 'chk_charge_not_zero']
-  }
-
-  records (Adduct_type, Charge) {
-    '[M-H]-', 1
   }
 }
 
 Table "Detection" {
   Detection_ID integer [primary key, increment]
-  Adduct_id integer [ref: > Adducts.Adducts_ID] // Un précurseur MZ est associé à un adduct
-  File_id integer [ref: > File.File_ID] // Une détection provient d'un fichier mzML        
-  Precursor_MZ real
-  Scan integer
-  Num_Peaks integer
-  Energie_collision real
-  Exact_mass real
-  Molecular_weight real
-  MZ real
-  RT real
+  Adduct_id integer [ref: > Adducts.Adducts_ID] // Une détection est associée à un adduct et un adduct peut être associé à plusieurs détections
+  File_id integer [ref: > File.File_ID] // Une détection provient d'un fichier mzML et un fichier mzML peut contenir plusieurs détections        
+  Precursor_MZ real [note: 'Rapport masse/charge du précurseur en Da']
+  Scan integer  [note: 'Numéro de scan dans le fichier mzML']
+  MS_level integer
+  Num_Peaks integer [note: 'Nombre de fragments associés au précurseur']
+  Energie_collision real [note: 'Énergie de fragmentation, unité dépend du mode de fragmentation']
+  Exact_mass real [note: 'Masse exacte monoisotopique en Da']
+  Molecular_weight real [note: 'Masse moléculaire moyenne en Da']
+  RT real [note: 'Temps de rétention en minutes']
   CCS real
 
   checks {
     `Precursor_MZ > 0` [name: 'chk_precursor_positive']
     `Exact_mass > 0` [name: 'chk_exact_mass_positive']
     `Molecular_weight > 0` [name: 'chk_molecular_weight_positive']
-    `MZ > 0` [name: 'chk_mz_positive']
     `RT >= 0` [name: 'chk_rt_positive']
     `CCS > 0` [name: 'chk_ccs_positive']
   }
-
 }
 
 Table "Fragment" {
   Fragment_ID integer [primary key, increment]
-  Detection_id integer [ref: > Detection.Detection_ID] // Un précurseur MZ est associé à plusieurs fragments
+  Detection_id integer [ref: > Detection.Detection_ID] // Un fragment est associé à une détection et une détection peut contenir plusieurs fragments
   MZ real
   Intensity real
-
-  records (Detection_id, MZ, Intensity) {
-  1, 78.9591522, 195637
-  1, 79.6148758, 134924
-  1, 140.012024, 173812
-  1, 146.417129, 35530
-  1, 196.038513, 93715
-  1, 201.069885, 110856
-  1, 202.078796, 677803
-  1, 203.086807, 664892
-  1, 210.962326, 37669
-  1, 255.232849, 1164319
-  1, 281.248596, 3514684
-  1, 281.288971, 94824
-  1, 452.280396, 78108
-  1, 716.523376, 2835320
-}
 
   checks {
   `MZ > 0` [name: 'chk_fragment_mz_positive']
   `Intensity > 0` [name: 'chk_intensity_positive']
   }
-
 }
 
 Table "Lipids" {
@@ -157,12 +118,11 @@ Table "Lipids" {
 
 Table "Annotation" {
   Annotation_ID integer [primary key, increment]
-  Detection_id integer [ref: > Detection.Detection_ID] // Une annotation relie une détection à un lipide
-  Lipid_id integer [ref: > Lipids.Lipids_ID] // Plusieurs annotations peuvent mener au même lipide
-  Confidence_level text
+  Detection_id integer [ref: > Detection.Detection_ID] // Une annotation est associée à une détection et une détection peut avoir plusieurs annotations
+  Lipid_id integer [ref: > Lipids.Lipids_ID] // Une annotation est associée à un lipide et un lipide peut être associé à plusieurs annotations
+  Confidence_level integer
 
   checks {
   `Confidence_level >= 1 AND Confidence_level <= 5` [name: 'chk_confidence_level']
   }
-
 }
