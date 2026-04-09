@@ -63,9 +63,9 @@ Table "File" {
   Name_file text [note: 'Nom du fichier mzML']
 }
 
-Table "Adducts" {
-  Adducts_ID integer [primary key, increment]
-  Adduct_type text  [note: 'Notation de l adduct']
+Table "Adduct" {
+  Adduct_ID integer [primary key, increment]
+  Adduct_name text  [note: 'Notation de l adduct']
   Charge integer  [note: 'Charge de l adduct']
 
   checks {
@@ -75,7 +75,7 @@ Table "Adducts" {
 
 Table "Detection" {
   Detection_ID integer [primary key, increment]
-  Adduct_id integer [ref: > Adducts.Adducts_ID] // Une détection est associée à un adduct et un adduct peut être associé à plusieurs détections
+  Adduct_id integer [ref: > Adduct.Adduct_ID] // Une détection est associée à un adduct et un adduct peut être associé à plusieurs détections
   File_id integer [ref: > File.File_ID] // Une détection provient d'un fichier mzML et un fichier mzML peut contenir plusieurs détections        
   Precursor_MZ real [note: 'Rapport masse/charge du précurseur en Da']
   Scan integer  [note: 'Numéro de scan dans le fichier mzML']
@@ -99,8 +99,8 @@ Table "Detection" {
 Table "Fragment" {
   Fragment_ID integer [primary key, increment]
   Detection_id integer [ref: > Detection.Detection_ID] // Un fragment est associé à une détection et une détection peut contenir plusieurs fragments
-  MZ real
-  Intensity real
+  MZ real   [note: 'Rapport masse/charge du fragment en Da']
+  Intensity real  [note: 'Intensité du signal du fragment']
 
   checks {
   `MZ > 0` [name: 'chk_fragment_mz_positive']
@@ -108,20 +108,19 @@ Table "Fragment" {
   }
 }
 
-Table "Lipids" {
-  Lipids_ID integer [primary key, increment]
-  Lipid_name text
-  Lipid_class text
-  Lipid_category text
-  Formula text
+Table "Lipid" {
+  Lipid_ID integer [primary key, increment]
+  Lipid_name text [note: 'Nom du lipide']
+  Lipid_class text [note: 'Classe du lipide']
+  Lipid_category text [note: 'Catégorie du lipide']
+  Formula text [note: 'Formule chimique']
 }
 
 Table "Annotation" {
   Annotation_ID integer [primary key, increment]
   Detection_id integer [ref: > Detection.Detection_ID] // Une annotation est associée à une détection et une détection peut avoir plusieurs annotations
-  Lipid_id integer [ref: > Lipids.Lipids_ID] // Une annotation est associée à un lipide et un lipide peut être associé à plusieurs annotations
-  Confidence_level integer
-
+  Lipid_id integer [ref: > Lipid.Lipid_ID] // Une annotation est associée à un lipide et un lipide peut être associé à plusieurs annotations
+  Confidence_level integer [note: 'Niveau de confiance de l annotation']
   checks {
   `Confidence_level >= 1 AND Confidence_level <= 5` [name: 'chk_confidence_level']
   }
