@@ -13,14 +13,14 @@
     {
       "name": "Experiment",
       "schemaName": "public",
-      "x": 251.95160462391192,
-      "y": -22.12783203578816
+      "x": 288.72265625,
+      "y": 50
     },
     {
       "name": "Method",
       "schemaName": "public",
-      "x": 610.449758734554,
-      "y": 590.2516046602174
+      "x": 563.77880859375,
+      "y": 50
     },
     {
       "name": "File",
@@ -32,7 +32,7 @@
       "name": "Adduct",
       "schemaName": "public",
       "x": 0,
-      "y": 864.2516046602174
+      "y": 292
     },
     {
       "name": "Detection",
@@ -49,8 +49,8 @@
     {
       "name": "Lipid",
       "schemaName": "public",
-      "x": 248.97998046875,
-      "y": 864.2516046602174
+      "x": 863.26708984375,
+      "y": 260
     },
     {
       "name": "Annotation",
