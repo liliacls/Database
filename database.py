@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
-from models import Base, Organism, Experiment, Method, File, Adduct, Detection, Fragment, Lipid, Annotation
-
+from partial_model import Base
 # ============================================================
 # Connexion à la base de données SQLite et création des tables
 # ============================================================
@@ -8,15 +7,14 @@ from models import Base, Organism, Experiment, Method, File, Adduct, Detection, 
 # Chemin vers la base de données SQLite
 db_path = "sqlite:///lipids.db"
 
-
-engine = create_engine(db_path, echo=False)
+engine = create_engine(db_path, echo=True)
 
 try:
     # Connexion à la base de données
     conn = engine.connect()
     print("Connexion réussie")
 
-    # Création de toutes les tables définies dans models.py
+    # Création de toutes les tables définies dans models2.py
     Base.metadata.create_all(bind=engine)
     print("Tables créées avec succès !")
 
