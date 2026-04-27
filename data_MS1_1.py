@@ -7,15 +7,21 @@ from partial_model import Lipid, Detection, Annotation
 # Premier test d'intégration de la base de données avec une seule ligne du tableur
 ##################################################################################
 
-# Chemin vers la base de données SQLite
-db_path = "sqlite:///lipids.db"
+# Chemins
+DB_PATH = "sqlite:///lipids.db"
+CSV_INPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv'
+CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'
 
 # Création de l'engine SQLAlchemy
-engine = create_engine(db_path, echo=True)
+engine = create_engine(DB_PATH, echo=True)
 
 # Lecture du fichier CSV et sélection de la ligne correspondant à 'PE 34:1'
-df = pd.read_csv('/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv')
+df = pd.read_csv(CSV_INPUT)
 ligne = df[df['Name'] == 'PE 34:1'].iloc[0]
+
+###############################################
+# Insertion des données dans la base de données
+################################################
 
 with Session(engine) as session:
     try:
@@ -50,7 +56,11 @@ with Session(engine) as session:
     except Exception as e:
         session.rollback()
         print(f"Erreur : {e}")
+        raise
 
+###########
+# Export 
+###########
 
 with Session(engine) as session:
 
@@ -59,11 +69,12 @@ with Session(engine) as session:
     
     # Création d'une liste de dictionnaires pour stocker les résultats de l'annotation
     resultats = []
+
     for annotation in annotations:
         resultats.append({
-            'formula': annotation.lipid.Formula,
-            'mz': annotation.detection.Precursor_MZ,
-            'name': annotation.lipid.Lipid_name
+            'formula'   : annotation.lipid.Formula,
+            'mz'        : annotation.detection.Precursor_MZ,
+            'name'      : annotation.lipid.Lipid_name
         })
     
     # Conversion de la liste de dictionnaires en DataFrame pour faciliter l'exportation
@@ -72,10 +83,10 @@ with Session(engine) as session:
     
     # Exportation des données de la base vers un fichier CSV
     df_export.to_csv(
-    '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv',
-    index=False,
-    encoding='utf-8',
-    lineterminator='\r\n'  
+        CSV_OUTPUT,
+        index=False,
+        encoding='utf-8',
+        lineterminator='\r\n'  
     )
 
     print("Fichier créé !")
