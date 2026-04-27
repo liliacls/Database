@@ -20,7 +20,7 @@ class Organism(Base):
     Species : Mapped[String] = mapped_column()
     Full_name : Mapped[String] = mapped_column()
 
-    # Un organisme peut avoir PLUSIEURS expériences → list
+    # Un organisme peut avoir PLUSIEURS expériences
     experiments: Mapped[list["Experiment"]] = relationship(back_populates="organism")
 
     def __repr__(self):
@@ -34,7 +34,7 @@ class Experiment(Base):
     Culture_mode : Mapped[String] = mapped_column()
     DOI : Mapped[String] = mapped_column()
 
-    # Une expérience appartient à UN SEUL organisme → pas de list
+    # Une expérience appartient à UN SEUL organisme
     organism: Mapped["Organism"] = relationship(back_populates="experiments")
 
 def __repr__(self):

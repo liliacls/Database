@@ -14,7 +14,7 @@ try:
     conn = engine.connect()
     print("Connexion réussie")
 
-    # Création de toutes les tables définies dans models2.py
+    # Création de toutes les tables définies dans partial_model.py
     Base.metadata.create_all(bind=engine)
     print("Tables créées avec succès !")
 

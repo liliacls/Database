@@ -11,8 +11,8 @@ class Base(DeclarativeBase):
 
 class Detection(Base):
     __tablename__ = 'Detection'
-
     Detection_ID : Mapped[int] = mapped_column(primary_key=True)
+
     Precursor_MZ : Mapped[float] = mapped_column()
     Scan : Mapped[Optional[int]] = mapped_column()
     MS_level : Mapped[Optional[int]] = mapped_column()
@@ -33,8 +33,8 @@ def __repr__(self):
 
 class Fragment(Base):
     __tablename__ = 'Fragment'
+    Fragment_ID : Mapped[int] = mapped_column(primary_key=True)
 
-    Fragment_ID : Mapped[Optional[int]] = mapped_column(primary_key=True)
     Detection_id : Mapped[Optional[int]] = mapped_column(ForeignKey('Detection.Detection_ID'))
     MZ : Mapped[Optional[float]] = mapped_column()
     Intensity : Mapped[Optional[float]] = mapped_column()
@@ -48,8 +48,8 @@ def __repr__(self):
 
 class Lipid(Base):
     __tablename__ = 'Lipid'
-
     Lipids_ID : Mapped[int] = mapped_column(primary_key=True)
+
     Lipid_name : Mapped[Optional[str]] = mapped_column()
     Lipid_class : Mapped[Optional[str]] = mapped_column()
     Lipid_category : Mapped[Optional[str]] = mapped_column()
@@ -63,8 +63,8 @@ def __repr__(self):
 
 class Annotation(Base):
     __tablename__ = 'Annotation'
-
     Annotation_ID : Mapped[int] = mapped_column(primary_key=True)
+    
     Lipid_id : Mapped[Optional[int]] = mapped_column(ForeignKey('Lipid.Lipids_ID'))
     Detection_id : Mapped[Optional[int]] = mapped_column(ForeignKey('Detection.Detection_ID'))
     Confidence_level : Mapped[Optional[int]] = mapped_column()
