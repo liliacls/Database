@@ -1,3 +1,6 @@
 __pycache__/
 xlsxToCsv.py
 Entity_Relationship.dbdiagram
+.history
+lipids.db
+tableur_MS1.ipynb
