@@ -3,17 +3,30 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from partial_model import Lipid, Detection, Annotation
 
-# Second test avec un 10 lipides tirés au hasard dans le tableur
+################################################################################################
+# Second test d'intégration de la base de données avec 10 lignes tirés au hasard dans le tableur
+################################################################################################
 
-db_path = "sqlite:///lipids.db"
-engine = create_engine(db_path, echo=True)
+# Chemins
+DB_PATH = "sqlite:///lipids.db"
+CSV_INPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv'
+CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'
 
-df = pd.read_csv('/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv')
+# Création de l'engine SQLAlchemy
+engine = create_engine(DB_PATH, echo=True)
+
+# Lecture du fichier CSV et sélection de 10 lignes tirés au hasard
+df = pd.read_csv(CSV_INPUT)
 lignes = df.sample(10)
-print(lignes)
+
+##############################################
+# Insertion des données dans la base de données
+################################################
 
 with Session(engine) as session:
     try:
+
+        # Itération ligne par ligne pour insérer les données dans les tables Lipid, Detection et Annotation ( _ pour indique que l'index de la ligne )
         for _, ligne in lignes.iterrows():
             
             # Insertion dans la table Lipid
@@ -41,23 +54,25 @@ with Session(engine) as session:
             )
             session.add(annotation)
         session.commit()
-        print("10 lignes insérées avec succès !")
+        print("Insertion réussie !")
 
     # En cas d'erreur, rollback de la transaction
     except Exception as e:
         session.rollback()
         print(f"Erreur : {e}")
+        raise
 
 with Session(engine) as session:
+
     # Extraction des données nécessaires pour réaliser l'annotation MS1 en utilisant les relations entre les tables
     annotations = session.query(Annotation).all()
     
     resultats = []
     for annotation in annotations:
         resultats.append({
-            'formula': annotation.lipid.Formula,
-            'mz': annotation.detection.Precursor_MZ,
-            'name': annotation.lipid.Lipid_name
+            'formula'       : annotation.lipid.Formula,
+            'mz'            : annotation.detection.Precursor_MZ,
+            'name'          : annotation.lipid.Lipid_name
         })
     
     df_export = pd.DataFrame(resultats)
@@ -65,10 +80,10 @@ with Session(engine) as session:
     
     # Exportation des données de la base vers un fichier CSV
     df_export.to_csv(
-    '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1_V2.csv',
-    index=False,
-    encoding='utf-8',
-    lineterminator='\r\n'  
+        CSV_OUTPUT,
+        index=False,
+        encoding='utf-8',
+        lineterminator='\r\n'  
     )
 
     print("Fichier créé !")

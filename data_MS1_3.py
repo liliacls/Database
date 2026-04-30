@@ -3,16 +3,36 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from partial_model import Lipid, Detection, Annotation
 
-# Second test avec un 10 lipides tirés au hasard dans le tableur
+##############################################################################
+# Script d'intégration de la base de données avec toutes les lignes du tableur
+##############################################################################
 
+# Chemins
+DB_PATH = "sqlite:///lipids.db"
+CSV_INPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv'
+CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'
+
+# Chemin vers la base de données SQLite
 db_path = "sqlite:///lipids.db"
-engine = create_engine(db_path, echo=True)
 
-df = pd.read_csv('/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv')
+# Création de l'engine SQLAlchemy
+engine = create_engine(DB_PATH, echo=True)
+
+# Lecture du csv
+df = pd.read_csv(CSV_INPUT)
+
+if df.empty:
+    raise ValueError(f"Le fichier CSV est vide : {CSV_INPUT}")
+
+print(f"{len(df)} lignes trouvées dans le CSV.")
+
+###############################################
+# Insertion des données dans la base de données
+###############################################
 
 with Session(engine) as session:
     try:
-        for _, ligne in df.iterrows():
+        for i, ligne in df.iterrows():
             
             # Insertion dans la table Lipid
             lipid = Lipid(
@@ -38,15 +58,20 @@ with Session(engine) as session:
             session.add(annotation)
         session.commit()
 
-    # En cas d'erreur, rollback de la transaction
+    # En cas d'erreur, rollback de la transaction et affichage de l'erreur
     except Exception as e:
         session.rollback()
-        print(f"Erreur : {e}")
+        print(f"Erreur à la ligne {i} ({ligne.get('Name', '?')}) : {e}")
+        raise
+
+###########
+# Export 
+###########
 
 with Session(engine) as session:
     # Extraction des données nécessaires pour réaliser l'annotation MS1 en utilisant les relations entre les tables
     annotations = session.query(Annotation).all()
-    
+
     resultats = []
     for annotation in annotations:
         resultats.append({
@@ -55,15 +80,17 @@ with Session(engine) as session:
             'name': annotation.lipid.Lipid_name
         })
     
+    # Conversion de la liste de dictionnaires en DataFrame pour faciliter l'exportation
     df_export = pd.DataFrame(resultats)
     print(df_export)
+
     
     # Exportation des données de la base vers un fichier CSV
     df_export.to_csv(
-    '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1_V3.csv',
-    index=False,
-    encoding='utf-8',
-    lineterminator='\r\n'  
+        CSV_OUTPUT,
+        index=False,
+        encoding='utf-8',
+        lineterminator='\r\n'  
     )
 
     print("Fichier créé !")
