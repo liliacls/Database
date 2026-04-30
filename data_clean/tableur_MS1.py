@@ -63,7 +63,7 @@ def clean_MS1(PATH):
 
     # Filtrage : Suppression des lignes vides
     NA = df.isnull().any(axis=1)
-    exclus.append(df[NA].copy().assign(raison_exclusion='ligne vide'))
+    exclus.append(df[NA].copy().assign(raison_exclusion='ligne vide:'))
     df = df[~NA]
 
     # Correction : Remplacement des valeurs 'w' par None
@@ -81,28 +81,28 @@ def clean_MS1(PATH):
         df['Formula'].str.contains(r'\?', na=False) |
         df['Name'].str.contains(r'\?', na=False)
     )
-    exclus.append(df[interrogation].copy().assign(raison_exclusion='contient ?'))
+    exclus.append(df[interrogation].copy().assign(raison_exclusion='contient "?":'))
     df = df[~interrogation]
 
     # Filtrage : Suppression des lignes contenant " ou " : annotation ambiguë
     OU = df['Name'].str.contains(' ou ', regex=False, na=False)
-    exclus.append(df[OU].copy().assign(raison_exclusion='contient ou'))
+    exclus.append(df[OU].copy().assign(raison_exclusion='contient "ou":'))
     df = df[~OU]
 
     # Filtrage : Suppression des fragments et adduits
     FRAG = df['Name'].str.contains(r'Fragment|\+', regex=True, na=False)
-    exclus.append(df[FRAG].copy().assign(raison_exclusion='fragment ou adduit'))
+    exclus.append(df[FRAG].copy().assign(raison_exclusion='fragment ou adduit:'))
     df = df[~FRAG]
     
     # Filtrage : Suppression des lignes contenant - H20 ou - 2H20
     H2O = df['Name'].str.contains(r'-\s*\d*H2O', regex=True, na=False)
-    exclus.append(df[H2O].copy().assign(raison_exclusion='eau'))
+    exclus.append(df[H2O].copy().assign(raison_exclusion='contient "eau":'))
     df = df[~H2O]
 
     # Filtrage : Suppresion des lignes non lipidiques
-    pattern = '|'.join([f'^{re.escape(l)}' for l in LIPIDES])
-    lipides = df['Name'].str.contains(pattern, na=False)
-    exclus.append(df[~lipides].copy().assign(raison_exclusion='non lipide'))
+    pattern = r'^(?:' + '|'.join(re.escape(l) for l in LIPIDES) + r')\b'
+    lipides = df['Name'].str.contains(pattern, na=False, regex=True)
+    exclus.append(df[~lipides].copy().assign(raison_exclusion='non lipide:'))
     df = df[lipides].copy()
 
     # Conversion de la colonne 'masse_experimentale' en numérique pour évitér les erreurs lors du calcul du rapport m/z
@@ -110,7 +110,7 @@ def clean_MS1(PATH):
     
     # Filtrage : Suppression des lignes avec une masse expérimentale invalide (NaN après conversion)
     mask_invalid = df['masse_experimentale'].isna()
-    exclus.append(df[mask_invalid].copy().assign(raison_exclusion='masse invalide'))
+    exclus.append(df[mask_invalid].copy().assign(raison_exclusion='masse invalide:'))
     df = df[~mask_invalid]
 
     # Calcul du rapport m/z précurseur (mode négatif)
@@ -119,19 +119,21 @@ def clean_MS1(PATH):
     # Consolidation de toutes les lignes exclues
     df_exclus = pd.concat(exclus, ignore_index=True)
 
-    return df, df_exclus
+    return df, df_exclus, exclus
 
 # ─── Point d'entrée ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    df, df_exclus = clean_MS1(PATH)
+    df, df_exclus, exclus = clean_MS1(PATH)
 
-    df.to_csv(OUTPUT, index=False)
-    print(f"Fichier nettoyé enregistré sous : {OUTPUT}")
-    print(f"Nombre de lipides gardés        : {len(df)}")
-
-    df_exclus.to_csv(OUTPUT_EXCLUS, index=False)
-    print(f"\nLignes exclues ({len(df_exclus)}) enregistrées sous : {OUTPUT_EXCLUS}")
-
-    print("\nRésumé filtrage :")
+    df.to_csv(OUTPUT, index=False, encoding='utf-8')
+    df_exclus.to_csv(OUTPUT_EXCLUS, index=False, encoding='utf-8')
+    
+    print("\nRésumé filtrage")
+    print("---------------")
+    print(f"Nombre de lipides gardés: {len(df)}")
+    print(f"Lignes exclues : {len(df_exclus)}")
     for e in exclus:
-        print(e['raison_exclusion'].iloc[0], len(e))
+        if not e.empty:
+            print(e['raison_exclusion'].iloc[0], len(e))
+    else:
+        print("(filtre vide)", 0)
