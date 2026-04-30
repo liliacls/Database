@@ -1,8 +1,9 @@
 import pandas as pd
+import re
 
 # Chemins des fichiers 
 PATH = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/LipidesAcineto.xlsx"
-OUTPUT = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto2.csv"
+OUTPUT = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv"
 OUTPUT_EXCLUS = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto_exclus.csv"
 
 # Masse du proton (H⁻)
@@ -13,7 +14,7 @@ LIPIDES = [
     'PE', 'PG', 'MLCL', 'CL', 'PA', 'LipA6P2', 'LipA7P2', 'NAPE', 'LipA6P2PE',
     'LipA7P2PE', 'PAGPE', 'LipA6P', 'PGox', 'aPG', 'cycPGP', 'LPA', 'DLCL', 'PPA',
     'MLCLox', 'LipIVA', 'LPG', 'LPE', 'LipA5P2', 'PGP', 'CPA', 'LipA6PPE', 'CLox',
-    'LipA5P2PE', 'LipX3', 'LipA7P', 'LipA7PPE', 'CPG', 'DaPG', 'LipA6P2PE-KDO',
+    'LipA5P2PE', 'LipX3', 'LipX4', 'LipA7P', 'LipA7PPE', 'CPG', 'DaPG', 'LipA6P2PE-KDO',
     'LipA6P2-KDO', 'CDP-PA34:1', 'CDP-PA32:1', 'LcycPGP', 'UDP'
 ]
 
@@ -27,12 +28,13 @@ def clean_MS1(PATH):
         1.  Suppression des lignes contenant au moins une valeur manquante.
         2.  Remplacement de 'w' par None dans la colonne Name.
         3.  Nettoyage des tirets spéciaux et des espaces superflus.
-        4.  Exclusion des lignes dont Name contient 'Precurser' (ion précurseur).
+        4.  Suppression du mot 'Precurser' dans la colonne Name.
         5.  Exclusion des lignes dont Formula ou Name contient '?'.
         6.  Exclusion des lignes dont Name contient ' ou ' (ambiguïté d'annotation).
         7.  Exclusion des fragments et adduits (mots-clés 'Fragment' ou '+').
-        8.  Exclusion des lignes dont le préfixe de Name ne correspond à aucune classe de lipides référencée dans LIPIDES.
-        9.  La colonne 'Precursor_MZ' est calculée en soustrayant la masse du proton (H⁻) à la masse expérimentale, 
+        8.  Exclusion des lignes dont Name contient - H20,  -2H20
+        9.  Exclusion des lignes dont le préfixe de Name ne correspond à aucune classe de lipides référencée dans LIPIDES.
+        10.  La colonne 'Precursor_MZ' est calculée en soustrayant la masse du proton (H⁻) à la masse expérimentale, 
             pour obtenir le rapport m/z en mode d'ionisation négatif.
 
     :param PATH: Chemin vers le fichier Excel d'annotation à nettoyer (.xlsx).
@@ -65,13 +67,13 @@ def clean_MS1(PATH):
     df = df[~NA]
 
     # Correction : Remplacement des valeurs 'w' par None
-    df['Name'] = df['Name'].replace('w', 'None')
+    df['Name'] = df['Name'].replace('w', None)
 
     # Correction : Nettoyage des tiret long (–) par des tiret ASCII (-) et des espaces en trop
-    df['Name'] = df['Name'].str.replace('–', '-', regex=False).str.strip()
-    df = df.apply(lambda x: x.str.strip() if x.dtype == 'object' else x)
+    cols_obj = df.select_dtypes(include='object').columns
+    df[cols_obj] = df[cols_obj].apply(lambda col: col.str.strip())
 
-    # Suppression du mot precurseur pour nettoyer la cellule
+    # Suppression du mot "precurser" pour nettoyer la cellule
     df['Name'] = df['Name'].str.replace('Precurser', '', regex=False).str.strip()
 
     # Filtrage : Suppression des lignes avec '?'  annotation incertaine
@@ -91,12 +93,25 @@ def clean_MS1(PATH):
     FRAG = df['Name'].str.contains(r'Fragment|\+', regex=True, na=False)
     exclus.append(df[FRAG].copy().assign(raison_exclusion='fragment ou adduit'))
     df = df[~FRAG]
+    
+    # Filtrage : Suppression des lignes contenant - H20 ou - 2H20
+    H2O = df['Name'].str.contains(r'-\s*\d*H2O', regex=True, na=False)
+    exclus.append(df[H2O].copy().assign(raison_exclusion='eau'))
+    df = df[~H2O]
 
     # Filtrage : Suppresion des lignes non lipidiques
-    pattern = '|'.join([f'^{l}' for l in LIPIDES])
+    pattern = '|'.join([f'^{re.escape(l)}' for l in LIPIDES])
     lipides = df['Name'].str.contains(pattern, na=False)
     exclus.append(df[~lipides].copy().assign(raison_exclusion='non lipide'))
     df = df[lipides].copy()
+
+    # Conversion de la colonne 'masse_experimentale' en numérique pour évitér les erreurs lors du calcul du rapport m/z
+    df['masse_experimentale'] = pd.to_numeric(df['masse_experimentale'], errors='coerce')
+    
+    # Filtrage : Suppression des lignes avec une masse expérimentale invalide (NaN après conversion)
+    mask_invalid = df['masse_experimentale'].isna()
+    exclus.append(df[mask_invalid].copy().assign(raison_exclusion='masse invalide'))
+    df = df[~mask_invalid]
 
     # Calcul du rapport m/z précurseur (mode négatif)
     df['Precursor_MZ'] = df['masse_experimentale'] - H_NEGATIF
@@ -116,3 +131,7 @@ if __name__ == "__main__":
 
     df_exclus.to_csv(OUTPUT_EXCLUS, index=False)
     print(f"\nLignes exclues ({len(df_exclus)}) enregistrées sous : {OUTPUT_EXCLUS}")
+
+    print("\nRésumé filtrage :")
+    for e in exclus:
+        print(e['raison_exclusion'].iloc[0], len(e))
