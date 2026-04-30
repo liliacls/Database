@@ -1,30 +1,26 @@
 import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-from partial_model import Lipid, Detection, Annotation
+import sys
+sys.path.insert(0, '/home/liliacls/Documents/Stage/Database')
+from database_model.partial_model import Lipid, Detection, Annotation
 
 ##############################################################################
 # Script d'intégration de la base de données avec toutes les lignes du tableur
 ##############################################################################
 
 # Chemins
-DB_PATH = "sqlite:///lipids.db"
+DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/lipids.db"
 CSV_INPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv'
 CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'
-
-# Chemin vers la base de données SQLite
-db_path = "sqlite:///lipids.db"
 
 # Création de l'engine SQLAlchemy
 engine = create_engine(DB_PATH, echo=True)
 
-# Lecture du csv
+# Lecture du csv d'entrée
 df = pd.read_csv(CSV_INPUT)
-
 if df.empty:
     raise ValueError(f"Le fichier CSV est vide : {CSV_INPUT}")
-
-print(f"{len(df)} lignes trouvées dans le CSV.")
 
 ###############################################
 # Insertion des données dans la base de données
@@ -70,10 +66,10 @@ with Session(engine) as session:
 
 with Session(engine) as session:
     # Extraction des données nécessaires pour réaliser l'annotation MS1 en utilisant les relations entre les tables
-    annotations = session.query(Annotation).all()
+    rows = session.query(Annotation).all()
 
     resultats = []
-    for annotation in annotations:
+    for annotation in rows:
         resultats.append({
             'formula': annotation.lipid.Formula,
             'mz': annotation.detection.Precursor_MZ,
@@ -82,15 +78,8 @@ with Session(engine) as session:
     
     # Conversion de la liste de dictionnaires en DataFrame pour faciliter l'exportation
     df_export = pd.DataFrame(resultats)
-    print(df_export)
 
-    
-    # Exportation des données de la base vers un fichier CSV
-    df_export.to_csv(
-        CSV_OUTPUT,
-        index=False,
-        encoding='utf-8',
-        lineterminator='\r\n'  
-    )
+    # Exportation des données de la base vers un fichier CSV, lineterminator='\r\n' sinon fichier pas accepté par MZmine
+    df_export.to_csv(CSV_OUTPUT, index=False, encoding='utf-8',lineterminator='\r\n')
 
     print("Fichier créé !")

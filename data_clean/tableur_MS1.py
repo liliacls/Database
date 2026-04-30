@@ -95,7 +95,7 @@ def clean_MS1(PATH):
     df = df[~FRAG]
     
     # Filtrage : Suppression des lignes contenant - H20 ou - 2H20
-    H2O = df['Name'].str.contains(r'-\s*\d*H2O', regex=True, na=False)
+    H2O = df['Name'].str.contains(r'–\s*\d*H2O', regex=True, na=False)
     exclus.append(df[H2O].copy().assign(raison_exclusion='contient "eau":'))
     df = df[~H2O]
 

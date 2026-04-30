@@ -5,7 +5,7 @@ from partial_model import Base
 # ============================================================
 
 # Chemin vers la base de données SQLite
-db_path = "sqlite:///lipids.db"
+db_path = "sqlite:////home/liliacls/Documents/Stage/Database/lipids.db"
 
 # Création de l'engine SQLAlchemy
 engine = create_engine(db_path, echo=True)
