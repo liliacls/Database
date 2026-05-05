@@ -1,7 +1,7 @@
 # Lipid Database Project
 
 
-# Architecture 
+# **Architecture**
 ```
 projet/
 ├── 📁 data_cleaning/          → Traitement des tableurs d'annotations
@@ -22,4 +22,9 @@ projet/
 │   └── 📄 partial_model.py
 ├── 📄 .gitignore
 └── 📄 README.md
+```
+# **Create the conda environment**
+```bash
+   conda create --file environment.yml
+   conda activate lipid_database
 ```
