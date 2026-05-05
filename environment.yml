@@ -1,0 +1,9 @@
+name: lipid_database
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pandas=2.3.3
+  - sqlalchemy=2.0.48
+  - streamlit=1.55.0
+prefix: /home/liliacls/miniforge3/envs/lipid_database

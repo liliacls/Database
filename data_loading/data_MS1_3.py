@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 import sys
 sys.path.insert(0, '/home/liliacls/Documents/Stage/Database')
-from database_model.partial_model import Lipid, Detection, Annotation
+from database_models.partial_model import Lipid, Detection, Annotation
 
 ##############################################################################
 # Script d'intégration de la base de données avec toutes les lignes du tableur
@@ -59,27 +59,3 @@ with Session(engine) as session:
         session.rollback()
         print(f"Erreur à la ligne {i} ({ligne.get('Name', '?')}) : {e}")
         raise
-
-###########
-# Export 
-###########
-
-with Session(engine) as session:
-    # Extraction des données nécessaires pour réaliser l'annotation MS1 en utilisant les relations entre les tables
-    rows = session.query(Annotation).all()
-
-    resultats = []
-    for annotation in rows:
-        resultats.append({
-            'formula': annotation.lipid.Formula,
-            'mz': annotation.detection.Precursor_MZ,
-            'name': annotation.lipid.Lipid_name
-        })
-    
-    # Conversion de la liste de dictionnaires en DataFrame pour faciliter l'exportation
-    df_export = pd.DataFrame(resultats)
-
-    # Exportation des données de la base vers un fichier CSV, lineterminator='\r\n' sinon fichier pas accepté par MZmine
-    df_export.to_csv(CSV_OUTPUT, index=False, encoding='utf-8',lineterminator='\r\n')
-
-    print("Fichier créé !")
