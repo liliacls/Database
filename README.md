@@ -21,7 +21,8 @@ projet/
 │   ├── 📄 database.py
 │   └── 📄 partial_model.py
 ├── 📄 .gitignore
-└── 📄 README.md
+├── 📄 README.md
+└── 📄 environment.yml
 ```
 # **Create the conda environment**
 ```bash
