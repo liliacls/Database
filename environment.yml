@@ -7,4 +7,5 @@ dependencies:
   - sqlalchemy=2.0.48
   - streamlit=1.55.0
   - molmass
+  - openpyxl
 prefix: /home/liliacls/miniforge3/envs/lipid_database

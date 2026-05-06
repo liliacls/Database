@@ -1,12 +1,27 @@
 import streamlit as st
 import pandas as pd
+import sys
+import os
 
-from database_loading.data_MS1_load import database_loading_MS1
 
+# L'utilisateur sélectionne le niveau d'annotation, le mode d'ionisation et le niveau de confiance de l'annotation. 
+# Ces paramètres vont être utilisés par la suite. Le niveau d'annotation permettra de déterminer "Num_Peaks", si c'est MS1 la valeur sera 0. 
+# Le niveau d'annotation permettra de completer "MS_level". Le mode d'ionisation permettra de calculer la masse neutre "Exact_Mass".
+
+# L'utilisateur charge son fichier d'annotation au format .xlsx/ .csv /.tsv
+# Le fichier doit contenir dans l'ordre : "Precursor_MZ", "Lipid_name" et "Formula". Les colonnes "RT" et "CCS" sont optionnelles.
+# Un fichier type sera intégré dans le projet afin de d'exemple
+
+
+# Ajoute la racine du projet au chemin Python
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
+
+from data_loading.data_MS1_load import database_loading_MS1
+
+from utils.lipid_class_calc import lipid_class_calculation, lipid_category_calculation
+from utils.molecularw_calc import molecularw_calculation  
 from utils.exact_mass_calc import exact_mass_calculation
-from utils.lipid_class_calc import lipid_class_calc
-from utils.lipid_categorie_calc import lipid_category_calc
-from utils.molecularw_calc import molecularw_calc
 
 ####################################################
 # MODULE 1 : Page streamlit d'intégration de données
@@ -18,18 +33,12 @@ REQUIRED_COLUMNS = ['Lipid_Name', 'Formula', 'Precursor_MZ']
 
 # _________________________________Interface streamlit__________________________________________________________________
 
-st.title(":blue[MODULE 1]: Intégration de données", text_alignment="center")
+st.title(":blue[MODULE 1] : Intégration de données", text_alignment="center")
 st. divider()
 
 # _________________________________ETAPE 1______________________________________________________________________________
 
-""" 
-L'utilisateur sélectionne le niveau d'annotation, le mode d'ionisation et le niveau de confiance de l'annotation. 
-Ces paramètres vont être utilisés par la suite. Le niveau d'annotation permettra de déterminer "Num_Peaks", si c'est MS1 la valeur sera 0. 
-Le niveau d'annotation permettra de completer "MS_level". Le mode d'ionisation permettra de calculer la masse neutre "Exact_Mass".
-"""
-
-st.header(":blue[ETAPE 1]: - Paramétrages", text_alignment="left")
+st.header(":blue[ETAPE 1] - Paramétrages", text_alignment="left")
 st. divider()
 
 col1, col2, col3 = st.columns(3)
@@ -72,12 +81,6 @@ else:
 
 # _________________________________ETAPE 2______________________________________________________________________________
 
-"""
-L'utilisateur charge son fichier d'annotation au format .xlsx/ .csv /.tsv
-Le fichier doit contenir dans l'ordre : "Precursor_MZ", "Lipid_name" et "Formula". Les colonnes "RT" et "CCS" sont optionnelles.
-Un fichier type sera intégré dans le projet afin de d'exemple
-"""
-
 st.header("ETAPE 2 - Chargement du fichier", text_alignment="left")
 st.divider()
 
@@ -115,10 +118,6 @@ df = st.session_state["df"]
 
 # _________________________________ETAPE 3______________________________________________________________________________
 
-"""
-Vérification de la conformité du tableur
-"""
-
 st.header("ETAPE 3 - Vérification des colonnes obligatoires", text_alignment="left")
 st.divider()
 
@@ -135,7 +134,7 @@ if missing_columns:
     st.stop()
 else:
     # Affiche le tableau brut pour que l'utilisateur vérifie son fichier
-    st.success(f"Fichier valide : {len(df)} lignes détectées.", icon="✅")
+    st.success(f"Fichier valide", icon="✅")
     st.dataframe(df, use_container_width=True)
 
 # _________________________________ETAPE 4______________________________________________________________________________
@@ -155,21 +154,21 @@ if st.button("Lancer la complétion automatique", type="primary", use_container_
 
     # Calcul du poids moléculaire depuis la formule brute
     try:
-        df["Molecular_weight"] = df["Formula"].apply(lambda f: molecularw_calc(f))
+        df["Molecular_weight"] = df["Formula"].apply(lambda f: molecularw_calculation(f))
     except Exception as e:
         st.error(f"Erreur lors du calcul du poids moléculaire : {e}")
         st.stop()
 
     # Inférence de la classe lipidique depuis le nom du lipide
     try:
-        df["Lipid_class"] = df["Lipid_name"].apply(lambda n: lipid_class_calc(n))
+        df["Lipid_class"] = df["Lipid_Name"].apply(lambda n: lipid_class_calculation(n))
     except Exception as e:
         st.error(f"Erreur lors de l'inférence de la classe lipidique : {e}")
         st.stop()
 
     # Inférence de la catégorie lipidique depuis la classe
     try:
-        df["Lipid_category"] = df["Lipid_class"].apply(lambda c: lipid_category_calc(c))
+        df["Lipid_category"] = df["Lipid_class"].apply(lambda c: lipid_category_calculation(c))
     except Exception as e:
         st.error(f"Erreur lors de l'inférence de la catégorie lipidique : {e}")
         st.stop()
@@ -186,7 +185,7 @@ if st.button("Lancer la complétion automatique", type="primary", use_container_
 
     # Sauvegarde du dataframe complété dans la session
     st.session_state["df_complete"] = df
-    st.success("Complétion automatique réussie !", icon="✅")
+    st.success("Complétion automatique réussie !")
 
 # Bloque l'affichage du tableau si la complétion n'a pas encore été lancée
 if "df_complete" not in st.session_state:

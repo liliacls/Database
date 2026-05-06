@@ -22,7 +22,7 @@ def database_loading_MS1(df, confidence_level):
             session.flush()
 
             lipid = Lipid(
-                Lipid_name     = row.get("Lipid_name"),
+                Lipid_Name     = row.get("Lipid_Name"),
                 Lipid_class    = row.get("Lipid_class"),
                 Lipid_category = row.get("Lipid_category"),
                 Formula        = row.get("Formula"),
