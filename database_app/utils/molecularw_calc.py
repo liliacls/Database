@@ -1,6 +1,9 @@
-def molecularw_calc(formula):
-    """molecularw_calc _summary_
+from molmass import Formula
 
-    :param formula: _description_
-    :type formula: _type_
-    """
+def molecularw_calc(formula):
+    """Calcule le poids moléculaire à partir de la formule brute."""
+    try:
+        f = Formula(formula)
+        return int(round(f.mass, 0))
+    except Exception:
+        return None

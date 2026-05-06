@@ -12,7 +12,6 @@ from database_models.partial_model import Lipid, Detection, Annotation
 # Chemins
 DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/lipids.db"
 CSV_INPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv'
-CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'
 
 # Création de l'engine SQLAlchemy
 engine = create_engine(DB_PATH, echo=True)

@@ -1,10 +1,14 @@
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+from database_models.partial_model import Detection, Lipid, Annotation
+
+DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/lipids.db"
+
 def database_loading_MS1(df, confidence_level):
     """Insère les lignes du dataframe dans Detection, Lipid et Annotation."""
-    engine = get_engine()
+    engine = create_engine(DB_PATH, echo=False)
     with Session(engine) as session:
-
         for _, row in df.iterrows():
-            
             detection = Detection(
                 Precursor_MZ     = row.get("Precursor_MZ"),
                 MS_level         = row.get("MS_level"),

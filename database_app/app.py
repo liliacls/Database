@@ -1,7 +1,4 @@
-import streamlit as st
-import pandas as pd
-import sys
-import sqlalchemy
+import streamlit
 
 """
 Detection :
@@ -24,13 +21,8 @@ Lipid :
 - Lipid_categorie --> inféré automatiquement à partir de la formule
 - Formula --> OBLIGATOIRE dans le fichier d'annotation
 
-Bouton : 
-
-- Choix du fichier d'annotation à intégrer
-- Lancement de l'intégration --> visualiser les données intégrées dans la base de données
-- Lancement de l'exportation --> visualiser les fichier avant de le télécharger
-- Téléchargement du fichier
-
+Caractéristiques de l'interface :
+---------------------------------
 Système d'intégration de données issues du tableur d'annotation : 
 - Paramètres globaux (Niveau d'annotation (MS_level), mode ionisation, niveau annotation)
 - Chargement du fichier
@@ -45,9 +37,6 @@ Système de génération du fichier pour l'annotation :
 - Téléchargement du fichier
 
 Visualisation de la base de données quand l'utilisateur le souhaite. 
-
 """
-
-
 
 
