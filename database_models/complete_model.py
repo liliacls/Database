@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from typing import Optional, Text
+from sqlalchemy import Integer, String, Float, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.orm import DeclarativeBase
 
@@ -20,7 +19,6 @@ class Organism(Base):
     Species : Mapped[String] = mapped_column()
     Full_name : Mapped[String] = mapped_column()
 
-    # Un organisme peut avoir PLUSIEURS expériences
     experiments: Mapped[list["Experiment"]] = relationship(back_populates="organism")
 
     def __repr__(self):
@@ -34,7 +32,6 @@ class Experiment(Base):
     Culture_mode : Mapped[String] = mapped_column()
     DOI : Mapped[String] = mapped_column()
 
-    # Une expérience appartient à UN SEUL organisme
     organism: Mapped["Organism"] = relationship(back_populates="experiments")
 
 def __repr__(self):
