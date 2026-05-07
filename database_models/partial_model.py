@@ -50,10 +50,10 @@ class Lipid(Base):
     __tablename__ = 'Lipid'
     Lipids_ID : Mapped[int] = mapped_column(primary_key=True)
 
-    Lipid_name : Mapped[Optional[str]] = mapped_column()
+    Lipid_name : Mapped[str] = mapped_column()
     Lipid_class : Mapped[Optional[str]] = mapped_column()
     Lipid_category : Mapped[Optional[str]] = mapped_column()
-    Formula : Mapped[Optional[str]] = mapped_column()
+    Formula : Mapped[str] = mapped_column()
 
     # Un lipide peut être associé à plusieurs annotations (1 -> N)
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="lipid")
