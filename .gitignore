@@ -6,3 +6,5 @@ Entity_Relationship.dbdiagram
 BacLipidDB.db
 __pycache__
 database_app/pages/.streamlit/
+data_MS1_1.py
+data_MS1_2.py

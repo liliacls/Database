@@ -5,7 +5,13 @@ from database_models.partial_model import Detection, Lipid, Annotation
 DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/BacLipidDB"
 
 def database_loading_MS1(df, confidence_level):
-    """Insère les lignes du dataframe dans Detection, Lipid et Annotation."""
+    """database_loading_MS1 _summary_
+
+    :param df: _description_
+    :type df: _type_
+    :param confidence_level: _description_
+    :type confidence_level: _type_
+    """
     engine = create_engine(DB_PATH, echo=False)
     with Session(engine) as session:
         for _, row in df.iterrows():
