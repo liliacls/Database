@@ -92,10 +92,10 @@ Table "Detection" {
   // Une détection provient d'un fichier mzML et un fichier mzML peut contenir plusieurs détections 
   File_id integer [ref: > File.File_ID]        
 
-  Precursor_MZ real [not null,note: 'Rapport masse/charge du précurseur en Da'] // Valeur obligatoire 
-  Scan integer  [not null,note: 'Numéro de scan dans le fichier mzML']
-  MS_level integer [null, note: 'Niveau de fragmentation']
-  Num_Peaks integer [null,note: 'Nombre de fragments associés au précurseur']
+  Precursor_MZ real [note: 'Rapport masse/charge du précurseur en Da'] // Valeur obligatoire 
+  Scan integer  [note: 'Numéro de scan dans le fichier mzML']
+  MS_level integer [note: 'Niveau de fragmentation']
+  Num_Peaks integer [note: 'Nombre de fragments associés au précurseur']
   Energie_collision real [null,note: 'Énergie de fragmentation, unité dépend du mode de fragmentation']
   Exact_mass real [null, note: 'Masse exacte monoisotopique en Da']
   Molecular_weight real [null, note: 'Masse moléculaire moyenne en Da']
