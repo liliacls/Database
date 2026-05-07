@@ -1,5 +1,4 @@
-# Lipid Database Project
-
+# BacLipidDB Project
 
 # **Architecture**
 ```
@@ -12,8 +11,16 @@ projet/
     └── 📄 data_MS1_3.py
 ├── 📁 data_export/            → Export en .csv et .msp
 │   └── 📄 data_MS1_3.py
-├── 📁 database_app/           → Interface
-│   └── 📄 app.py
+├── 📁 database_app/           → Interface streamlit
+│   └── 📄 Home.py             → Lancement de l'interface
+│   └── 📁 pages
+│       └── 📄 Data_Integration.py
+│       └── 📄 Database.py
+│       └── 📄 module3.py
+│   └── 📁 utils
+│       └── 📄 exact_mass_calc.py
+│       └── 📄 lipid_class_calc.py
+│       └── 📄 molecularw_calc.py
 ├── 📁 database_modeling/      → Modélisation de la base de données
 │   └── 📄 Entity_Relationship.dbml
 ├── 📁 database_models/        → Création de la structure de la base de données

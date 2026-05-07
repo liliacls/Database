@@ -1,7 +1,8 @@
 __pycache__/
-xlsxToCsv.py
+.history
+.gitignore
 Entity_Relationship.dbdiagram
 .history
-lipids.db
-tableur_MS1.ipynb
+BacLipidDB.db
 __pycache__
+database_app/pages/.streamlit/

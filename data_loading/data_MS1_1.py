@@ -1,14 +1,16 @@
 import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-from partial_model import Lipid, Detection, Annotation
+import sys
+sys.path.insert(0, '/home/liliacls/Documents/Stage/Database')
+from database_models.partial_model import Lipid, Detection, Annotation
 
 ##################################################################################
 # Premier test d'intégration de la base de données avec une seule ligne du tableur
 ##################################################################################
 
 # Chemins
-DB_PATH = "sqlite:///lipids.db"
+DB_PATH = "sqlite:///BacLipidDB.db"
 CSV_INPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv'
 CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'
 

@@ -6,7 +6,7 @@ sys.path.insert(0, '/home/liliacls/Documents/Stage/Database')
 from database_models.partial_model import Annotation
 
 # Chemins
-DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/lipids.db"
+DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/BactLipidDB.db"
 CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'
 
 # Création de l'engine SQLAlchemy

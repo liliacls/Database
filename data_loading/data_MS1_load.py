@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from database_models.partial_model import Detection, Lipid, Annotation
 
-DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/lipids.db"
+DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/BacLipidDB"
 
 def database_loading_MS1(df, confidence_level):
     """Insère les lignes du dataframe dans Detection, Lipid et Annotation."""
@@ -22,7 +22,7 @@ def database_loading_MS1(df, confidence_level):
             session.flush()
 
             lipid = Lipid(
-                Lipid_Name     = row.get("Lipid_Name"),
+                Lipid_name     = row.get("Lipid_Name"),
                 Lipid_class    = row.get("Lipid_class"),
                 Lipid_category = row.get("Lipid_category"),
                 Formula        = row.get("Formula"),

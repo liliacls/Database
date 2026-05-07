@@ -10,7 +10,7 @@ from database_models.partial_model import Lipid, Detection, Annotation
 ##############################################################################
 
 # Chemins
-DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/lipids.db"
+DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/BacLipidDB"
 CSV_INPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv'
 
 # Création de l'engine SQLAlchemy
