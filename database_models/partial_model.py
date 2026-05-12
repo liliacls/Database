@@ -1,14 +1,23 @@
 """
 partial_model.py
 ----------------
-Définition des modèles SQLAlchemy de BacLipidDB.
+Définition des modèles SQLAlchemy de BacLipidDB (modèle partiel).
 
 Contient les 4 tables de la base de données :
-    - Detection : signal détecté par le spectromètre de masse (m/z, RT, CCS, ...)
+    - Detection  : signal détecté par le spectromètre de masse.
     - Fragment   : ions fragments associés à une détection (MS2 uniquement)
     - Lipid      : lipide identifié (nom, classe, catégorie, formule)
     - Annotation : lien entre une détection et un lipide, avec un niveau de confiance
 
+Relations :
+    - Detection  1→N  Fragment    (un signal peut produire plusieurs fragments, MS2 uniquement)
+    - Detection  1→N  Annotation  (un signal peut correspondre à plusieurs lipides candidats)
+    - Lipid      1→N  Annotation  (un lipide peut être détecté dans plusieurs expériences)
+
+Conventions :
+    - Les clés primaires sont nommées avec le suffixe "_ID"
+    - Les clés étrangères sont nommées avec le suffixe "_id"
+    - Chaque classe définit un __repr__ pour afficher lisiblement un objet lors du débogage
 """
 
 from sqlalchemy.orm import DeclarativeBase
