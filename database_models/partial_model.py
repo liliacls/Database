@@ -36,11 +36,11 @@ class Detection(Base):
 
     Precursor_MZ : Mapped[float] = mapped_column()
     Scan : Mapped[Optional[int]] = mapped_column()
-    MS_level : Mapped[Optional[str]] = mapped_column()
-    Num_Peaks : Mapped[Optional[int]] = mapped_column()
+    MS_level : Mapped[str] = mapped_column()
+    Num_Peaks : Mapped[int] = mapped_column()
     Energie_collision : Mapped[Optional[float]] = mapped_column()
-    Exact_mass : Mapped[Optional[float]] = mapped_column()
-    Molecular_weight : Mapped[Optional[float]] = mapped_column()
+    Exact_mass : Mapped[float] = mapped_column()
+    Molecular_weight : Mapped[float] = mapped_column()
     RT : Mapped[Optional[float]] = mapped_column()
     CCS : Mapped[Optional[float]] = mapped_column()
 
@@ -69,7 +69,7 @@ class Fragment(Base):
 
 class Lipid(Base):
     __tablename__ = 'Lipid'
-    Lipids_ID : Mapped[int] = mapped_column(primary_key=True)
+    Lipid_ID : Mapped[int] = mapped_column(primary_key=True)
 
     Lipid_name : Mapped[str] = mapped_column()
     Lipid_class : Mapped[Optional[str]] = mapped_column()
@@ -80,12 +80,12 @@ class Lipid(Base):
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="lipid")
 
     def __repr__(self):
-        return f"Lipid(Lipids_ID={self.Lipids_ID}, Lipid_name='{self.Lipid_name}', Lipid_class='{self.Lipid_class}', Lipid_category='{self.Lipid_category}', Formula='{self.Formula}')"
+        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_class='{self.Lipid_class}', Lipid_category='{self.Lipid_category}', Formula='{self.Formula}')"
 
 class Annotation(Base):
     __tablename__ = 'Annotation'
     Annotation_ID : Mapped[int] = mapped_column(primary_key=True)
-    Lipid_id : Mapped[int] = mapped_column(ForeignKey('Lipid.Lipids_ID'))
+    Lipid_id : Mapped[int] = mapped_column(ForeignKey('Lipid.Lipid_ID'))
     Detection_id : Mapped[int] = mapped_column(ForeignKey('Detection.Detection_ID'))
     
     Confidence_level : Mapped[Optional[int]] = mapped_column()

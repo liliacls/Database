@@ -18,6 +18,8 @@ Relations :
     - Organism   1→N  Experiment  (un organisme peut avoir plusieurs expériences)
     - Experiment 1→N  File        (une expérience peut avoir plusieurs fichiers)
     - Method     1→N  File        (une méthode peut être utilisée dans plusieurs fichiers)
+    - Adduct     1→N  Detection   (un adduit peut être associé à plusieurs détections)
+    - File       1→N  Detection   (un fichier peut contenir plusieurs détections)
     - Detection  1→N  Fragment    (un signal peut produire plusieurs fragments, MS2 uniquement)
     - Detection  1→N  Annotation  (un signal peut correspondre à plusieurs lipides candidats)
     - Lipid      1→N  Annotation  (un lipide peut être détecté dans plusieurs expériences)
@@ -34,6 +36,7 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
 from typing import List, Optional
+
 
 class Base(DeclarativeBase):
     pass
@@ -58,7 +61,7 @@ class Experiment(Base):
     Experiment_ID : Mapped[int] = mapped_column(primary_key=True)
     Organism_id : Mapped[int] = mapped_column(ForeignKey('Organism.Organism_ID'))
 
-    Treatment : Mapped[Optional[str]] = mapped_column()
+    Sample_prep : Mapped[Optional[str]] = mapped_column()
     Culture_mode : Mapped[Optional[str]] = mapped_column()
     DOI : Mapped[Optional[str]] = mapped_column()
 
@@ -69,17 +72,17 @@ class Experiment(Base):
     files: Mapped[List["File"]] = relationship(back_populates="experiment")
 
     def __repr__(self):
-        return f"Experiment(Experiment_ID={self.Experiment_ID}, Organism_id={self.Organism_id}, Treatment='{self.Treatment}', Culture_mode='{self.Culture_mode}', DOI='{self.DOI}')"
+        return f"Experiment(Experiment_ID={self.Experiment_ID}, Organism_id={self.Organism_id}, Sample_prep='{self.Sample_prep}', Culture_mode='{self.Culture_mode}', DOI='{self.DOI}')"
 
 class Method(Base):
     __tablename__ = 'Method'
     Method_ID : Mapped[int] = mapped_column(primary_key=True)
 
-    Instrument : Mapped[str] = mapped_column()
-    Instrument_type : Mapped[str] = mapped_column()
-    Source : Mapped[str] = mapped_column()
-    Polarity : Mapped[str] = mapped_column()
-    Fragmentation_mode : Mapped[str] = mapped_column()
+    Instrument : Mapped[Optional[str]] = mapped_column()
+    Instrument_type : Mapped[Optional[str]] = mapped_column()
+    Source : Mapped[Optional[str]] = mapped_column()
+    Polarity : Mapped[Optional[str]] = mapped_column()
+    Fragmentation_mode : Mapped[Optional[str]] = mapped_column()
 
     # Relation 1→N : une méthode peut être utilisée dans plusieurs fichiers
     files: Mapped[List["File"]] = relationship(back_populates="method")
@@ -101,6 +104,9 @@ class File(Base):
     # Relation N→1 : un fichier est rattaché à une seule méthode
     method: Mapped["Method"] = relationship(back_populates="files")
 
+    # Relation 1→N : un fichier peut contenir plusieurs détections
+    detections: Mapped[List["Detection"]] = relationship(back_populates="file")
+
     def __repr__(self):
         return f"File(File_ID={self.File_ID}, Experiment_id={self.Experiment_id}, Method_id={self.Method_id}, Name_file='{self.Name_file}')"
 
@@ -108,8 +114,11 @@ class Adduct(Base):
     __tablename__ = 'Adduct'
     Adduct_ID : Mapped[int] = mapped_column(primary_key=True)
 
-    Adduct_name : Mapped[str] = mapped_column()
-    Charge : Mapped[int] = mapped_column()
+    Adduct_name : Mapped[Optional[str]] = mapped_column()
+    Charge : Mapped[Optional[int]] = mapped_column()
+
+    # Relation 1→N : un adduit peut être associé à plusieurs détections
+    detections: Mapped[List["Detection"]] = relationship(back_populates="adduct")
 
     def __repr__(self):
         return f"Adduct(Adduct_ID={self.Adduct_ID}, Adduct_name='{self.Adduct_name}', Charge={self.Charge})"
@@ -117,16 +126,24 @@ class Adduct(Base):
 class Detection(Base):
     __tablename__ = 'Detection'
     Detection_ID : Mapped[int] = mapped_column(primary_key=True)
+    Adduct_id : Mapped[int] = mapped_column(ForeignKey('Adduct.Adduct_ID'))
+    File_id : Mapped[int] = mapped_column(ForeignKey('File.File_ID'))
 
     Precursor_MZ : Mapped[float] = mapped_column()
     Scan : Mapped[Optional[int]] = mapped_column()
-    MS_level : Mapped[Optional[str]] = mapped_column()
-    Num_Peaks : Mapped[Optional[int]] = mapped_column()
+    MS_level : Mapped[str] = mapped_column()
+    Num_Peaks : Mapped[int] = mapped_column()
     Energie_collision : Mapped[Optional[float]] = mapped_column()
-    Exact_mass : Mapped[Optional[float]] = mapped_column()
-    Molecular_weight : Mapped[Optional[float]] = mapped_column()
+    Exact_mass : Mapped[float] = mapped_column()
+    Molecular_weight : Mapped[float] = mapped_column()
     RT : Mapped[Optional[float]] = mapped_column()
     CCS : Mapped[Optional[float]] = mapped_column()
+
+    # Relation N→1 : une détection est rattachée à un seul adduit
+    adduct: Mapped["Adduct"] = relationship(back_populates="detections")
+
+    # Relation N→1 : une détection provient d'un seul fichier
+    file: Mapped["File"] = relationship(back_populates="detections")
 
     # Relation 1→N : une détection peut être associée à plusieurs fragments (MS2 uniquement)
     fragments: Mapped[List["Fragment"]] = relationship(back_populates="detection")
@@ -135,7 +152,7 @@ class Detection(Base):
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="detection")
 
     def __repr__(self):
-        return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, Scan={self.Scan}, MS_level={self.MS_level}, Num_Peaks={self.Num_Peaks}, Energie_collision={self.Energie_collision}, Exact_mass={self.Exact_mass}, Molecular_weight={self.Molecular_weight}, RT={self.RT}, CCS={self.CCS})"
+        return f"Detection(Detection_ID={self.Detection_ID}, Adduct_id={self.Adduct_id}, File_id={self.File_id}, Precursor_MZ={self.Precursor_MZ}, Scan={self.Scan}, MS_level={self.MS_level}, Num_Peaks={self.Num_Peaks}, Energie_collision={self.Energie_collision}, Exact_mass={self.Exact_mass}, Molecular_weight={self.Molecular_weight}, RT={self.RT}, CCS={self.CCS})"
 
 class Fragment(Base):
     __tablename__ = 'Fragment'
@@ -153,7 +170,7 @@ class Fragment(Base):
 
 class Lipid(Base):
     __tablename__ = 'Lipid'
-    Lipids_ID : Mapped[int] = mapped_column(primary_key=True)
+    Lipid_ID : Mapped[int] = mapped_column(primary_key=True)
 
     Lipid_name : Mapped[str] = mapped_column()
     Lipid_class : Mapped[Optional[str]] = mapped_column()
@@ -164,12 +181,12 @@ class Lipid(Base):
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="lipid")
 
     def __repr__(self):
-        return f"Lipid(Lipids_ID={self.Lipids_ID}, Lipid_name='{self.Lipid_name}', Lipid_class='{self.Lipid_class}', Lipid_category='{self.Lipid_category}', Formula='{self.Formula}')"
+        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_class='{self.Lipid_class}', Lipid_category='{self.Lipid_category}', Formula='{self.Formula}')"
 
 class Annotation(Base):
     __tablename__ = 'Annotation'
     Annotation_ID : Mapped[int] = mapped_column(primary_key=True)
-    Lipid_id : Mapped[int] = mapped_column(ForeignKey('Lipid.Lipids_ID'))
+    Lipid_id : Mapped[int] = mapped_column(ForeignKey('Lipid.Lipid_ID'))
     Detection_id : Mapped[int] = mapped_column(ForeignKey('Detection.Detection_ID'))
 
     Confidence_level : Mapped[Optional[int]] = mapped_column()
