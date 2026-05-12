@@ -1,8 +1,28 @@
+"""
+Database.py
+-----------
+Module 2 : Consultation des tables de BacLipidDB.
+
+Permet d'afficher le contenu des tables Detection, Fragment, Lipid, Annotation,
+ainsi qu'une vue complète par jointure des trois tables principales.
+"""
+
+import sys
+import os
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from database_models.partial_model import Annotation, Lipid, Detection
 
 DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/BacLipidDB.db"
+
+@st.cache_resource
+def get_engine():
+    """Crée et met en cache la connexion à la base de données."""
+    return create_engine(DB_PATH, echo=False)
 
 st.markdown("""
     <style>
@@ -18,39 +38,51 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.write("")
 
-# Connexion à la base
-engine = create_engine(DB_PATH, echo=False)
+engine = get_engine()
 
-# Boutons de sélection de table au dessus du tableau
 table = st.radio(
-    "Sélectionner une table",
-    options=["Annotation", "Detection", "Fragment", "Lipid", "Vue complète"],
+    "Select a table",
+    options=["Annotation", "Detection", "Fragment", "Lipid", "Full view"],
     horizontal=True,
     key="table_select"
 )
 
 st.divider()
 
-# Chargement et affichage de la table sélectionnée
 try:
-    if table == "Vue complète":
-        # Jointure des 3 tables principales
-        query = """
-            SELECT "
-                l.Lipid_name, l.Formula, l.Lipid_class, l.Lipid_category,
-                d.Precursor_MZ, d.Exact_mass, d.Molecular_weight,
-                d.MS_level, d.Num_Peaks, d.RT, d.CCS,
-                a.Confidence_level
-            FROM Annotation a
-            JOIN Lipid l ON a.Lipid_id = l.Lipids_ID
-            JOIN Detection d ON a.Detection_id = d.Detection_ID
-        """
-        df = pd.read_sql(query, engine)
+    if table == "Full view":
+        with Session(engine) as session:
+            results = (
+                session.query(Annotation)
+                .join(Annotation.lipid)
+                .join(Annotation.detection)
+                .all()
+            )
+        df = pd.DataFrame([
+            {
+                "Lipid_name":       a.lipid.Lipid_name,
+                "Formula":          a.lipid.Formula,
+                "Lipid_class":      a.lipid.Lipid_class,
+                "Lipid_category":   a.lipid.Lipid_category,
+                "Precursor_MZ":     a.detection.Precursor_MZ,
+                "Exact_mass":       a.detection.Exact_mass,
+                "Molecular_weight": a.detection.Molecular_weight,
+                "MS_level":         a.detection.MS_level,
+                "Num_Peaks":        a.detection.Num_Peaks,
+                "RT":               a.detection.RT,
+                "CCS":              a.detection.CCS,
+                "Confidence_level": a.Confidence_level,
+            }
+            for a in results
+        ])
     else:
         df = pd.read_sql_table(table, engine)
 
-    st.subheader(f"Table : {table} — {len(df)} lignes")
-    st.dataframe(df, use_container_width=True, height=600)
+    st.subheader(f"Table : {table} - {len(df)} rows")
+    if df.empty:
+        st.info("This table contains no data yet.")
+    else:
+        st.dataframe(df, use_container_width=True, height=600)
 
 except Exception as e:
-    st.error(f"Erreur lors du chargement de la table : {e}")
+    st.error(f"Error loading table : {e}")
