@@ -40,12 +40,12 @@ BacLipidDB/
 # **Description des modules**
 
 ### `config.py`
-Centralise la configuration globale du projet : chemin racine et URL de connexion à la base SQLite (`BacLipidDB.db`).
+Configuration globale du projet : chemin racine et URL de connexion à la base SQLite (`BacLipidDB.db`).
 
 ---
 
-### `app/` — Interface utilisateur Streamlit
-Pages de l'application web accessibles depuis le navigateur.
+### `app/` - Interface utilisateur Streamlit
+Pages de l'application web Streamlit accessibles depuis le navigateur.
 
 | Fichier | Rôle |
 |---|---|
@@ -56,7 +56,7 @@ Pages de l'application web accessibles depuis le navigateur.
 
 ---
 
-### `models/` — Modèles de base de données (ORM)
+### `models/` - Modèles de base de données (ORM)
 Définit la structure de la base de données via SQLAlchemy.
 
 | Fichier | Rôle |
@@ -65,8 +65,8 @@ Définit la structure de la base de données via SQLAlchemy.
 
 ---
 
-### `integration/` — Intégration des données
-Couche intermédiaire entre l'interface utilisateur et la base de données.
+### `integration/` - Intégration des données
+Contient la fonction d'insertion des données dans la base, appelées depuis la page Integration après validation du fichier.
 
 | Fichier | Rôle |
 |---|---|
@@ -74,8 +74,8 @@ Couche intermédiaire entre l'interface utilisateur et la base de données.
 
 ---
 
-### `utils/` — Fonctions de calcul
-Fonctions utilitaires utilisées dans le module "1_Integration.py" de l'application web
+### `utils/` - Fonctions de calcul
+Fonctions utilitaires utilisées dans le module "1_Integration.py" de l'application web pour la complétion automatique du tableur.
 
 | Fichier | Rôle |
 |---|---|
@@ -85,13 +85,14 @@ Fonctions utilitaires utilisées dans le module "1_Integration.py" de l'applicat
 
 ---
 
-### `scripts/` — Scripts d'exécution ponctuelle
-Scripts à lancer en ligne de commande, indépendants de l'interface Streamlit.
+### `scripts/` - Scripts d'exécution ponctuelle
+Scripts à lancer en ligne de commande, utilisés dans un premier temps pour nettoyer et insérer les données du tableur d'annotation MS1
+dans la base de données, puis pour extraire les données et générer le fichier .csv pour l'annotation avec le module "Local Compound Database Search". 
 
 | Fichier | Rôle |
 |---|---|
 | `init_db.py` | Initialise la base de données et crée toutes les tables |
-| `clean_MS1.py` | Nettoie et filtre un le fichier Excel brut d'annotations |
+| `clean_MS1.py` | Nettoie et filtre le fichier Excel brut d'annotations |
 | `load_MS1.py` | Charge un CSV nettoyé et insère toutes les entrées dans la base de données |
 | `export_MS1.py` | Extrait les données de la base et les exporte en CSV compatible MZmine |
 
