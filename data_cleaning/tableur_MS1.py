@@ -7,7 +7,7 @@ OUTPUT = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/L
 OUTPUT_EXCLUS = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto_exclus.csv"
 
 # Masse du proton (H⁻)
-H_NEGATIF = 1.008489
+H_NEGATIF = 1.007276
 
 # Liste des classes de lipides à conserver
 LIPIDES = [
