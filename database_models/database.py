@@ -5,14 +5,9 @@ Script d'initialisation de la base de données "BacLipidDB.db"
 Execution une seule fois pour créer les tables SQLite définies dans partial_model.py
 """
 
-import os
-import sys
-sys.path.insert(0, os.path.dirname(__file__))
-
 from sqlalchemy import create_engine
-from partial_model import Base
-
-DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/BacLipidDB.db"
+from database_models.partial_model import Base
+from config import DB_PATH
 
 def main():
     """Crée la base de données et toutes les tables si elles n'existent pas encore"""
