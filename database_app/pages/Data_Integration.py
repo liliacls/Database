@@ -16,16 +16,11 @@ Colonnes optionnelles : RT, CCS.
 
 import streamlit as st
 import pandas as pd
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from data_loading.data_MS1_load import database_loading_MS1
-from utils.lipid_class_calc import lipid_class_calculation, lipid_category_calculation
-from utils.molecularw_calc import molecularw_calculation
-from utils.exact_mass_calc import exact_mass_calculation
+from database_app.utils.lipid_class_calc import lipid_class_calculation, lipid_category_calculation
+from database_app.utils.molecularw_calc import molecularw_calculation
+from database_app.utils.exact_mass_calc import exact_mass_calculation
 
 # Colonnes obligatoire pour l'annotation MS1
 REQUIRED_COLUMNS = ['Lipid_Name', 'Formula', 'Precursor_MZ']
@@ -77,7 +72,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     ms_level = st.selectbox(
         "Annotation level",
-        options=["MS1", "MS2", "MS3"],
+        options=["MS1"],
         index=None,
         placeholder="Annotation level",
         key="ms_level",
@@ -142,7 +137,7 @@ except Exception as e:
     st.error(f"Error loading file : {e}")
     st.stop()
 
-df = st.session_state["df"]
+df = st.session_state["df"].copy()
 
 # ── STEP 3 ────────────────────────────────────────────────────────────────────
 
