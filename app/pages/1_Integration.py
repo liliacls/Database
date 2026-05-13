@@ -17,7 +17,7 @@ Colonnes optionnelles : RT, CCS.
 import streamlit as st
 import pandas as pd
 
-from services.loading import database_loading_MS1
+from integration.loading import database_loading_MS1
 from utils.lipid_class import lipid_class_calculation, lipid_category_calculation
 from utils.molecular_weight import molecularw_calculation
 from utils.exact_mass import exact_mass_calculation
