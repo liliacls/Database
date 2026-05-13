@@ -18,9 +18,9 @@ def exact_mass_calculation(Precursor_MZ, ion_mode):
     masse_proton = 1.007276
 
     # En mode positif, la molécule a gagné un proton donc retrait pour obtenir la masse neutre
-    if ion_mode == "Positif":
+    if ion_mode == "Positive":
         return round(mz - masse_proton, 6)
-    
-    # En mode négatif, la molécule a perdu un proton donc ajout pour obtenir la masse neutre
-    else:
+    elif ion_mode == "Negative":
         return round(mz + masse_proton, 6)
+    else:
+        raise ValueError(f"ion_mode inconnu : {ion_mode!r}. Valeurs acceptées : 'Positive' ou 'Negative'.")
