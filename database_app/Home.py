@@ -4,11 +4,17 @@ Home.py
 Page d'accueil de BacLipidDB.
 """
 
+import logging
 import streamlit as st
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s — %(message)s",
+)
 
 st.markdown("""
     <style>
-
+        
     .module {
         border: 5px solid #000000;
         border-radius: 10px;
