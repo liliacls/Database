@@ -7,17 +7,13 @@ Permet d'afficher le contenu des tables Detection, Fragment, Lipid, Annotation,
 ainsi qu'une vue complète par jointure des trois tables principales.
 """
 
-import sys
-import os
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from database_models.partial_model import Annotation, Lipid, Detection
-
-DB_PATH = "sqlite:////home/liliacls/Documents/Stage/Database/BacLipidDB.db"
+from database_models.partial_model import Annotation
+from config import DB_PATH
 
 @st.cache_resource
 def get_engine():
