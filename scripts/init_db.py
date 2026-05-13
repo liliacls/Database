@@ -6,7 +6,7 @@ Execution une seule fois pour créer les tables SQLite définies dans partial_mo
 """
 
 from sqlalchemy import create_engine
-from database_models.partial_model import Base
+from models.model import Base
 from config import DB_PATH
 
 def main():

@@ -1,9 +1,7 @@
 import pandas as pd
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import create_engine
-
-from sqlalchemy.orm import joinedload
-from database_models.partial_model import Annotation
+from models.model import Annotation
 from config import DB_PATH
 
 CSV_OUTPUT = '/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/annotation_MS1.csv'

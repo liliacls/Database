@@ -17,10 +17,10 @@ Colonnes optionnelles : RT, CCS.
 import streamlit as st
 import pandas as pd
 
-from data_loading.data_MS1_load import database_loading_MS1
-from database_app.utils.lipid_class_calc import lipid_class_calculation, lipid_category_calculation
-from database_app.utils.molecularw_calc import molecularw_calculation
-from database_app.utils.exact_mass_calc import exact_mass_calculation
+from services.loading import database_loading_MS1
+from utils.lipid_class import lipid_class_calculation, lipid_category_calculation
+from utils.molecular_weight import molecularw_calculation
+from utils.exact_mass import exact_mass_calculation
 
 # Colonnes obligatoire pour l'annotation MS1
 REQUIRED_COLUMNS = ['Lipid_Name', 'Formula', 'Precursor_MZ']

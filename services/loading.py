@@ -1,7 +1,7 @@
 import logging
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-from database_models.partial_model import Detection, Lipid, Annotation
+from models.model import Detection, Lipid, Annotation
 from config import DB_PATH
 
 engine = create_engine(DB_PATH, echo=False)

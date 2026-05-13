@@ -12,7 +12,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from database_models.partial_model import Annotation
+from models.model import Annotation
 from config import DB_PATH
 
 @st.cache_resource
