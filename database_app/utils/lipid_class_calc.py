@@ -64,7 +64,7 @@ def lipid_category_calculation(lipid_class):
     for category, classes in categories.items():
         if lipid_class in classes:
             return category
-    return ""
+    return None
 
 
 def lipid_class_calculation(lipid_name):
@@ -135,5 +135,5 @@ def lipid_class_calculation(lipid_name):
         # Les préfixes sont mis en majuscules pour éviter les erreurs de casse
         if lipid_name_upper.startswith(prefix.upper()):
             return prefix
-    return ""
+    return None
 
