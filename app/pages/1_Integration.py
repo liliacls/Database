@@ -5,12 +5,12 @@ Module 1 : Intégration de données lipidiques dans BacLipidDB.
 
 Workflow en 5 étapes :
     1. Settings      : sélection du niveau MS, mode d'ionisation et niveau de confiance.
-    2. File upload   : chargement d'un fichier .xlsx / .csv / .tsv.
+    2. File upload   : chargement d'un fichier .xlsx, .csv, .tsv
     3. Verification  : contrôle de la présence des colonnes obligatoires.
     4. Completion    : calcul automatique des colonnes dérivées, édition et validation.
     5. Integration   : insertion dans les tables Detection, Lipid et Annotation.
 
-Colonnes obligatoires : Lipid_Name, Formula, Precursor_MZ.
+Colonnes obligatoires : Lipid_Name, Formula, Precursor_MZ, Lipid_category , Lipid_class.
 Colonnes optionnelles : RT, CCS.
 """
 
@@ -18,12 +18,11 @@ import streamlit as st
 import pandas as pd
 
 from integration.loading import database_loading_MS1
-from utils.lipid_class import lipid_class_calculation, lipid_category_calculation
 from utils.molecular_weight import molecularw_calculation
 from utils.exact_mass import exact_mass_calculation
 
 # Colonnes obligatoire pour l'annotation MS1
-REQUIRED_COLUMNS = ['Lipid_Name', 'Formula', 'Precursor_MZ']
+REQUIRED_COLUMNS = ['Lipid_Name', 'Formula', 'Precursor_MZ', "Lipid_category", "Lipid_class"]
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -72,7 +71,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     ms_level = st.selectbox(
         "Annotation level",
-        options=["MS1"],
+        options=["MS1", "MS2"],
         index=None,
         placeholder="Annotation level",
         key="ms_level",
@@ -186,22 +185,6 @@ if "df_complete" not in st.session_state:
                 st.error(f"Error calculating molecular weight : {e}")
                 st.stop()
 
-            try:
-                df["Lipid_class"] = df["Lipid_Name"].apply(
-                    lambda n: lipid_class_calculation(n)
-                )
-            except Exception as e:
-                st.error(f"Error inferring lipid class : {e}")
-                st.stop()
-
-            try:
-                df["Lipid_category"] = df["Lipid_class"].apply(
-                    lambda c: lipid_category_calculation(c)
-                )
-            except Exception as e:
-                st.error(f"Error inferring lipid category : {e}")
-                st.stop()
-
             df["MS_level"] = ms_level
             df["Num_Peaks"] = 0 if ms_level == "MS1" else None
 
@@ -220,10 +203,11 @@ df_edite = st.data_editor(
 )
 
 if st.button("Validate data", type="primary", use_container_width=True):
-    if df_edite.isnull().any().any():
-        colonnes_vides = df_edite.columns[df_edite.isnull().any()].tolist()
+    strictly_required = ['Lipid_Name', 'Formula', 'Precursor_MZ']
+    colonnes_vides = [c for c in strictly_required if df_edite[c].isnull().any()]
+    if colonnes_vides:
         st.warning(
-            f"The table contains empty cells in : **{', '.join(colonnes_vides)}**",
+            f"The table contains empty cells in required columns : **{', '.join(colonnes_vides)}**",
             icon="⚠️",
         )
     else:
@@ -239,7 +223,7 @@ if "df_valide" in st.session_state:
         st.markdown("**By lipid class :**")
         st.dataframe(
             st.session_state["df_valide"]["Lipid_class"]
-            .value_counts()
+            .value_counts(dropna=False)
             .rename_axis("Class")
             .reset_index(name="Count"),
             use_container_width=True,
@@ -250,7 +234,7 @@ if "df_valide" in st.session_state:
         st.markdown("**By lipid category :**")
         st.dataframe(
             st.session_state["df_valide"]["Lipid_category"]
-            .value_counts()
+            .value_counts(dropna=False)
             .rename_axis("Category")
             .reset_index(name="Count"),
             use_container_width=True,
