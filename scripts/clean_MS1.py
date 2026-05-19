@@ -1,139 +1,126 @@
-import pandas as pd
+"""
+clean_MS1.py
+------------
+Nettoyage et filtrage du tableur d'annotation MS1 brut (LipidesAcineto.xlsx).
+
+Transformations appliquées (du plus au moins discriminant) :
+    1.  Suppression des colonnes non pertinentes : m/z, intensity, diff, %intensity, col J.
+    2.  Renommage : Formula → Lipid_Name | col E → Formula | m exp → Precursor_MZ.
+    3.  Suppression des lignes où Lipid_Name, Formula ou Precursor_MZ est absent.
+    4.  Conservation uniquement des lipides dont le préfixe est dans LIPIDES.
+    5.  Suppression des adduits (+).
+    6.  Suppression des lipides + (O)
+    7.  Suppression des lipides + ;O
+    8.  Suppression des lignes contenant " ou "
+    9.  Suppression des tirets longs
+    10. Suppression des variantes -O
+    11. Suppression des lignes dont Lipid_Name commence par "C13".
+    12. Suppression des lignes dont Lipid_Name contient "Fragment".
+    13. Suppression des lignes dont Lipid_Name se termine par "Précurseur" ou "Precurser".
+    14. Suppression des lignes dont Lipid_Name contient des parenthèses.
+
+Usage :
+    python scripts/clean_MS1.py
+"""
+
 import re
+import pandas as pd
+from pathlib import Path
 
-# Chemins des fichiers 
-PATH = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/LipidesAcineto.xlsx"
-OUTPUT = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv"
-OUTPUT_EXCLUS = "/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto_exclus.csv"
+PATH          = Path('/home/liliacls/Documents/Stage/Data/Tableur_annotation/LipidesAcineto.xlsx')
+OUTPUT        = Path('/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto.csv')
+OUTPUT_EXCLUS = Path('/home/liliacls/Documents/Stage/Data/Tableur_annotation/tableur_clean/LipidesAcineto_exclus.csv')
 
-# Masse du proton (H⁻)
-H_NEGATIF = 1.007276
-
-# Liste des classes de lipides à conserver
 LIPIDES = [
     'PE', 'PG', 'MLCL', 'CL', 'PA', 'LipA6P2', 'LipA7P2', 'NAPE', 'LipA6P2PE',
     'LipA7P2PE', 'PAGPE', 'LipA6P', 'PGox', 'aPG', 'cycPGP', 'LPA', 'DLCL', 'PPA',
     'MLCLox', 'LipIVA', 'LPG', 'LPE', 'LipA5P2', 'PGP', 'CPA', 'LipA6PPE', 'CLox',
-    'LipA5P2PE', 'LipX3', 'LipX4', 'LipA7P', 'LipA7PPE', 'CPG', 'DaPG', 'LipA6P2PE-KDO',
-    'LipA6P2-KDO', 'CDP-PA34:1', 'CDP-PA32:1', 'LcycPGP', 'UDP'
+    'LipA5P2PE', 'LipX3', 'LipX4', 'LipX', 'LipA7P', 'LipA7PPE', 'CPG', 'DaPG',
+    'LipA6P2PE-KDO', 'LipA6P2-KDO', 'CDP-PA34:1', 'CDP-PA32:1', 'LcycPGP', 'UDP',
 ]
 
-def clean_MS1(PATH):
+REQUIRED_COLUMNS = ['Lipid_Name', 'Formula', 'Precursor_MZ']
+
+
+def clean_MS1(path: Path):
+    """Lit le fichier Excel brut et applique les filtres de nettoyage MS1.
+
+    :param path: Chemin vers le fichier Excel brut (.xlsx)
+    :type path: Path
+    :return: Tuple (df_clean, df_exclus, exclus) — données valides, exclues et détail des filtres
+    :rtype: tuple[pd.DataFrame, pd.DataFrame, list]
     """
-    Lit le fichier Excel brut, supprime les colonnes non pertinentes, renomme les colonnes restantes, 
-    puis applique une série de filtres pour ne conserver que les lignes pertinentes. 
-    Les lignes rejetées sont rassemblées dans un DataFrame séparé avec la raison de leur exclusion.
+    df = pd.read_excel(path)
 
-    Les étapes de filtrage, dans l'ordre, sont :
-        1.  Suppression des lignes contenant au moins une valeur manquante.
-        2.  Remplacement de 'w' par None dans la colonne Name.
-        3.  Nettoyage des tirets spéciaux et des espaces superflus.
-        4.  Suppression du mot 'Precurser' dans la colonne Name.
-        5.  Exclusion des lignes dont Formula ou Name contient '?'.
-        6.  Exclusion des lignes dont Name contient ' ou ' (ambiguïté d'annotation).
-        7.  Exclusion des fragments et adduits (mots-clés 'Fragment' ou '+').
-        8.  Exclusion des lignes dont Name contient - H20,  -2H20
-        9.  Exclusion des lignes dont le préfixe de Name ne correspond à aucune classe de lipides référencée dans LIPIDES.
-        10.  La colonne 'Precursor_MZ' est calculée en soustrayant la masse du proton (H⁻) à la masse expérimentale, 
-            pour obtenir le rapport m/z en mode d'ionisation négatif.
+    # ── Mise en forme ─────────────────────────────────────────────────────────
 
-    :param PATH: Chemin vers le fichier Excel d'annotation à nettoyer (.xlsx).
-    :type PATH: str
-    :return: Un tuple "(df, df_exclus)' où 'df' contient les lignes validées avec la colonne 'Precursor_MZ' calculée, 
-            et 'df_exclus' contient toutes les lignes rejetées avec une colonne 'raison_exclusion'.
-    :rtype: tuple[pd.DataFrame, pd.DataFrame]
-    """
+    df = df.drop(columns=['m/z', 'intensity', 'm theor', 'diff', '%intensity', 'code', 'Unnamed: 9'])
 
-    # Chargement du fichier
-    df = pd.read_excel(PATH)
-
-    # Mise en forme des colonnes : suppression des colonnes non pertinentes
-    df = df.drop(columns=['m/z', 'intensity', 'Unnamed: 9', 'diff', 'code', '%intensity'])
-
-    # Mise en forme des colonnes : renommage des colonnes
     df = df.rename(columns={
-        'Formula'    : 'Name',
+        'Formula'    : 'Lipid_Name',
         'Unnamed: 4' : 'Formula',
-        'm exp'      : 'masse_experimentale',
-        'm theor'    : 'masse_theorique'
+        'm exp'      : 'Precursor_MZ',
     })
 
-    # Filtrage : accumulateur des lignes rejetées 
+    # ── Filtrage (du plus au moins discriminant) ───────────────────────────────
+
     exclus = []
 
-    # Filtrage : Suppression des lignes vides
-    NA = df.isnull().any(axis=1)
-    exclus.append(df[NA].copy().assign(raison_exclusion='ligne vide:'))
-    df = df[~NA]
+    def exclure(mask, raison):
+        exclus.append(df[mask].copy().assign(raison_exclusion=raison))
+        return df[~mask]
 
-    # Correction : Remplacement des valeurs 'w' par None
-    df['Name'] = df['Name'].replace('w', None)
+    # 1. Colonnes obligatoires manquantes
+    df = exclure(df[REQUIRED_COLUMNS].isnull().any(axis=1), 'colonne obligatoire manquante')
 
-    # Correction : Nettoyage des tiret long (–) par des tiret ASCII (-) et des espaces en trop
-    cols_obj = df.select_dtypes(include='object').columns
-    df[cols_obj] = df[cols_obj].apply(lambda col: col.str.strip())
+    # 2. Conservation des lipides connus uniquement
+    pattern = r'^(?:' + '|'.join(re.escape(l) for l in sorted(LIPIDES, key=len, reverse=True)) + r')\b'
+    lipides_connus = df['Lipid_Name'].str.contains(pattern, na=False, regex=True)
+    fragment_valide = df['Lipid_Name'].str.match(r'^Fragment\s+\S', na=False)
+    df = exclure(~(lipides_connus | fragment_valide), 'classe lipidique inconnue')
 
-    # Suppression du mot "precurser" pour nettoyer la cellule
-    df['Name'] = df['Name'].str.replace('Precurser', '', regex=False).str.strip()
+    # 3. Adduits (contient "+")
+    df = exclure(df['Lipid_Name'].str.contains(r'\+', regex=True, na=False), 'adduit (+)')
 
-    # Filtrage : Suppression des lignes avec '?'  annotation incertaine
-    interrogation = (
-        df['Formula'].str.contains(r'\?', na=False) |
-        df['Name'].str.contains(r'\?', na=False)
-    )
-    exclus.append(df[interrogation].copy().assign(raison_exclusion='contient "?":'))
-    df = df[~interrogation]
+    # 4. Variants (O) — plasmalogènes / éthers
+    df = exclure(df['Lipid_Name'].str.contains(r'\(O\)', regex=True, na=False), 'contient (O)')
 
-    # Filtrage : Suppression des lignes contenant " ou " : annotation ambiguë
-    OU = df['Name'].str.contains(' ou ', regex=False, na=False)
-    exclus.append(df[OU].copy().assign(raison_exclusion='contient "ou":'))
-    df = df[~OU]
+    # 5. Variants ;O — lipides oxydés
+    df = exclure(df['Lipid_Name'].str.contains(r';O', regex=False, na=False), 'contient ;O')
 
-    # Filtrage : Suppression des fragments et adduits
-    FRAG = df['Name'].str.contains(r'Fragment|\+', regex=True, na=False)
-    exclus.append(df[FRAG].copy().assign(raison_exclusion='fragment ou adduit:'))
-    df = df[~FRAG]
-    
-    # Filtrage : Suppression des lignes contenant - H20 ou - 2H20
-    H2O = df['Name'].str.contains(r'–\s*\d*H2O', regex=True, na=False)
-    exclus.append(df[H2O].copy().assign(raison_exclusion='contient "eau":'))
-    df = df[~H2O]
+    # 7. Tirets longs (–, —)
+    df = exclure(df['Lipid_Name'].str.contains(r'–|—', regex=True, na=False), 'tiret long')
 
-    # Filtrage : Suppresion des lignes non lipidiques
-    pattern = r'^(?:' + '|'.join(re.escape(l) for l in LIPIDES) + r')\b'
-    lipides = df['Name'].str.contains(pattern, na=False, regex=True)
-    exclus.append(df[~lipides].copy().assign(raison_exclusion='non lipide:'))
-    df = df[lipides].copy()
+    # 8. Variante -O isolée (hors notation éther e\dO)
+    df = exclure(df['Lipid_Name'].str.contains(r'\d-O\d*(?=[\s\-]|$)', regex=True, na=False), 'contient -O')
 
-    # Conversion de la colonne 'masse_experimentale' en numérique pour évitér les erreurs lors du calcul du rapport m/z
-    df['masse_experimentale'] = pd.to_numeric(df['masse_experimentale'], errors='coerce')
-    
-    # Filtrage : Suppression des lignes avec une masse expérimentale invalide (NaN après conversion)
-    mask_invalid = df['masse_experimentale'].isna()
-    exclus.append(df[mask_invalid].copy().assign(raison_exclusion='masse invalide:'))
-    df = df[~mask_invalid]
+    # 9. Noms commençant par "C13"
+    df = exclure(df['Lipid_Name'].str.startswith('C13', na=False), 'C13')
 
-    # Calcul du rapport m/z précurseur (mode négatif)
-    df['Precursor_MZ'] = df['masse_experimentale'] - H_NEGATIF
+    # 10. Noms contenant "Fragment"
+    df = exclure(df['Lipid_Name'].str.contains('Fragment', regex=False, na=False), 'Fragment')
 
-    # Consolidation de toutes les lignes exclues
+    # 11. Noms se terminant par "Précurseur" ou "Precurser"
+    df = exclure(df['Lipid_Name'].str.endswith(('Précurseur', 'Precurser'), na=False), 'Précurseur')
+
+    # 12. Noms contenant des parenthèses
+    df = exclure(df['Lipid_Name'].str.contains(r'\(', regex=True, na=False), 'contient des parenthèses')
+
     df_exclus = pd.concat(exclus, ignore_index=True)
 
     return df, df_exclus, exclus
 
-# ─── Point d'entrée ─────────────────────────────────────────────────────────────
+
 if __name__ == "__main__":
     df, df_exclus, exclus = clean_MS1(PATH)
 
     df.to_csv(OUTPUT, index=False, encoding='utf-8')
     df_exclus.to_csv(OUTPUT_EXCLUS, index=False, encoding='utf-8')
-    
+
     print("\nRésumé filtrage")
     print("---------------")
-    print(f"Nombre de lipides gardés: {len(df)}")
-    print(f"Lignes exclues : {len(df_exclus)}")
+    print(f"Lignes conservées : {len(df)}")
+    print(f"Lignes exclues    : {len(df_exclus)}")
     for e in exclus:
         if not e.empty:
-            print(e['raison_exclusion'].iloc[0], len(e))
-    else:
-        print("(filtre vide)", 0)
+            print(f"  {e['raison_exclusion'].iloc[0]:<40} {len(e)}")
