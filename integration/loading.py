@@ -18,7 +18,7 @@ def database_loading_MS1(df, confidence_level):
                     Precursor_MZ     = row.get("Precursor_MZ"),
                     MS_level         = row.get("MS_level"),
                     Num_Peaks        = row.get("Num_Peaks"),
-                    Exact_mass       = row.get("Exact_mass"),
+                    Exact_mass       = row.get("Neutral_mass"),
                     Molecular_weight = row.get("Molecular_weight"),
                     RT               = row.get("RT") if "RT" in row else None,
                     CCS              = row.get("CCS") if "CCS" in row else None,
