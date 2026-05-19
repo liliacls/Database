@@ -1,4 +1,5 @@
 import logging
+import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from models.model import Detection, Lipid, Annotation
@@ -27,8 +28,8 @@ def database_loading_MS1(df, confidence_level):
 
                 lipid = Lipid(
                     Lipid_name     = row.get("Lipid_Name"),
-                    Lipid_class    = row.get("Lipid_class"),
-                    Lipid_category = row.get("Lipid_category"),
+                    Lipid_class    = row.get("Lipid_class") if pd.notna(row.get("Lipid_class")) else None,
+                    Lipid_category = row.get("Lipid_category")if pd.notna(row.get("Lipid_category")) else None,
                     Formula        = row.get("Formula"),
                 )
                 session.add(lipid)
