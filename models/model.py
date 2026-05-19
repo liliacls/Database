@@ -1,13 +1,13 @@
 """
-partial_model.py
+model.py
 ----------------
 Définition des modèles SQLAlchemy de BacLipidDB.
 
 Contient les 4 tables de la base de données :
     - Detection  : signal détecté par le spectromètre de masse.
     - Fragment   : ions fragments associés à une détection (MS2 uniquement)
-    - Lipid      : lipide identifié (nom, classe, catégorie, formule)
-    - Annotation : lien entre une détection et un lipide, avec un niveau de confiance
+    - Lipid      : lipide de référence (nom, classe, catégorie, formule)
+    - Annotation : association entre une détection et un lipide candidat, avec un niveau de confiance sur l'identification
 
 Relations :
     - Detection  1→N  Fragment    (un signal peut produire plusieurs fragments, MS2 uniquement)
@@ -80,7 +80,7 @@ class Lipid(Base):
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="lipid")
 
     def __repr__(self):
-        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_class='{self.Lipid_class}', Lipid_category='{self.Lipid_category}', Formula='{self.Formula}')"
+        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_class='{self.Lipid_class}', Lipid_category='{self.Lipid_category}', Formula='{self.Formula}', Molecular_weight={self.Molecular_weight})"
 
 class Annotation(Base):
     __tablename__ = 'Annotation'
