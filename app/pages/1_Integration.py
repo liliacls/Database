@@ -19,7 +19,7 @@ import pandas as pd
 
 from integration.loading import database_loading_MS1
 from utils.molecular_weight import molecularw_calculation
-from utils.exact_mass import exact_mass_calculation
+from utils.neutral_mass import neutral_mass_cal
 
 # Colonnes obligatoires pour l'annotation MS1
 REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "Lipid_class"]
@@ -169,10 +169,10 @@ if "df_complete" not in st.session_state:
         with st.spinner("Computing derived columns..."):
             try:
                 df["Neutral_mass"] = df["Precursor_MZ"].apply(
-                    lambda mz: exact_mass_calculation(mz, ion_mode)
+                    lambda mz: neutral_mass_cal(mz, ion_mode)
                 )
             except Exception as e:
-                st.error(f"Error calculating exact mass : {e}")
+                st.error(f"Error calculating neutral mass : {e}")
                 st.stop()
 
             try:
