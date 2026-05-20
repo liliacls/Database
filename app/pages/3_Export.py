@@ -88,10 +88,14 @@ col3, col4 = st.columns(2)
 
 with col1:
     categories = sorted(df_all["Lipid_category"].dropna().unique().tolist())
+    if df_all["Lipid_category"].isna().any():
+        categories = ["(None)"] + categories
     selected_categories = st.multiselect("Lipid category", options=categories)
 
 with col2:
     classes = sorted(df_all["Lipid_class"].dropna().unique().tolist())
+    if df_all["Lipid_class"].isna().any():
+        classes = ["(None)"] + classes
     selected_classes = st.multiselect("Lipid class", options=classes)
 
 with col3:
@@ -124,9 +128,16 @@ st.divider()
 df_filtered = df_all.copy()
 
 if selected_categories:
-    df_filtered = df_filtered[df_filtered["Lipid_category"].isin(selected_categories)]
+    mask = df_filtered["Lipid_category"].isin([c for c in selected_categories if c != "(None)"])
+    if "(None)" in selected_categories:
+        mask |= df_filtered["Lipid_category"].isna()
+    df_filtered = df_filtered[mask]
+
 if selected_classes:
-    df_filtered = df_filtered[df_filtered["Lipid_class"].isin(selected_classes)]
+    mask = df_filtered["Lipid_class"].isin([c for c in selected_classes if c != "(None)"])
+    if "(None)" in selected_classes:
+        mask |= df_filtered["Lipid_class"].isna()
+    df_filtered = df_filtered[mask]
 if selected_ms:
     df_filtered = df_filtered[df_filtered["MS_level"].isin(selected_ms)]
 if selected_confidence:
