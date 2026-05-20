@@ -9,7 +9,17 @@ engine = create_engine(DB_PATH, echo=False)
 logger = logging.getLogger(__name__)
 
 def database_loading_MS1(df, confidence_level):
-    """Insère les lignes d'un DataFrame MS1 dans les tables Detection, Lipid et Annotation."""
+    """
+    Insère les données d'annotation MS1 dans la base de données.
+    Pour chaque ligne du DataFrame, crée et insère un enregistrement dans les trois tables : Detection, Lipid et Annotation
+
+    :param df: DataFrame contenant les colonnes Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Molecular_weight, MS_level, Num_Peaks, Lipid_class, Lipid_category,
+               et optionnellement RT et CCS.
+    :type df: pandas.DataFrame
+    :param confidence_level: niveau de confiance de l'annotation 
+    :type confidence_level: int
+    :raises Exception: en cas d'erreur aucune ligne n'est commitée (ROLLBACK automatique) et l'erreur est loggée.
+    """
     logger.info(f"Début de l'intégration - {len(df)} lignes à insérer.")
     with Session(engine) as session:
         try:
