@@ -3,8 +3,8 @@ Database.py
 -----------
 Module 2 : Consultation des tables de BacLipidDB.
 
-Permet d'afficher le contenu des tables Detection, Fragment, Lipid, Annotation,
-ainsi qu'une vue complète par jointure des trois tables principales.
+Permet d'afficher le contenu des tables Detection, Fragment, Lipid et Annotation,
+ainsi qu'une vue complète par jointure des tables Detection, Lipid et Annotation.
 """
 
 import streamlit as st
@@ -54,23 +54,23 @@ try:
                 .join(Annotation.detection)
                 .all()
             )
-        df = pd.DataFrame([
-            {
-                "Lipid_name":       a.lipid.Lipid_name,
-                "Formula":          a.lipid.Formula,
-                "Lipid_class":      a.lipid.Lipid_class,
-                "Lipid_category":   a.lipid.Lipid_category,
-                "Precursor_MZ":     a.detection.Precursor_MZ,
-                "Exact_mass":       a.detection.Exact_mass,
-                "Molecular_weight": a.detection.Molecular_weight,
-                "MS_level":         a.detection.MS_level,
-                "Num_Peaks":        a.detection.Num_Peaks,
-                "RT":               a.detection.RT,
-                "CCS":              a.detection.CCS,
-                "Confidence_level": a.Confidence_level,
-            }
-            for a in results
-        ])
+            df = pd.DataFrame([
+                {
+                    "Lipid_name":       a.lipid.Lipid_name,
+                    "Formula":          a.lipid.Formula,
+                    "Lipid_class":      a.lipid.Lipid_class,
+                    "Lipid_category":   a.lipid.Lipid_category,
+                    "Precursor_MZ":     a.detection.Precursor_MZ,
+                    "Neutral_mass":     a.detection.Neutral_mass,
+                    "Molecular_weight": a.lipid.Molecular_weight,
+                    "MS_level":         a.detection.MS_level,
+                    "Num_Peaks":        a.detection.Num_Peaks,
+                    "RT":               a.detection.RT,
+                    "CCS":              a.detection.CCS,
+                    "Confidence_level": a.Confidence_level,
+                }
+                for a in results
+            ])
     else:
         df = pd.read_sql_table(table, engine)
 
