@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def database_loading_MS1(df, confidence_level):
     """Insère les lignes d'un DataFrame MS1 dans les tables Detection, Lipid et Annotation."""
-    logger.info(f"Début de l'intégration — {len(df)} lignes à insérer.")
+    logger.info(f"Début de l'intégration - {len(df)} lignes à insérer.")
     with Session(engine) as session:
         try:
             for _, row in df.iterrows():
@@ -18,18 +18,18 @@ def database_loading_MS1(df, confidence_level):
                     Precursor_MZ     = row.get("Precursor_MZ"),
                     MS_level         = row.get("MS_level"),
                     Num_Peaks        = row.get("Num_Peaks"),
-                    Neutral_mass       = row.get("Neutral_mass"),
-                    RT               = row.get("RT") if "RT" in row else None,
-                    CCS              = row.get("CCS") if "CCS" in row else None,
+                    Neutral_mass     = row.get("Neutral_mass"),
+                    RT               = row.get("RT") if pd.notna(row.get("RT")) else None,
+                    CCS              = row.get("CCS") if pd.notna(row.get("CCS")) else None,
                 )
                 session.add(detection)
                 session.flush()
 
                 lipid = Lipid(
-                    Lipid_name     = row.get("Lipid_Name"),
-                    Lipid_class    = row.get("Lipid_class") if pd.notna(row.get("Lipid_class")) else None,
-                    Lipid_category = row.get("Lipid_category")if pd.notna(row.get("Lipid_category")) else None,
-                    Formula        = row.get("Formula"),
+                    Lipid_name       = row.get("Lipid_Name"),
+                    Lipid_class      = row.get("Lipid_class") if pd.notna(row.get("Lipid_class")) else None,
+                    Lipid_category   = row.get("Lipid_category") if pd.notna(row.get("Lipid_category")) else None,
+                    Formula          = row.get("Formula"),
                     Molecular_weight = row.get("Molecular_weight"),
                 )
                 session.add(lipid)
@@ -43,7 +43,7 @@ def database_loading_MS1(df, confidence_level):
                 session.add(annotation)
 
             session.commit()
-            logger.info(f"Intégration terminée — {len(df)} lignes insérées avec succès.")
+            logger.info(f"Intégration terminée - {len(df)} lignes insérées avec succès.")
 
         except Exception as e:
             logger.error(f"Erreur durant l'intégration : {e}")
