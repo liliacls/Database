@@ -19,7 +19,6 @@ def database_loading_MS1(df, confidence_level):
                     MS_level         = row.get("MS_level"),
                     Num_Peaks        = row.get("Num_Peaks"),
                     Neutral_mass       = row.get("Neutral_mass"),
-                    Molecular_weight = row.get("Molecular_weight"),
                     RT               = row.get("RT") if "RT" in row else None,
                     CCS              = row.get("CCS") if "CCS" in row else None,
                 )
@@ -31,6 +30,7 @@ def database_loading_MS1(df, confidence_level):
                     Lipid_class    = row.get("Lipid_class") if pd.notna(row.get("Lipid_class")) else None,
                     Lipid_category = row.get("Lipid_category")if pd.notna(row.get("Lipid_category")) else None,
                     Formula        = row.get("Formula"),
+                    Molecular_weight = row.get("Molecular_weight"),
                 )
                 session.add(lipid)
                 session.flush()
