@@ -3,15 +3,15 @@ Data_Integration.py
 -------------------
 Module 1 : Intégration de données lipidiques dans BacLipidDB.
 
+Colonnes obligatoires : Lipid_Name, Formula, Precursor_MZ, Lipid_category , Lipid_class.
+Colonnes optionnelles : RT, CCS.
+
 Workflow en 5 étapes :
     1. Settings      : sélection du niveau MS, mode d'ionisation et niveau de confiance.
     2. File upload   : chargement d'un fichier .xlsx, .csv, .tsv
     3. Verification  : contrôle de la présence des colonnes obligatoires.
     4. Completion    : calcul automatique des colonnes dérivées, édition et validation.
     5. Integration   : insertion dans les tables Detection, Lipid et Annotation.
-
-Colonnes obligatoires : Lipid_Name, Formula, Precursor_MZ, Lipid_category , Lipid_class.
-Colonnes optionnelles : RT, CCS.
 """
 
 import streamlit as st
@@ -21,14 +21,13 @@ from integration.loading import database_loading_MS1
 from utils.molecular_weight import molecularw_calculation
 from utils.exact_mass import exact_mass_calculation
 
-# Colonnes obligatoire pour l'annotation MS1
-REQUIRED_COLUMNS = ['Lipid_Name', 'Formula', 'Precursor_MZ', "Lipid_category", "Lipid_class"]
+# Colonnes obligatoires pour l'annotation MS1
+REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "Lipid_class"]
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 
 def _icon(done):
-    """ Affichage de l'icône de progression selon l'état d'une étape du worflow """
     return "✅" if done else "⬜"
 
 step1_done = all(st.session_state.get(k) is not None for k in ["ms_level", "ion_mode", "confidence_level"])
@@ -98,8 +97,8 @@ with col3:
 if None in [ms_level, ion_mode, confidence_level]:
     st.warning("Please fill in all parameters before continuing.", icon="⚠️")
     st.stop()
-else:
-    st.success(f"Selected : {ms_level} | {ion_mode} | Confidence {confidence_level}", icon="✅")
+
+st.success(f"Selected : {ms_level} | {ion_mode} | Confidence {confidence_level}", icon="✅")
 
 # ── STEP 2 ────────────────────────────────────────────────────────────────────
 
@@ -109,7 +108,6 @@ st.divider()
 uploaded_file = st.file_uploader(
     "Choose an annotation file",
     type=["csv", "xlsx", "tsv"],
-    accept_multiple_files=False,
     key="file_uploader",
 )
 
@@ -121,7 +119,7 @@ try:
         if uploaded_file.name.endswith(".csv"):
             df_new = pd.read_csv(uploaded_file)
         elif uploaded_file.name.endswith(".tsv"):
-            df_new = pd.read_csv(uploaded_file, sep='\t')
+            df_new = pd.read_csv(uploaded_file, sep="\t")
         else:
             df_new = pd.read_excel(uploaded_file)
         for key in ["df_complete", "df_valide", "integration_done", "columns_valid"]:
@@ -170,7 +168,7 @@ if "df_complete" not in st.session_state:
     if st.button("Run automatic completion", type="primary", use_container_width=True):
         with st.spinner("Computing derived columns..."):
             try:
-                df["Exact_mass"] = df["Precursor_MZ"].apply(
+                df["Neutral_mass"] = df["Precursor_MZ"].apply(
                     lambda mz: exact_mass_calculation(mz, ion_mode)
                 )
             except Exception as e:
@@ -178,9 +176,7 @@ if "df_complete" not in st.session_state:
                 st.stop()
 
             try:
-                df["Molecular_weight"] = df["Formula"].apply(
-                    lambda f: molecularw_calculation(f)
-                )
+                df["Molecular_weight"] = df["Formula"].apply(molecularw_calculation)
             except Exception as e:
                 st.error(f"Error calculating molecular weight : {e}")
                 st.stop()
@@ -203,7 +199,7 @@ df_edite = st.data_editor(
 )
 
 if st.button("Validate data", type="primary", use_container_width=True):
-    strictly_required = ['Lipid_Name', 'Formula', 'Precursor_MZ']
+    strictly_required = ["Lipid_Name", "Formula", "Precursor_MZ"]
     colonnes_vides = [c for c in strictly_required if df_edite[c].isnull().any()]
     if colonnes_vides:
         st.warning(
@@ -217,9 +213,9 @@ if st.button("Validate data", type="primary", use_container_width=True):
 if "df_valide" in st.session_state:
     st.subheader("Summary")
 
-    col1, col2 = st.columns(2)
+    col_class, col_cat = st.columns(2)
 
-    with col1:
+    with col_class:
         st.markdown("**By lipid class :**")
         st.dataframe(
             st.session_state["df_valide"]["Lipid_class"]
@@ -230,7 +226,7 @@ if "df_valide" in st.session_state:
             hide_index=True,
         )
 
-    with col2:
+    with col_cat:
         st.markdown("**By lipid category :**")
         st.dataframe(
             st.session_state["df_valide"]["Lipid_category"]
