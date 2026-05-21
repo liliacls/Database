@@ -7,6 +7,8 @@ Page d'accueil de BacLipidDB.
 import logging
 import streamlit as st
 
+st.set_page_config(layout="wide")
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
