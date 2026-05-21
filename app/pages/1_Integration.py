@@ -213,7 +213,18 @@ if st.button("Validate data", type="primary", use_container_width=True):
 if "df_valide" in st.session_state:
     st.subheader("Summary")
 
-    col_class, col_cat = st.columns(2)
+    col_cat, col_class, col_subclass = st.columns(3)
+
+    with col_cat:
+        st.markdown("**By lipid category :**")
+        st.dataframe(
+            st.session_state["df_valide"]["Lipid_category"]
+            .value_counts(dropna=False)
+            .rename_axis("Category")
+            .reset_index(name="Count"),
+            use_container_width=True,
+            hide_index=True,
+        )
 
     with col_class:
         st.markdown("**By lipid class :**")
@@ -226,16 +237,17 @@ if "df_valide" in st.session_state:
             hide_index=True,
         )
 
-    with col_cat:
-        st.markdown("**By lipid category :**")
+    with col_subclass:
+        st.markdown("**By lipid subclass :**")
         st.dataframe(
-            st.session_state["df_valide"]["Lipid_category"]
+            st.session_state["df_valide"]["Lipid_subclass"]
             .value_counts(dropna=False)
-            .rename_axis("Category")
+            .rename_axis("Subclass")
             .reset_index(name="Count"),
             use_container_width=True,
             hide_index=True,
         )
+    
 
     st.info(f"Total : **{len(st.session_state['df_valide'])}** lipids to integrate.")
 
