@@ -7,13 +7,16 @@ Permet d'afficher le contenu des tables Detection, Fragment, Lipid et Annotation
 ainsi qu'une vue complète par jointure des tables Detection, Lipid et Annotation.
 """
 
+import logging
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from models.model import Annotation
 from config import DB_PATH
+
+logger = logging.getLogger(__name__)
 
 @st.cache_resource
 def get_engine():
@@ -50,8 +53,10 @@ try:
         with Session(engine) as session:
             results = (
                 session.query(Annotation)
-                .join(Annotation.lipid)
-                .join(Annotation.detection)
+                .options(
+                    joinedload(Annotation.lipid),
+                    joinedload(Annotation.detection),
+                )
                 .all()
             )
             df = pd.DataFrame([
@@ -59,6 +64,7 @@ try:
                     "Lipid_name":       a.lipid.Lipid_name,
                     "Formula":          a.lipid.Formula,
                     "Lipid_class":      a.lipid.Lipid_class,
+                    "Lipid_subclass":   a.lipid.Lipid_subclass,
                     "Lipid_category":   a.lipid.Lipid_category,
                     "Precursor_MZ":     a.detection.Precursor_MZ,
                     "Neutral_mass":     a.detection.Neutral_mass,
@@ -78,7 +84,8 @@ try:
     if df.empty:
         st.info("This table contains no data yet.")
     else:
-        st.dataframe(df, use_container_width=True, height=600)
+        st.dataframe(df, use_container_width=True)
 
 except Exception as e:
+    logger.exception("Error loading table '%s'", table)
     st.error(f"Error loading table : {e}")
