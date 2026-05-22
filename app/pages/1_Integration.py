@@ -3,7 +3,7 @@ Data_Integration.py
 -------------------
 Module 1 : Intégration de données lipidiques dans BacLipidDB.
 
-Colonnes obligatoires : Lipid_Name, Formula, Precursor_MZ, Lipid_category , Lipid_class.
+Colonnes obligatoires : Lipid_Name, Formula, Precursor_MZ, Lipid_category , Lipid_class, Lipid_subclass.
 Colonnes optionnelles : RT, CCS.
 
 Workflow en 5 étapes :
@@ -17,12 +17,12 @@ Workflow en 5 étapes :
 import streamlit as st
 import pandas as pd
 
-from integration.loading import database_loading_MS1
+from utils.loading_MS1 import database_loading_MS1
 from utils.molecular_weight import molecularw_calculation
 from utils.neutral_mass import neutral_mass_cal
 
 # Colonnes obligatoires pour l'annotation MS1
-REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "Lipid_class"]
+REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "Lipid_class", "Lipid_subclass"]
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -37,11 +37,11 @@ with st.sidebar:
     st.markdown(f"{_icon(step1_done)} Step 1 - Settings")
     st.markdown(f"{_icon('df' in st.session_state)} Step 2 - File upload")
     st.markdown(f"{_icon(st.session_state.get('columns_valid', False))} Step 3 - Verification")
-    st.markdown(f"{_icon('df_valide' in st.session_state)} Step 4 - Completion")
+    st.markdown(f"{_icon('df_valide' in st.session_state)} Step 4 - Completion & Validation")
     st.markdown(f"{_icon(st.session_state.get('integration_done', False))} Step 5 - Integration")
     st.divider()
     if st.button("Reset 🔄", type="secondary", use_container_width=True):
-        for key in ["df", "df_file_name", "df_complete", "df_valide", "integration_done", "columns_valid"]:
+        for key in ["df", "df_file_id", "df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration"]:
             if key in st.session_state:
                 del st.session_state[key]
         st.rerun()
@@ -67,6 +67,8 @@ st.divider()
 
 col1, col2, col3 = st.columns(3)
 
+_locked = "df_complete" in st.session_state
+
 with col1:
     ms_level = st.selectbox(
         "Annotation level",
@@ -74,6 +76,7 @@ with col1:
         index=None,
         placeholder="Annotation level",
         key="ms_level",
+        disabled=_locked,
     )
 
 with col2:
@@ -83,6 +86,7 @@ with col2:
         index=None,
         placeholder="Ionization mode",
         key="ion_mode",
+        disabled=_locked,
     )
 
 with col3:
@@ -92,6 +96,7 @@ with col3:
         index=None,
         placeholder="Confidence level",
         key="confidence_level",
+        disabled=_locked,
     )
 
 if None in [ms_level, ion_mode, confidence_level]:
@@ -115,17 +120,17 @@ if uploaded_file is None:
     st.stop()
 
 try:
-    if st.session_state.get("df_file_name") != uploaded_file.name:
+    if st.session_state.get("df_file_id") != uploaded_file.file_id:
         if uploaded_file.name.endswith(".csv"):
             df_new = pd.read_csv(uploaded_file)
         elif uploaded_file.name.endswith(".tsv"):
             df_new = pd.read_csv(uploaded_file, sep="\t")
         else:
             df_new = pd.read_excel(uploaded_file)
-        for key in ["df_complete", "df_valide", "integration_done", "columns_valid"]:
+        for key in ["df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration"]:
             st.session_state.pop(key, None)
         st.session_state["df"] = df_new
-        st.session_state["df_file_name"] = uploaded_file.name
+        st.session_state["df_file_id"] = uploaded_file.file_id
         st.rerun()
 
     st.success(f"File loaded : {uploaded_file.name} - {len(st.session_state['df'])} rows detected.", icon="✅")
@@ -175,10 +180,14 @@ if "df_complete" not in st.session_state:
                 st.error(f"Error calculating neutral mass : {e}")
                 st.stop()
 
-            try:
-                df["Molecular_weight"] = df["Formula"].apply(molecularw_calculation)
-            except Exception as e:
-                st.error(f"Error calculating molecular weight : {e}")
+            df["Molecular_weight"] = df["Formula"].apply(molecularw_calculation)
+            invalid_formulas = df.loc[df["Molecular_weight"].isna(), "Formula"].tolist()
+            if invalid_formulas:
+                st.error(
+                    f"Cannot compute molecular weight for the following formula(s) : "
+                    f"**{', '.join(str(f) for f in invalid_formulas)}**\n\n"
+                    f"Please correct these formulas in your file and reload it."
+                )
                 st.stop()
 
             df["MS_level"] = ms_level
@@ -195,7 +204,13 @@ df_edite = st.data_editor(
     st.session_state["df_complete"],
     use_container_width=True,
     num_rows="dynamic",
-    key="editor_integration"
+    key="editor_integration",
+    column_config={
+        "Neutral_mass":     st.column_config.NumberColumn(disabled=True),
+        "Molecular_weight": st.column_config.NumberColumn(disabled=True),
+        "MS_level":         st.column_config.TextColumn(disabled=True),
+        "Num_Peaks":        st.column_config.NumberColumn(disabled=True),
+    },
 )
 
 if st.button("Validate data", type="primary", use_container_width=True):
@@ -213,43 +228,29 @@ if st.button("Validate data", type="primary", use_container_width=True):
 if "df_valide" in st.session_state:
     st.subheader("Summary")
 
+    df_valide = st.session_state["df_valide"]
+    total = len(df_valide)
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Total lipids", total)
+    m2.metric("Categories", df_valide["Lipid_category"].nunique())
+    m3.metric("Classes", df_valide["Lipid_class"].nunique())
+    m4.metric("Subclasses", df_valide["Lipid_subclass"].nunique())
+
+    st.markdown("")
     col_cat, col_class, col_subclass = st.columns(3)
 
-    with col_cat:
-        st.markdown("**By lipid category :**")
-        st.dataframe(
-            st.session_state["df_valide"]["Lipid_category"]
-            .value_counts(dropna=False)
-            .rename_axis("Category")
-            .reset_index(name="Count"),
-            use_container_width=True,
-            hide_index=True,
-        )
-
-    with col_class:
-        st.markdown("**By lipid class :**")
-        st.dataframe(
-            st.session_state["df_valide"]["Lipid_class"]
-            .value_counts(dropna=False)
-            .rename_axis("Class")
-            .reset_index(name="Count"),
-            use_container_width=True,
-            hide_index=True,
-        )
-
-    with col_subclass:
-        st.markdown("**By lipid subclass :**")
-        st.dataframe(
-            st.session_state["df_valide"]["Lipid_subclass"]
-            .value_counts(dropna=False)
-            .rename_axis("Subclass")
-            .reset_index(name="Count"),
-            use_container_width=True,
-            hide_index=True,
-        )
-    
-
-    st.info(f"Total : **{len(st.session_state['df_valide'])}** lipids to integrate.")
+    for col, field, label in [
+        (col_cat, "Lipid_category", "By category"),
+        (col_class, "Lipid_class", "By class"),
+        (col_subclass, "Lipid_subclass", "By subclass"),
+    ]:
+        with col:
+            st.markdown(f"**{label}**")
+            counts = df_valide[field].value_counts(dropna=False)
+            for name, count in counts.items():
+                display = str(name) if pd.notna(name) else "Unknown"
+                st.caption(f"{display} - {count}")
 
 # ── STEP 5 ────────────────────────────────────────────────────────────────────
 
@@ -265,6 +266,8 @@ if st.session_state.get("integration_done", False):
         "Integration already completed. Use the **Reset** button in the sidebar to start a new integration.",
         icon="✅",
     )
+    if st.session_state.pop("show_balloons", False):
+        st.balloons()
 else:
     st.info(f"Ready to integrate **{len(st.session_state['df_valide'])}** lipids into the database.")
     if st.button("Integrate data", type="primary", use_container_width=True):
@@ -272,7 +275,8 @@ else:
             try:
                 database_loading_MS1(st.session_state["df_valide"], confidence_level)
                 st.session_state["integration_done"] = True
-                st.balloons()
+                st.session_state["show_balloons"] = True
                 st.rerun()
             except Exception as e:
                 st.error(f"Error during database integration : {e}")
+                st.stop()
