@@ -7,31 +7,35 @@ BacLipidDB est une base de données relationnelle spécialisée dans l'annotatio
 # **Architecture**
 ```
 BacLipidDB/
-├── 📄 .streamlit/config.toml
+├──  📁.streamlit/
+│       └── config.toml
 ├── 📄 config.py
 ├── 📄 environment.yml
+├── 📄 README.md
 ├── 📁 app/
-│       ├── Home.py
+│       ├── 📄 Home.py
 │       └── pages/
 │           ├── 📄 1_Integration.py
 │           ├── 📄 2_Database.py
 │           └── 📄 3_Export.py
+├── 📁 assets/
+        └── pages/
 ├── 📁 models/
 │       ├── __init__.py
 │       └── 📄 model.py
-├── 📁 integration/
-│       ├── __init__.py
-│       └── 📄 loading.py
 ├── 📁 utils/
 │       ├── __init__.py
-│       ├── 📄 exact_mass.py
-│       ├── 📄 lipid_class.py
-│       └── 📄 molecular_weight.py
+│       ├── 📄 neutral_mass.py
+│       ├── 📄 molecular_weight.py
+│       ├── 📄 msp_export.py
+│       ├── 📄 precursor_type.py
+│       └── 📄 loading_MS1.py
+
 └── 📁 scripts/
-        ├── init_db.py
-        ├── 📄 clean_MS1.py
-        ├── 📄 load_MS1.py
-        └── 📄 export_MS1.py
+        ├── init_db.pY
+        ├── 📄 init_db.py
+        ├── 📄 load_MS2_msp.py
+        └── 📄 reset_db.py
 
 ```
 
@@ -40,7 +44,7 @@ BacLipidDB/
 # **Description des modules**
 
 ### `config.py`
-Configuration globale du projet : chemin racine et URL de connexion à la base SQLite (`BacLipidDB.db`).
+Configuration globale du projet : chemin racine, URL de connexion à la base SQLite (`BacLipidDB.db`) et création du moteur SQLAlchemy partagé (`get_engine()`).
 
 ---
 
@@ -50,9 +54,9 @@ Pages de l'application web Streamlit accessibles depuis le navigateur.
 | Fichier | Rôle |
 |---|---|
 | `Home.py` | Page d'accueil, présente les trois modules de l'application |
-| `1_Integration.py` | Importe un fichier d'annotations et l'intègre dans la base |
-| `2_Database.py` | Visualise le contenu des tables et explore la base |
-| `3_Export.py` | Extrait les données de la base et les exporte en CSV compatible MZmine |
+| `1_Integration.py` | Importe un fichier d'annotations et l'intègre dans la base de données |
+| `2_Database.py` | Visualise le contenu des tables ou une vue complète de la base de données |
+| `3_Export.py` | Filtre les données et les exporte en CSV (MS1) ou en MSP (MS2) compatible avec le logiciel MZmine |
 
 ---
 
@@ -65,36 +69,27 @@ Définit la structure de la base de données via SQLAlchemy.
 
 ---
 
-### `integration/` - Intégration des données
-Contient la fonction d'insertion des données dans la base, appelées depuis la page Integration après validation du fichier.
+### `utils/` - Fonctions utilitaires
+Fonctions de calcul et d'insertion utilisées par les modules d'intégration (Module 1) et d'export (Module 3).
 
 | Fichier | Rôle |
 |---|---|
-| `loading.py` | Insère les données d'un DataFrame MS1 dans les tables `Detection`, `Lipid` et `Annotation` via une transaction SQLAlchemy |
-
----
-
-### `utils/` - Fonctions de calcul
-Fonctions utilitaires utilisées dans le module "1_Integration.py" de l'application web pour la complétion automatique du tableur.
-
-| Fichier | Rôle |
-|---|---|
-| `exact_mass.py` | Calcule la masse monoisotopique neutre à partir du rapport m/z et du mode d'ionisation (positif/négatif) |
-| `lipid_class.py` | Détermine la classe lipidique et la catégorie à partir du nom du lipide |
+| `neutral_mass.py` | Calcule la masse neutre à partir du rapport m/z et du mode d'ionisation (positif/négatif) |
 | `molecular_weight.py` | Calcule le poids moléculaire à partir de la formule brute via la librairie `molmass` |
+| `precursor_type.py` | Déduit le type de précurseur (`[M+H]+` ou `[M-H]-`) à partir de la masse neutre et du m/z |
+| `msp_export.py` | Génère le contenu d'un fichier `.msp` à partir des annotations MS2 filtrées |
+| `loading_MS1.py` | Insère les données d'un DataFrame MS1 dans les tables `Detection`, `Lipid` et `Annotation` |
 
 ---
 
 ### `scripts/` - Scripts d'exécution ponctuelle
-Scripts à lancer en ligne de commande, utilisés dans un premier temps pour nettoyer et insérer les données du tableur d'annotation MS1
-dans la base de données, puis pour extraire les données et générer le fichier .csv pour l'annotation avec le module "Local Compound Database Search". 
+Scripts à lancer en ligne de commande pour initialiser, alimenter ou réinitialiser la base de données.
 
 | Fichier | Rôle |
 |---|---|
 | `init_db.py` | Initialise la base de données et crée toutes les tables |
-| `clean_MS1.py` | Nettoie et filtre le fichier Excel brut d'annotations |
-| `load_MS1.py` | Charge un CSV nettoyé et insère toutes les entrées dans la base de données |
-| `export_MS1.py` | Extrait les données de la base et les exporte en CSV compatible MZmine |
+| `reset_db.py` | Supprime tous les enregistrements sans supprimer les tables |
+| `load_MS2_msp.py` | Lit un fichier `.msp` MS2 et insère les détections, fragments et annotations dans la base |
 
 ---
 
