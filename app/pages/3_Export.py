@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from models.model import Annotation
 from config import DB_PATH
+from utils.msp_export import generate_msp
 
 
 @st.cache_resource
@@ -43,13 +44,16 @@ def load_data(_engine):
             {
                 "name":             a.lipid.Lipid_name,
                 "formula":          a.lipid.Formula,
-                "Lipid_class":      a.lipid.Lipid_class,
                 "Lipid_category":   a.lipid.Lipid_category,
+                "Lipid_class":      a.lipid.Lipid_class,
+                "Lipid_subclass":   a.lipid.Lipid_subclass,
                 "mz":               a.detection.Precursor_MZ,
+                "neutral_mass":     a.detection.Neutral_mass,
                 "MS_level":         a.detection.MS_level,
                 "Confidence_level": a.Confidence_level,
                 "RT":               a.detection.RT,
                 "CCS":              a.detection.CCS,
+                "Num_Peaks":        a.detection.Num_Peaks,
             }
             for a in results
         ])
@@ -83,8 +87,7 @@ if df_all.empty:
 st.subheader("Filters")
 st.write("")
 
-col1, col2 = st.columns(2)
-col3, col4 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     categories = sorted(df_all["Lipid_category"].dropna().unique().tolist())
@@ -99,12 +102,16 @@ with col2:
     selected_classes = st.multiselect("Lipid class", options=classes)
 
 with col3:
-    ms_levels = sorted(df_all["MS_level"].dropna().unique().tolist())
-    selected_ms = st.multiselect("MS level", options=ms_levels)
+    sub_classes = sorted(df_all["Lipid_subclass"].dropna().unique().tolist())
+    if df_all["Lipid_subclass"].isna().any():
+        sub_classes = ["(None)"] + sub_classes
+    selected_sub_classes = st.multiselect("Lipid subclass", options=sub_classes)
+
+col4, col5, col6 = st.columns(3)
 
 with col4:
-    confidence_levels = sorted(df_all["Confidence_level"].dropna().unique().tolist())
-    selected_confidence = st.multiselect("Confidence level", options=confidence_levels)
+    ms_levels = sorted(df_all["MS_level"].dropna().unique().tolist())
+    selected_ms = st.multiselect("MS level", options=ms_levels)
 
 mz_min = float(df_all["mz"].min())
 mz_max = float(df_all["mz"].max())
@@ -138,10 +145,15 @@ if selected_classes:
     if "(None)" in selected_classes:
         mask |= df_filtered["Lipid_class"].isna()
     df_filtered = df_filtered[mask]
+
+if selected_sub_classes:
+    mask = df_filtered["Lipid_subclass"].isin([c for c in selected_sub_classes if c != "(None)"])
+    if "(None)" in selected_sub_classes:
+        mask |= df_filtered["Lipid_subclass"].isna()
+    df_filtered = df_filtered[mask]
+
 if selected_ms:
     df_filtered = df_filtered[df_filtered["MS_level"].isin(selected_ms)]
-if selected_confidence:
-    df_filtered = df_filtered[df_filtered["Confidence_level"].isin(selected_confidence)]
 
 df_filtered = df_filtered[
     (df_filtered["mz"] >= mz_range[0]) & (df_filtered["mz"] <= mz_range[1])
@@ -155,21 +167,53 @@ if df_filtered.empty:
     st.warning("No data matches the selected filters.", icon="⚠️")
     st.stop()
 
-df_preview = df_filtered[["formula", "mz", "name", "RT", "CCS"]].reset_index(drop=True)
+preview_cols = ["name", "formula", "mz", "MS_level", "RT", "CCS", "Num_Peaks"]
+df_preview = df_filtered[preview_cols].copy().reset_index(drop=True)
+df_preview["Num_Peaks"] = df_preview.apply(
+    lambda r: r["Num_Peaks"] if r["MS_level"] == "MS2" else None, axis=1
+)
 st.dataframe(df_preview, use_container_width=True, height=400)
 
 # ── Download ──────────────────────────────────────────────────────────────────
 
 st.divider()
 
-df_export = df_filtered[["formula", "mz", "name"]].reset_index(drop=True)
-csv = df_export.to_csv(index=False, encoding="utf-8", lineterminator="\r\n")
+ms1 = df_filtered["MS_level"].isin(["MS1"]).any()
+ms2 = df_filtered["MS_level"].isin(["MS2"]).any()
 
-st.download_button(
-    label="Download CSV",
-    data=csv,
-    file_name="annotation_export.csv",
-    mime="text/csv",
-    type="primary",
-    use_container_width=True,
-)
+col_1, col_2 = st.columns(2)
+
+with col_1:
+    if ms1:
+        df_export = df_filtered[df_filtered["MS_level"] == "MS1"][["neutral_mass", "mz", "formula", "name"]].reset_index(drop=True)
+        csv = df_export.to_csv(index=False, encoding="utf-8", lineterminator="\r\n")
+        st.download_button(
+            label="Download CSV (MS1)",
+            data=csv,
+            file_name="annotation_export.csv",
+            mime="text/csv",
+            type="primary",
+            use_container_width=True,
+        )
+    else:
+        st.button("Download CSV (MS1)", disabled=True, use_container_width=True)
+
+with col_2:
+    if ms2:
+        msp = generate_msp(
+            engine,
+            categories=[c for c in selected_categories if c != "(None)"],
+            classes=[c for c in selected_classes if c != "(None)"],
+            sub_classes=[c for c in selected_sub_classes if c != "(None)"],
+            mz_range=mz_range,
+        )
+        st.download_button(
+            label="Download MSP (MS2)",
+            data=msp,
+            file_name="annotation_export.msp",
+            mime="text/plain",
+            type="primary",
+            use_container_width=True,
+        )
+    else:
+        st.button("Download MSP (MS2)", disabled=True, use_container_width=True)
