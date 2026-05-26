@@ -193,7 +193,7 @@ with col_1:
         st.download_button(
             label="Download CSV (MS1)",
             data=csv,
-            file_name=f"annotation_export_{datetime.now()}.csv",
+            file_name=f"annotation_export_{datetime.now().strftime('%Y%m%d')}.csv",
             mime="text/csv",
             type="primary",
             use_container_width=True,
@@ -213,7 +213,7 @@ with col_2:
         st.download_button(
             label="Download MSP (MS2)",
             data=msp,
-            file_name=f"annotation_export_{datetime.now()}.msp",
+            file_name=f"annotation_export_{datetime.now().strftime('%Y%m%d')}.msp",
             mime="text/plain",
             type="primary",
             use_container_width=True,
