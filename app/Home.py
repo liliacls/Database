@@ -6,7 +6,7 @@ Page d'accueil de BacLipidDB.
 
 import logging
 import streamlit as st
-from sqlalchemy import create_engine, func
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 import sys
@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from models.model import Detection
-from config import DB_PATH
+from config import get_engine
 
 st.set_page_config(layout="wide")
 
@@ -22,10 +22,6 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
 )
-
-@st.cache_resource
-def get_engine():
-    return create_engine(DB_PATH, echo=False)
 
 @st.cache_data(ttl=60)
 def stats():

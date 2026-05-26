@@ -10,18 +10,12 @@ ainsi qu'une vue complète par jointure des tables Detection, Lipid et Annotatio
 import logging
 import streamlit as st
 import pandas as pd
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, joinedload
 
 from models.model import Annotation
-from config import DB_PATH
+from config import get_engine
 
 logger = logging.getLogger(__name__)
-
-@st.cache_resource
-def get_engine():
-    """Crée et met en cache la connexion à la base de données."""
-    return create_engine(DB_PATH, echo=False)
 
 st.markdown("""
     <style>
