@@ -63,6 +63,12 @@ def parse_msp(path: Path) -> dict:
     if num_peaks is None:
         raise ValueError("Num Peaks introuvable dans le fichier .msp.")
 
+    return {
+        "precursor_mz": precursor_mz,
+        "num_peaks":    num_peaks,
+        "fragments":    fragments,
+    }
+
 def load_MS2_msp(path: Path) -> None:
     """
     Insère les données d'un fichier .msp MS2 dans la base de données.

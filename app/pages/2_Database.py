@@ -77,6 +77,7 @@ try:
                 }
                 for a in results
             ])
+                
     else:
         df = pd.read_sql_table(table, engine)
 
