@@ -1,10 +1,23 @@
-name: lipid_database
+name: base
 channels:
   - conda-forge
 dependencies:
   - python=3.12
-  - pandas=2.3.3
-  - sqlalchemy=2.0.48
-  - streamlit=1.55.0
-  - molmass
-  - openpyxl
+  - conda=26.1.1
+  - mamba=2.1.1
+  - pip
+  - pyteomics
+  - biopython
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - pandas
+  - bwa
+  - samtools
+  - minimap2
+  - tablet
+  - bcftools
+  - jupyterlab
+  - fastqc
+  - ucimlrepo
+prefix: /home/liliacls/miniforge3
