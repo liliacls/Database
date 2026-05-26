@@ -9,21 +9,20 @@ niveau de confiance et plage de m/z, puis de les télécharger en CSV compatible
 
 import streamlit as st
 import pandas as pd
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from models.model import Annotation
-from config import DB_PATH
-from utils.msp_export import generate_msp
-
-
-@st.cache_resource
-def get_engine():
-    """Crée et met en cache la connexion à la base de données."""
-    return create_engine(DB_PATH, echo=False)
+from config import get_engine
+from utils.msp_export import generate_msp as _generate_msp
 
 
 @st.cache_data
+def generate_msp(_engine, categories, classes, sub_classes, mz_range):
+    return _generate_msp(_engine, categories, classes, sub_classes, mz_range)
+
+
+@st.cache_data(ttl=60)
 def load_data(_engine):
     """Charge et met en cache toutes les annotations avec leurs données Lipid et Detection associées.
 
@@ -76,7 +75,11 @@ st.markdown("""
 st.write("")
 
 engine = get_engine()
-df_all = load_data(engine)
+try:
+    df_all = load_data(engine)
+except Exception as e:
+    st.error(f"Unable to load data from the database: {e}")
+    st.stop()
 
 if df_all.empty:
     st.info("The database contains no data yet.")
@@ -107,7 +110,7 @@ with col3:
         sub_classes = ["(None)"] + sub_classes
     selected_sub_classes = st.multiselect("Lipid subclass", options=sub_classes)
 
-col4, col5, col6 = st.columns(3)
+col4, _, _ = st.columns(3)
 
 with col4:
     ms_levels = sorted(df_all["MS_level"].dropna().unique().tolist())
@@ -178,19 +181,19 @@ st.dataframe(df_preview, use_container_width=True, height=400)
 
 st.divider()
 
-ms1 = df_filtered["MS_level"].isin(["MS1"]).any()
-ms2 = df_filtered["MS_level"].isin(["MS2"]).any()
+ms1 = (df_filtered["MS_level"] == "MS1").any()
+ms2 = (df_filtered["MS_level"] == "MS2").any()
 
 col_1, col_2 = st.columns(2)
 
 with col_1:
     if ms1:
         df_export = df_filtered[df_filtered["MS_level"] == "MS1"][["neutral_mass", "mz", "formula", "name"]].reset_index(drop=True)
-        csv = df_export.to_csv(index=False, encoding="utf-8", lineterminator="\r\n")
+        csv = df_export.to_csv(index=False, lineterminator="\r\n")
         st.download_button(
             label="Download CSV (MS1)",
             data=csv,
-            file_name="annotation_export.csv",
+            file_name=f"annotation_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
             mime="text/csv",
             type="primary",
             use_container_width=True,
@@ -202,15 +205,15 @@ with col_2:
     if ms2:
         msp = generate_msp(
             engine,
-            categories=[c for c in selected_categories if c != "(None)"],
-            classes=[c for c in selected_classes if c != "(None)"],
-            sub_classes=[c for c in selected_sub_classes if c != "(None)"],
+            categories=[None if c == "(None)" else c for c in selected_categories],
+            classes=[None if c == "(None)" else c for c in selected_classes],
+            sub_classes=[None if c == "(None)" else c for c in selected_sub_classes],
             mz_range=mz_range,
         )
         st.download_button(
             label="Download MSP (MS2)",
             data=msp,
-            file_name="annotation_export.msp",
+            file_name=f"annotation_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.msp",
             mime="text/plain",
             type="primary",
             use_container_width=True,
