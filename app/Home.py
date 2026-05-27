@@ -88,7 +88,7 @@ stats = stats()
 if stats is None:
     st.warning("Unable to connect to the database.")
 else:
-    _, col1, col2, _ = st.columns([1, 2, 2, 1])
+    _, col1, col2, col3, _ = st.columns([1, 2, 2, 2, 1])
 
     with col1:
         with st.container(border=True):
@@ -97,6 +97,10 @@ else:
     with col2:
         with st.container(border=True):
             st.metric("MS2 detections", f"{stats['ms2']:,}")
+
+    with col3:
+        with st.container(border=True):
+            st.metric("Database size", stats['db_size'])
 
 st.write("")
 st.divider()
