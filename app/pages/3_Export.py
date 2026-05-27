@@ -17,7 +17,7 @@ from config import get_engine
 from utils.msp_export import generate_msp as _generate_msp
 
 
-@st.cache_data
+@st.cache_data(ttl=60)
 def generate_msp(_engine, categories, classes, sub_classes, mz_range):
     return _generate_msp(_engine, categories, classes, sub_classes, mz_range)
 
