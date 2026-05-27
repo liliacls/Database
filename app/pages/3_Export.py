@@ -60,7 +60,7 @@ def load_data(_engine):
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
-st.markdown("""
+st.html("""
     <style>
     .module {
         border: 2px solid #1F77B4;
@@ -71,7 +71,7 @@ st.markdown("""
     <div class="module">
         <h1><span style="color:#1F77B4">MODULE 3</span> : Export page</h1>
     </div>
-""", unsafe_allow_html=True)
+""")
 st.write("")
 
 engine = get_engine()
@@ -170,12 +170,12 @@ if df_filtered.empty:
     st.warning("No data matches the selected filters.", icon="⚠️")
     st.stop()
 
-preview_cols = ["name", "formula", "mz", "MS_level", "RT", "CCS", "Num_Peaks"]
-df_preview = df_filtered[preview_cols].copy().reset_index(drop=True)
+preview_columns = ["name", "formula", "mz", "MS_level", "RT", "CCS", "Num_Peaks"]
+df_preview = df_filtered[preview_columns].copy().reset_index(drop=True)
 df_preview["Num_Peaks"] = df_preview.apply(
     lambda r: r["Num_Peaks"] if r["MS_level"] == "MS2" else None, axis=1
 )
-st.dataframe(df_preview, use_container_width=True, height=400)
+st.dataframe(df_preview, height=400)
 
 # ── Download ──────────────────────────────────────────────────────────────────
 
@@ -196,10 +196,10 @@ with col_1:
             file_name=f"annotation_export_{datetime.now().strftime('%Y%m%d')}.csv",
             mime="text/csv",
             type="primary",
-            use_container_width=True,
+            width="stretch",
         )
     else:
-        st.button("Download CSV (MS1)", disabled=True, use_container_width=True)
+        st.button("Download CSV (MS1)", disabled=True, width="stretch")
 
 with col_2:
     if ms2:
@@ -216,7 +216,7 @@ with col_2:
             file_name=f"annotation_export_{datetime.now().strftime('%Y%m%d')}.msp",
             mime="text/plain",
             type="primary",
-            use_container_width=True,
+            width="stretch",
         )
     else:
-        st.button("Download MSP (MS2)", disabled=True, use_container_width=True)
+        st.button("Download MSP (MS2)", disabled=True, width="stretch")

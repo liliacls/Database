@@ -17,7 +17,7 @@ from config import get_engine
 
 logger = logging.getLogger(__name__)
 
-st.markdown("""
+st.html("""
     <style>
     .module {
         border: 2px solid #1F77B4;
@@ -28,7 +28,7 @@ st.markdown("""
     <div class="module">
         <h1><span style="color:#1F77B4">MODULE 2</span> : Database page</h1>
     </div>
-""", unsafe_allow_html=True)
+""")
 st.write("")
 
 engine = get_engine()
@@ -80,7 +80,7 @@ try:
     if df.empty:
         st.info("This table contains no data yet.")
     else:
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df)
 
 except Exception as e:
     logger.exception("Error loading table '%s'", table)

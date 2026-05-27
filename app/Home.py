@@ -37,7 +37,7 @@ logo_path = Path(__file__).parent.parent / "assets" / "logoDB.svg"
 if logo_path.exists():
     col = st.columns([1, 4, 1])
     with col[1]:
-        st.image(str(logo_path), use_container_width=True)
+        st.image(str(logo_path), width="stretch")
 
 st.write("")
 

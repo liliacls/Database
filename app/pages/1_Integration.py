@@ -40,7 +40,7 @@ with st.sidebar:
     st.markdown(f"{_icon('df_valide' in st.session_state)} Step 4 - Completion & Validation")
     st.markdown(f"{_icon(st.session_state.get('integration_done', False))} Step 5 - Integration")
     st.divider()
-    if st.button("Reset 🔄", type="secondary", use_container_width=True):
+    if st.button("Reset 🔄", type="secondary", width="stretch"):
         for key in ["df", "df_file_id", "df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration"]:
             st.session_state.pop(key, None)
         st.session_state["ms_level"] = None
@@ -170,7 +170,7 @@ else:
 st.header(":blue[STEP 4] - Preview and automatic completion", divider="blue", text_alignment="left")
 
 if "df_complete" not in st.session_state:
-    if st.button("Run automatic completion", type="primary", use_container_width=True):
+    if st.button("Run automatic completion", type="primary", width="stretch"):
         with st.spinner("Computing derived columns..."):
             try:
                 df["Neutral_mass"] = df["Precursor_MZ"].apply(
@@ -213,7 +213,7 @@ df_edite = st.data_editor(
     },
 )
 
-if st.button("Validate data", type="primary", use_container_width=True):
+if st.button("Validate data", type="primary", width="stretch"):
     required = ["Lipid_Name", "Formula", "Precursor_MZ"]
     empty_columns = [c for c in required if df_edite[c].isnull().any()]
     if empty_columns:
@@ -269,7 +269,7 @@ if st.session_state.get("integration_done", False):
         st.balloons()
 else:
     st.info(f"Ready to integrate **{len(st.session_state['df_valide'])}** lipids into the database.")
-    if st.button("Integrate data", type="primary", use_container_width=True):
+    if st.button("Integrate data", type="primary", width="stretch"):
         with st.spinner("Integrating data into the database..."):
             try:
                 database_loading_MS1(st.session_state["df_valide"], confidence_level)
