@@ -41,9 +41,12 @@ with st.sidebar:
     st.markdown(f"{_icon(st.session_state.get('integration_done', False))} Step 5 - Integration")
     st.divider()
     if st.button("Reset 🔄", type="secondary", use_container_width=True):
-        for key in ["df", "df_file_id", "df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration", "ms_level", "ion_mode", "confidence_level", "file_uploader"]:
-            if key in st.session_state:
-                del st.session_state[key]
+        for key in ["df", "df_file_id", "df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration"]:
+            st.session_state.pop(key, None)
+        st.session_state["ms_level"] = None
+        st.session_state["ion_mode"] = None
+        st.session_state["confidence_level"] = None
+        st.session_state["file_uploader"] = None
         st.rerun()
 
 # ── Header ────────────────────────────────────────────────────────────────────
