@@ -5,7 +5,6 @@ from models.model import Detection, Lipid, Annotation
 from config import get_engine
 
 logger = logging.getLogger(__name__)
-
 def database_loading_MS1(df, confidence_level):
     """
     Insère les données d'annotation MS1 dans la base de données.
