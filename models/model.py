@@ -48,7 +48,7 @@ class Detection(Base):
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="detection")
 
     def __repr__(self):
-        return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, Scan={self.Scan}, MS_level={self.MS_level}, Num_Peaks={self.Num_Peaks}, Energie_collision={self.Energie_collision}, Neutral_mass={self.Neutral_mass}, RT={self.RT}, CCS={self.CCS})"
+        return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, MS_level={self.MS_level}, Num_Peaks={self.Num_Peaks}, Neutral_mass={self.Neutral_mass}, RT={self.RT}, CCS={self.CCS})"
 
 class Fragment(Base):
     __tablename__ = 'Fragment'
