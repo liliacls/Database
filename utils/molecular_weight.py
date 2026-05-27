@@ -1,7 +1,8 @@
 from molmass import Formula
 
 def molecularw_calculation(formula):
-    """Calcule le poids moléculaire moyen du lipide à partir de la formule brute chimique.
+    """
+    Calcule le poids moléculaire moyen du lipide à partir de la formule brute chimique.
     Utilise molmass.Formula.mass pour le calcul, puis arrondit à l'entier le plus proche.
     Retourne None sans lever d'exception si la formule est nulle, vide ou invalide.
 

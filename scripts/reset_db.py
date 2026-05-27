@@ -21,6 +21,7 @@ from config import DB_PATH
 
 
 def reset_db():
+
     engine = create_engine(DB_PATH, echo=False)
 
     with Session(engine) as session:

@@ -1,8 +1,12 @@
 """
 init_db.py
 -----------
+Crée la base de données et toutes les tables si elles n'existent pas encore
 Script d'initialisation de la base de données "BacLipidDB.db"
 Execution une seule fois pour créer les tables SQLite définies dans models/model.py
+
+Usage :
+    python scripts/init_db.py
 """
 
 from sqlalchemy import create_engine
@@ -10,7 +14,7 @@ from models.model import Base
 from config import DB_PATH
 
 def main():
-    """Crée la base de données et toutes les tables si elles n'existent pas encore"""
+
     engine = create_engine(DB_PATH, echo=True)
     try:
         with engine.connect():

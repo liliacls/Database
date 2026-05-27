@@ -1,7 +1,8 @@
 def neutral_mass_cal(Precursor_MZ, ion_mode):
-    """Calcule la masse neutre à partir du rapport m/z du précurseur et du mode d'ionisation.
+    """
+    Calcule la masse neutre à partir du rapport m/z du précurseur et du mode d'ionisation indiqué dans l'étape 1
 
-    :param Precursor_MZ: rapport m/z du précurseur mesuré par le spectromètre de masse.
+    :param Precursor_MZ: rapport m/z du précurseur.
     :type Precursor_MZ: float
     :param ion_mode: mode d'ionisation "Positive" ou "Negative".
     :type ion_mode: str

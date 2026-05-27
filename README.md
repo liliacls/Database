@@ -34,7 +34,7 @@ BacLipidDB/
 └── 📁 scripts/
         ├── init_db.pY
         ├── 📄 init_db.py
-        ├── 📄 load_MS2_msp.py
+        ├── 📄 loading_MS2_msp.py
         └── 📄 reset_db.py
 
 ```
@@ -89,7 +89,7 @@ Scripts à lancer en ligne de commande pour initialiser, alimenter ou réinitial
 |---|---|
 | `init_db.py` | Initialise la base de données et crée toutes les tables |
 | `reset_db.py` | Supprime tous les enregistrements sans supprimer les tables |
-| `load_MS2_msp.py` | Lit un fichier `.msp` MS2 et insère les détections, fragments et annotations dans la base |
+| `loading_MS2_msp.py` | Lit un fichier `.msp` MS2 et insère les détections, fragments et annotations dans la base |
 
 ---
 
