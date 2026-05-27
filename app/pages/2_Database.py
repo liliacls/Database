@@ -73,7 +73,8 @@ try:
             ])
                 
     else:
-        df = pd.read_sql_table(table, engine)
+        with engine.connect() as conn:
+            df = pd.read_sql_table(table, conn)
 
     st.subheader(f"Table : {table} - {len(df)} rows")
     if df.empty:
