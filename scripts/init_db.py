@@ -1,8 +1,8 @@
 """
-database.py
+init_db.py
 -----------
 Script d'initialisation de la base de données "BacLipidDB.db"
-Execution une seule fois pour créer les tables SQLite définies dans partial_model.py
+Execution une seule fois pour créer les tables SQLite définies dans models/model.py
 """
 
 from sqlalchemy import create_engine
