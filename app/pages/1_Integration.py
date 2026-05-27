@@ -152,7 +152,6 @@ st.divider()
 missing_columns = [c for c in REQUIRED_COLUMNS if c not in df.columns]
 
 if missing_columns:
-    st.session_state["columns_valid"] = False
     st.error(
         f"The file is missing the following required columns : "
         f"**{', '.join(missing_columns)}**\n\n"
@@ -194,7 +193,7 @@ if "df_complete" not in st.session_state:
                 st.stop()
 
             df["MS_level"] = ms_level
-            df["Num_Peaks"] = 0 if ms_level == "MS1" else None
+            df["Num_Peaks"] = 0
 
         st.session_state["df_complete"] = df
         st.rerun()
