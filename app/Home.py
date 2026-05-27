@@ -8,10 +8,7 @@ import logging
 import streamlit as st
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-
-import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from models.model import Detection
 from config import get_engine
@@ -24,7 +21,7 @@ logging.basicConfig(
 )
 
 @st.cache_data(ttl=60)
-def stats():
+def statistics():
     try:
         with Session(get_engine()) as s:
             ms1 = s.query(func.count(Detection.Detection_ID)).filter(Detection.MS_level == "MS1").scalar() or 0
@@ -83,7 +80,7 @@ st.divider()
 st.subheader("Database overview")
 st.write("")
 
-stats = stats()
+stats = statistics()
 
 if stats is None:
     st.warning("Unable to connect to the database.")
