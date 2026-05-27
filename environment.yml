@@ -9,4 +9,4 @@ dependencies:
   - molmass
   - openpyxl
   - conda-build
-prefix: /home/liliacls/miniforge3/envs/lipid_database
+
