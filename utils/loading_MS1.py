@@ -1,11 +1,9 @@
 import logging
 import pandas as pd
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
 from models.model import Detection, Lipid, Annotation
-from config import DB_PATH
+from config import get_engine
 
-engine = create_engine(DB_PATH, echo=False)
 logger = logging.getLogger(__name__)
 
 def database_loading_MS1(df, confidence_level):
@@ -13,15 +11,15 @@ def database_loading_MS1(df, confidence_level):
     Insère les données d'annotation MS1 dans la base de données.
     Pour chaque ligne du DataFrame, crée et insère un enregistrement dans les trois tables : Detection, Lipid et Annotation
 
-    :param df: DataFrame contenant les colonnes Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Molecular_weight, MS_level, Num_Peaks, Lipid_class, Lipid_category,
+    :param df: DataFrame contenant les colonnes Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
                et optionnellement RT et CCS.
     :type df: pandas.DataFrame
-    :param confidence_level: niveau de confiance de l'annotation 
+    :param confidence_level: niveau de confiance de l'annotation (1 à 4)
     :type confidence_level: int
     :raises Exception: en cas d'erreur aucune ligne n'est commitée (ROLLBACK automatique) et l'erreur est loggée.
     """
     logger.info(f"Début de l'intégration - {len(df)} lignes à insérer.")
-    with Session(engine) as session:
+    with Session(get_engine()) as session:
         try:
             for _, row in df.iterrows():
                 detection = Detection(
