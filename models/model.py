@@ -24,7 +24,7 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy import ForeignKey
 from typing import List, Optional
 
 class Base(DeclarativeBase):
@@ -83,7 +83,6 @@ class Lipid(Base):
 
 class Annotation(Base):
     __tablename__ = 'Annotation'
-    __table_args__ = (UniqueConstraint('Lipid_id', 'Detection_id'),)
     Annotation_ID : Mapped[int] = mapped_column(primary_key=True)
     Lipid_id : Mapped[int] = mapped_column(ForeignKey('Lipid.Lipid_ID'))
     Detection_id : Mapped[int] = mapped_column(ForeignKey('Detection.Detection_ID'))
