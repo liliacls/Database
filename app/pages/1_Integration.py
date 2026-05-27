@@ -3,7 +3,7 @@ Data_Integration.py
 -------------------
 Module 1 : Intégration de données lipidiques dans BacLipidDB.
 
-Colonnes obligatoires : Lipid_Name, Formula, Precursor_MZ, Lipid_category , Lipid_class, Lipid_subclass.
+Colonnes obligatoires : Lipid_Name (champs obligatoires), Formula (champs obligatoires), Precursor_MZ (champs obligatoires), Lipid_category , Lipid_class, Lipid_subclass.
 Colonnes optionnelles : RT, CCS.
 
 Workflow en 5 étapes :
@@ -30,11 +30,11 @@ REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "
 def _icon(done):
     return "✅" if done else "⬜"
 
-step1_done = all(st.session_state.get(k) is not None for k in ["ms_level", "ion_mode", "confidence_level"])
+step1 = all(st.session_state.get(k) is not None for k in ["ms_level", "ion_mode", "confidence_level"])
 
 with st.sidebar:
     st.markdown("### Workflow")
-    st.markdown(f"{_icon(step1_done)} Step 1 - Settings")
+    st.markdown(f"{_icon(step1)} Step 1 - Settings")
     st.markdown(f"{_icon('df' in st.session_state)} Step 2 - File upload")
     st.markdown(f"{_icon(st.session_state.get('columns_valid', False))} Step 3 - Verification")
     st.markdown(f"{_icon('df_valide' in st.session_state)} Step 4 - Completion & Validation")
@@ -50,7 +50,7 @@ with st.sidebar:
         st.rerun()
 
 # ── Header ────────────────────────────────────────────────────────────────────
-st.markdown("""
+st.html("""
     <style>
     .module {
         border: 2px solid #1F77B4;
@@ -61,12 +61,11 @@ st.markdown("""
     <div class="module">
         <h1><span style="color:#1F77B4">MODULE 1</span> : Data integration page</h1>
     </div>
-""", unsafe_allow_html=True)
+""")
 
 # ── STEP 1 ────────────────────────────────────────────────────────────────────
 
-st.header(":blue[STEP 1] - Settings", text_alignment="left")
-st.divider()
+st.header(":blue[STEP 1] - Settings", divider="blue", text_alignment="left")
 
 col1, col2, col3 = st.columns(3)
 
@@ -77,7 +76,6 @@ with col1:
         "Annotation level",
         options=["MS1", "MS2"],
         index=None,
-        placeholder="Annotation level",
         key="ms_level",
         disabled=_locked,
     )
@@ -87,7 +85,6 @@ with col2:
         "Ionization mode",
         options=["Positive", "Negative"],
         index=None,
-        placeholder="Ionization mode",
         key="ion_mode",
         disabled=_locked,
     )
@@ -97,7 +94,6 @@ with col3:
         "Confidence level",
         options=[1, 2, 3, 4],
         index=None,
-        placeholder="Confidence level",
         key="confidence_level",
         disabled=_locked,
     )
@@ -110,8 +106,7 @@ st.success(f"Selected : {ms_level} | {ion_mode} | Confidence {confidence_level}"
 
 # ── STEP 2 ────────────────────────────────────────────────────────────────────
 
-st.header(":blue[STEP 2] - File upload", text_alignment="left")
-st.divider()
+st.header(":blue[STEP 2] - File upload", divider="blue", text_alignment="left")
 
 uploaded_file = st.file_uploader(
     "Choose an annotation file",
@@ -124,14 +119,19 @@ if uploaded_file is None:
 
 try:
     if st.session_state.get("df_file_id") != uploaded_file.file_id:
+
         if uploaded_file.name.endswith(".csv"):
             df_new = pd.read_csv(uploaded_file)
+
         elif uploaded_file.name.endswith(".tsv"):
             df_new = pd.read_csv(uploaded_file, sep="\t")
+
         else:
             df_new = pd.read_excel(uploaded_file)
+
         for key in ["df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration"]:
             st.session_state.pop(key, None)
+
         st.session_state["df"] = df_new
         st.session_state["df_file_id"] = uploaded_file.file_id
         st.rerun()
@@ -146,8 +146,7 @@ df = st.session_state["df"].copy()
 
 # ── STEP 3 ────────────────────────────────────────────────────────────────────
 
-st.header(":blue[STEP 3] - Required columns verification", text_alignment="left")
-st.divider()
+st.header(":blue[STEP 3] - Required columns verification", divider="blue", text_alignment="left")
 
 missing_columns = [c for c in REQUIRED_COLUMNS if c not in df.columns]
 
@@ -164,12 +163,11 @@ else:
         st.rerun()
     st.success("All required columns found", icon="✅")
     with st.expander("Preview raw data", expanded=True):
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, width="stretch")
 
 # ── STEP 4 ────────────────────────────────────────────────────────────────────
 
-st.header(":blue[STEP 4] - Preview and automatic completion", text_alignment="left")
-st.divider()
+st.header(":blue[STEP 4] - Preview and automatic completion", divider="blue", text_alignment="left")
 
 if "df_complete" not in st.session_state:
     if st.button("Run automatic completion", type="primary", use_container_width=True):
@@ -204,7 +202,7 @@ if "df_complete" not in st.session_state:
 st.caption(f"Settings : {ms_level} | {ion_mode} | Confidence {confidence_level}")
 df_edite = st.data_editor(
     st.session_state["df_complete"],
-    use_container_width=True,
+    width="stretch",
     num_rows="dynamic",
     key="editor_integration",
     column_config={
@@ -216,11 +214,11 @@ df_edite = st.data_editor(
 )
 
 if st.button("Validate data", type="primary", use_container_width=True):
-    strictly_required = ["Lipid_Name", "Formula", "Precursor_MZ"]
-    colonnes_vides = [c for c in strictly_required if df_edite[c].isnull().any()]
-    if colonnes_vides:
+    required = ["Lipid_Name", "Formula", "Precursor_MZ"]
+    empty_columns = [c for c in required if df_edite[c].isnull().any()]
+    if empty_columns:
         st.warning(
-            f"The table contains empty cells in required columns : **{', '.join(colonnes_vides)}**",
+            f"The table contains empty cells in required columns : **{', '.join(empty_columns)}**",
             icon="⚠️",
         )
     else:
@@ -256,8 +254,7 @@ if "df_valide" in st.session_state:
 
 # ── STEP 5 ────────────────────────────────────────────────────────────────────
 
-st.header(":blue[STEP 5] - Database integration", text_alignment="left")
-st.divider()
+st.header(":blue[STEP 5] - Database integration", divider="blue", text_alignment="left")
 
 if "df_valide" not in st.session_state:
     st.warning("Please validate the data in step 4 before continuing.", icon="⚠️")
