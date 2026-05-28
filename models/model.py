@@ -36,6 +36,7 @@ class Detection(Base):
 
     Precursor_MZ : Mapped[float] = mapped_column()
     MS_level : Mapped[str] = mapped_column()
+    Ionisation_mode : Mapped[str] = mapped_column()
     Num_Peaks : Mapped[int] = mapped_column()
     Neutral_mass : Mapped[float] = mapped_column()
     RT : Mapped[Optional[float]] = mapped_column()
@@ -48,7 +49,7 @@ class Detection(Base):
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="detection")
 
     def __repr__(self):
-        return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, MS_level={self.MS_level}, Num_Peaks={self.Num_Peaks}, Neutral_mass={self.Neutral_mass}, RT={self.RT}, CCS={self.CCS})"
+        return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, MS_level={self.MS_level}, Ionisation_mode={self.Ionisation_mode}, Num_Peaks={self.Num_Peaks}, Neutral_mass={self.Neutral_mass}, RT={self.RT}, CCS={self.CCS})"
 
 class Fragment(Base):
     __tablename__ = 'Fragment'
