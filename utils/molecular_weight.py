@@ -17,6 +17,6 @@ def molecularw_calculation(formula):
     try:
         s = str(formula).strip()
         f = Formula(s)
-        return int(round(f.mass, 0))
+        return round(float(f.mass), 6)
     except (ValueError, TypeError):
         return None
