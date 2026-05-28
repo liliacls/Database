@@ -163,7 +163,9 @@ else:
         st.rerun()
     st.success("All required columns found", icon="✅")
     with st.expander("Preview raw data", expanded=True):
-        st.dataframe(df, width="stretch")
+        st.dataframe(df, width="stretch", column_config={
+            "Precursor_MZ": st.column_config.NumberColumn(format="%.6f"),
+        })
 
 # ── STEP 4 ────────────────────────────────────────────────────────────────────
 
@@ -192,6 +194,7 @@ if "df_complete" not in st.session_state:
 
             df["MS_level"] = ms_level
             df["Num_Peaks"] = 0
+            df["Ionisation_mode"] = ion_mode
 
         st.session_state["df_complete"] = df
         st.rerun()
@@ -206,10 +209,12 @@ df_edite = st.data_editor(
     num_rows="dynamic",
     key="editor_integration",
     column_config={
-        "Neutral_mass":     st.column_config.NumberColumn(disabled=True),
-        "Molecular_weight": st.column_config.NumberColumn(disabled=True),
+        "Precursor_MZ":     st.column_config.NumberColumn(format="%.6f"),
+        "Neutral_mass":     st.column_config.NumberColumn(format="%.6f", disabled=True),
+        "Molecular_weight": st.column_config.NumberColumn(format="%.6f", disabled=True),
         "MS_level":         st.column_config.TextColumn(disabled=True),
         "Num_Peaks":        st.column_config.NumberColumn(disabled=True),
+        "Ionisation_mode":  st.column_config.TextColumn(disabled=True),
     },
 )
 
@@ -272,7 +277,7 @@ else:
     if st.button("Integrate data", type="primary", width="stretch"):
         with st.spinner("Integrating data into the database..."):
             try:
-                database_loading_MS1(st.session_state["df_valide"], confidence_level)
+                database_loading_MS1(st.session_state["df_valide"], confidence_level, uploaded_file.name)
                 st.session_state["integration_done"] = True
                 st.session_state["show_balloons"] = True
                 st.rerun()
