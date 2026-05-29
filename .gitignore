@@ -3,3 +3,4 @@ __pycache__
 .gitignore
 BacLipidDB.db
 database_app/pages/.streamlit/
+history.json
