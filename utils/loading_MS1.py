@@ -68,7 +68,7 @@ def database_loading_MS1(df, confidence_level, filename):
                 session.add(annotation)
 
             session.commit()
-            logger.info(f"Intégration terminée - {len(df)} lignes insérées avec succès.")
+            logger.info(f"Intégration terminée : {len(df)} lignes insérées avec succès.")
 
         except Exception as e:
             logger.error(f"Erreur durant l'intégration : {e}")
@@ -77,7 +77,7 @@ def database_loading_MS1(df, confidence_level, filename):
     first_row = df.iloc[0]
     _history({
         "filename":         filename,
-        "inserted":      datetime.now().isoformat(timespec="seconds"),
+        "inserted":         datetime.now(),
         "ms_level":         first_row.get("MS_level"),
         "ionisation_mode":  first_row.get("Ionisation_mode"),
         "num_rows":         len(df),
