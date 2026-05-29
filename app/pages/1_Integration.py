@@ -16,6 +16,7 @@ Workflow en 5 étapes :
 
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 from utils.loading_MS1 import database_loading_MS1
 from utils.molecular_weight import molecularw_calculation
@@ -250,12 +251,33 @@ if "df_valide" in st.session_state:
         (col_class, "Lipid_class", "By class"),
         (col_subclass, "Lipid_subclass", "By subclass"),
     ]:
+        counts = df_valide[field].value_counts(dropna=False).reset_index()
+        counts.columns = [field, "Count"]
+        counts[field] = counts[field].fillna("Unknown").astype(str)
+        fig = px.bar(
+            counts,
+            x="Count",
+            y=field,
+            orientation="h",
+            title=label,
+            color="Count",
+            color_continuous_scale=[[0, "#4292C6"], [1, "#08306B"]],
+            text="Count",
+        )
+        fig.update_layout(
+            showlegend=False,
+            coloraxis_showscale=False,
+            margin=dict(l=0, r=10, t=40, b=0),
+            yaxis_title=None,
+            xaxis_title=None,
+            height=max(180, len(counts) * 36 + 60),
+            title_font_size=14,
+        )
+        fig.update_traces(textposition="outside")
+        fig.update_yaxes(tickfont=dict(color="black"))
+        fig.update_xaxes(tickfont=dict(color="black"))
         with col:
-            st.markdown(f"**{label}**")
-            counts = df_valide[field].value_counts(dropna=False)
-            for name, count in counts.items():
-                display = str(name) if pd.notna(name) else "Unknown"
-                st.caption(f"{display} - {count}")
+            st.plotly_chart(fig, use_container_width=True)
 
 # ── STEP 5 ────────────────────────────────────────────────────────────────────
 
