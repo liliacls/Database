@@ -5,6 +5,7 @@ import pandas as pd
 from sqlalchemy.orm import Session
 from models.model import Detection, Lipid, Annotation
 from config import get_engine, HISTORY_PATH
+from utils.monoisotopic import molecularw_calculation
 
 logger = logging.getLogger(__name__)
 
@@ -50,12 +51,13 @@ def database_loading_MS1(df, confidence_level, filename):
                 detection_ids.append(detection.Detection_ID)
 
                 lipid = Lipid(
-                    Lipid_name       = row.get("Lipid_Name"),
-                    Lipid_category   = row.get("Lipid_category") if pd.notna(row.get("Lipid_category")) else None,
-                    Lipid_class      = row.get("Lipid_class") if pd.notna(row.get("Lipid_class")) else None,
-                    Lipid_subclass   = row.get("Lipid_subclass") if pd.notna(row.get("Lipid_subclass")) else None,
-                    Formula          = row.get("Formula"),
-                    Molecular_weight = row.get("Molecular_weight"),
+                    Lipid_name        = row.get("Lipid_Name"),
+                    Lipid_category    = row.get("Lipid_category") if pd.notna(row.get("Lipid_category")) else None,
+                    Lipid_class       = row.get("Lipid_class") if pd.notna(row.get("Lipid_class")) else None,
+                    Lipid_subclass    = row.get("Lipid_subclass") if pd.notna(row.get("Lipid_subclass")) else None,
+                    Formula           = row.get("Formula"),
+                    Molecular_weight  = row.get("Molecular_weight"),
+                    Monoisotopic_mass = molecularw_calculation(row.get("Formula")),
                 )
                 session.add(lipid)
                 session.flush()
@@ -77,7 +79,7 @@ def database_loading_MS1(df, confidence_level, filename):
     first_row = df.iloc[0]
     _history({
         "filename":         filename,
-        "inserted":         datetime.now(),
+        "inserted":         datetime.now().isoformat(),
         "ms_level":         first_row.get("MS_level"),
         "ionisation_mode":  first_row.get("Ionisation_mode"),
         "num_rows":         len(df),
