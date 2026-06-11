@@ -75,12 +75,13 @@ class Lipid(Base):
     Lipid_subclass : Mapped[Optional[str]] = mapped_column()
     Formula : Mapped[str] = mapped_column()
     Molecular_weight : Mapped[float] = mapped_column()
+    Monoisotopic_mass : Mapped[Optional[float]] = mapped_column()
 
     # Relation 1→N : un lipide peut être associé à plusieurs annotations
     annotations: Mapped[List["Annotation"]] = relationship(back_populates="lipid")
 
     def __repr__(self):
-        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_category='{self.Lipid_category}', Lipid_class='{self.Lipid_class}', Lipid_subclass='{self.Lipid_subclass}', Formula='{self.Formula}', Molecular_weight={self.Molecular_weight})"
+        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_category='{self.Lipid_category}', Lipid_class='{self.Lipid_class}', Lipid_subclass='{self.Lipid_subclass}', Formula='{self.Formula}', Molecular_weight={self.Molecular_weight}, Monoisotopic_mass={self.Monoisotopic_mass})"
 
 class Annotation(Base):
     __tablename__ = 'Annotation'
