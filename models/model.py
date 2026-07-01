@@ -1,23 +1,29 @@
 """
 model.py
 ----------------
-Définition des modèles SQLAlchemy de BacLipidDB.
+Definition of BacLipidDB's SQLAlchemy models.
 
-Contient les 4 tables de la base de données :
-    - Detection  : signal détecté par le spectromètre de masse.
-    - Fragment   : ions fragments associés à une détection (MS2 uniquement)
-    - Lipid      : lipide de référence (nom, classe, catégorie, formule)
-    - Annotation : association entre une détection et un lipide candidat, avec un niveau de confiance sur l'identification
+Contains the 4 tables of the database:
+    - Detection  : signal detected by the mass spectrometer.
+    - Fragment   : fragment ions associated with a detection (MS2 only)
+    - Lipid      : reference lipid (name, class, category, formula)
+    - Annotation : association between a detection and a candidate lipid, with a confidence level on the identification
 
-Relations :
-    - Detection  1→N  Fragment    (un signal peut produire plusieurs fragments, MS2 uniquement)
-    - Detection  1→N  Annotation  (un signal peut correspondre à plusieurs lipides candidats)
-    - Lipid      1→N  Annotation  (un lipide peut être détecté dans plusieurs expériences)
+Relationships:
+    - Detection  1→N  Fragment    (a signal can produce several fragments, MS2 only)
+    - Detection  1→1  Annotation  (a signal corresponds to a single annotation)
+    - Lipid      1→1  Annotation  (a lipid is associated with a single annotation)
 
-Conventions :
-    - Les clés primaires sont nommées avec le suffixe "_ID"
-    - Les clés étrangères sont nommées avec le suffixe "_id"
-    - Chaque classe définit un __repr__ pour afficher lisiblement un objet lors du débogage
+Conventions:
+    - Primary keys are named with the "_ID" suffix
+    - Foreign keys are named with the "_id" suffix
+    - Each class defines a __repr__ to display an object legibly when debugging
+
+Documentation : 
+    - DeclarativeBase : https://docs.sqlalchemy.org/en/21/orm/declarative_styles.html
+    - Mapped : https://docs.sqlalchemy.org/en/21/orm/mapping_styles.html#orm-mapping-styles
+    - mapped_column : https://docs.sqlalchemy.org/en/21/orm/mapping_api.html#sqlalchemy.orm.Mapper.columns
+    - relationship, ForeignKey : https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html
 """
 
 from sqlalchemy.orm import DeclarativeBase
@@ -25,7 +31,6 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
-from typing import List, Optional
 
 class Base(DeclarativeBase):
     pass
@@ -34,19 +39,19 @@ class Detection(Base):
     __tablename__ = 'Detection'
     Detection_ID : Mapped[int] = mapped_column(primary_key=True)
 
-    Precursor_MZ : Mapped[float] = mapped_column()
-    MS_level : Mapped[str] = mapped_column()
-    Ionisation_mode : Mapped[str] = mapped_column()
-    Num_Peaks : Mapped[int] = mapped_column()
-    Neutral_mass : Mapped[float] = mapped_column()
-    RT : Mapped[Optional[float]] = mapped_column()
-    CCS : Mapped[Optional[float]] = mapped_column()
+    Precursor_MZ : Mapped[float] = mapped_column()  # m/z of the precursor ion (Da)
+    MS_level : Mapped[str] = mapped_column()  # "MS1" (precursor only) or "MS2" (with fragment spectrum)
+    Ionisation_mode : Mapped[str] = mapped_column()  # "Positive" or "Negative"
+    Num_Peaks : Mapped[int | None] = mapped_column()  # number of fragment peaks (MS2 only)
+    Neutral_mass : Mapped[float] = mapped_column()  # neutral mass derived from Precursor_MZ and Ionisation_mode (Da)
+    RT : Mapped[float | None] = mapped_column()  # retention time (minutes)
+    CCS : Mapped[float | None] = mapped_column()  # collision cross section (Ų)
 
-    # Relation 1→N : une détection peut être associée à plusieurs fragments (MS2 uniquement)
-    fragments: Mapped[List["Fragment"]] = relationship(back_populates="detection")
+    # Relationship 1→N: a detection can be associated with several fragments (MS2 only)
+    fragments: Mapped[list["Fragment"]] = relationship(back_populates="detection")
 
-    # Relation 1→N : une détection peut être associée à plusieurs annotations
-    annotations: Mapped[List["Annotation"]] = relationship(back_populates="detection")
+    # Relationship 1→1: a detection is associated with a single annotation
+    annotation: Mapped["Annotation | None"] = relationship(back_populates="detection")
 
     def __repr__(self):
         return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, MS_level={self.MS_level}, Ionisation_mode={self.Ionisation_mode}, Num_Peaks={self.Num_Peaks}, Neutral_mass={self.Neutral_mass}, RT={self.RT}, CCS={self.CCS})"
@@ -56,10 +61,10 @@ class Fragment(Base):
     Fragment_ID : Mapped[int] = mapped_column(primary_key=True)
     Detection_id : Mapped[int] = mapped_column(ForeignKey('Detection.Detection_ID'))
     
-    MZ : Mapped[Optional[float]] = mapped_column()
-    Intensity : Mapped[Optional[float]] = mapped_column()
+    MZ : Mapped[float | None] = mapped_column()  # m/z of the fragment ion (Da)
+    Intensity : Mapped[float | None] = mapped_column()  # fragment peak intensity
 
-    # Relation N→1 : un fragment est rattaché à une seule détection
+    # Relationship N→1: a fragment is attached to a single detection
     detection: Mapped["Detection"] = relationship(back_populates="fragments")
 
     def __repr__(self):
@@ -70,15 +75,15 @@ class Lipid(Base):
     Lipid_ID : Mapped[int] = mapped_column(primary_key=True)
 
     Lipid_name : Mapped[str] = mapped_column()
-    Lipid_category : Mapped[Optional[str]] = mapped_column()
-    Lipid_class : Mapped[Optional[str]] = mapped_column()
-    Lipid_subclass : Mapped[Optional[str]] = mapped_column()
+    Lipid_category : Mapped[str | None] = mapped_column()  # LIPID MAPS category
+    Lipid_class : Mapped[str | None] = mapped_column()  # LIPID MAPS class
+    Lipid_subclass : Mapped[str | None] = mapped_column()  # LIPID MAPS subclass
     Formula : Mapped[str] = mapped_column()
-    Molecular_weight : Mapped[float] = mapped_column()
-    Monoisotopic_mass : Mapped[Optional[float]] = mapped_column()
+    Molecular_weight : Mapped[float] = mapped_column()  # average molecular weight (Da)
+    Monoisotopic_mass : Mapped[float] = mapped_column()  # monoisotopic mass (Da)
 
-    # Relation 1→N : un lipide peut être associé à plusieurs annotations
-    annotations: Mapped[List["Annotation"]] = relationship(back_populates="lipid")
+    # Relationship 1→1: a lipid is associated with a single annotation
+    annotation: Mapped["Annotation | None"] = relationship(back_populates="lipid")
 
     def __repr__(self):
         return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_category='{self.Lipid_category}', Lipid_class='{self.Lipid_class}', Lipid_subclass='{self.Lipid_subclass}', Formula='{self.Formula}', Molecular_weight={self.Molecular_weight}, Monoisotopic_mass={self.Monoisotopic_mass})"
@@ -86,16 +91,16 @@ class Lipid(Base):
 class Annotation(Base):
     __tablename__ = 'Annotation'
     Annotation_ID : Mapped[int] = mapped_column(primary_key=True)
-    Lipid_id : Mapped[int] = mapped_column(ForeignKey('Lipid.Lipid_ID'))
-    Detection_id : Mapped[int] = mapped_column(ForeignKey('Detection.Detection_ID'))
+    Lipid_id : Mapped[int] = mapped_column(ForeignKey('Lipid.Lipid_ID'), unique=True)
+    Detection_id : Mapped[int] = mapped_column(ForeignKey('Detection.Detection_ID'), unique=True)
     
-    Confidence_level : Mapped[Optional[int]] = mapped_column()
+    Confidence_level : Mapped[int | None] = mapped_column()  # annotation confidence, from 1 (highest) to 4 (lowest)
 
-    # Relation N→1 : une annotation est rattachée à un seul lipide
-    lipid: Mapped["Lipid"] = relationship(back_populates="annotations")
+    # Relationship N→1: an annotation is attached to a single lipid
+    lipid: Mapped["Lipid"] = relationship(back_populates="annotation")
 
-    # Relation N→1 : une annotation est rattachée à une seule détection
-    detection: Mapped["Detection"] = relationship(back_populates="annotations")
+    # Relationship N→1: an annotation is attached to a single detection
+    detection: Mapped["Detection"] = relationship(back_populates="annotation")
 
     def __repr__(self):
         return f"Annotation(Annotation_ID={self.Annotation_ID}, Lipid_id={self.Lipid_id}, Detection_id={self.Detection_id}, Confidence_level={self.Confidence_level})"
