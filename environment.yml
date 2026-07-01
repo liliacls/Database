@@ -8,4 +8,5 @@ dependencies:
   - streamlit=1.55.0
   - molmass
   - openpyxl
+  - plotly
 
