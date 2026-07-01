@@ -1,6 +1,14 @@
 [theme]
-primaryColor = "#1F77B4"
-backgroundColor = "#F8FAFF"
-secondaryBackgroundColor = "#e3ecf5"
-textColor = "#1A1A2E"
 font = "calibri"
+
+[theme.light]
+primaryColor = "#1F77B4"
+backgroundColor = "#feffff"
+secondaryBackgroundColor = "#e0f2fd"
+textColor = "#1A1A2E"
+
+[theme.dark]
+primaryColor = "#60B8FF"
+backgroundColor = "#0D1B2A"
+secondaryBackgroundColor = "#1A2D45"
+textColor = "#E8EDF5"
