@@ -33,20 +33,19 @@ def statistics():
     except Exception:
         return None
 
-logo_path = Path(__file__).parent.parent / "assets" / "logoDB.svg"
-if logo_path.exists():
-    col = st.columns([1, 4, 1])
-    with col[1]:
-        st.image(str(logo_path), width="stretch")
+logo_path = Path(__file__).parent.parent / "assets" / "APP.svg"
 
-st.write("")
+col_left, col_center, col_right = st.columns([1, 1, 1])
+with col_center:
+    if logo_path.exists():
+        st.image(str(logo_path), width="stretch")
 
 # ── Description ────────────────────────────────────────────────────────────────
 st.markdown("""
-**BacLipidDB** is a relational database specialized in the annotation of
-bacterial lipids from multiple mass spectrometry analytical platforms.
-It is designed to store, integrate, explore and export lipidomic data.
-""")
+<p style="text-align: center;">
+<strong>BacLipidAPP</strong> is a web application for the integration, exploration and export of lipidomic data from <strong>BacLipidDB</strong>.
+</p>
+""", unsafe_allow_html=True)
 st.divider()
 
 # ── Modules ─────────────────────────────────────────────────────────────────────
@@ -58,19 +57,19 @@ col1, col2, col3 = st.columns(3)
 with col1:
     with st.container(border=True):
         st.page_link("pages/1_Integration.py", label="MODULE 1")
-        st.markdown("##### 📥 Integration")
+        st.markdown("##### ⬇️ Integrate data")
         st.write("Import annotation files and integrate them into the database.")
 
 with col2:
     with st.container(border=True):
-        st.page_link("pages/2_Database.py", label="MODULE 2")
-        st.markdown("##### ⛁ Database")
+        st.page_link("pages/2_BacLipidDB.py", label="MODULE 2")
+        st.markdown("##### ⛁ BacLipidDB")
         st.write("Browse individual tables or explore a full joined view.")
 
 with col3:
     with st.container(border=True):
         st.page_link("pages/3_Export.py", label="MODULE 3")
-        st.markdown("##### 📤 Export")
+        st.markdown("##### ⬆️ Export data")
         st.write("Export data from the database in the desired format.")
 
 st.write("")
