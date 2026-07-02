@@ -1,14 +1,15 @@
 """
 init_db.py
 -----------
-Crée la base de données et toutes les tables si elles n'existent pas encore
-Script d'initialisation de la base de données "BacLipidDB.db"
-Execution une seule fois pour créer les tables SQLite définies dans models/model.py
+Create the database and all tables if they do not exist yet
+Initialization script for the database "BacLipidDB.db"
+Run this script only once to create the SQLite tables defined in models/model.py
 
 Usage :
     python scripts/init_db.py
 """
 
+import sys
 from sqlalchemy import create_engine
 from models.model import Base
 from config import DB_PATH
@@ -18,13 +19,13 @@ def main():
     engine = create_engine(DB_PATH, echo=True)
     try:
         with engine.connect():
-            print("Connexion réussie")
+            print("Connection successful")
         Base.metadata.create_all(engine)
-        print("Tables créées avec succès !")
-    
-    except Exception as ex:
-        print(f"Erreur : {ex}")
+        print("Tables created successfully!")
 
+    except Exception as ex:
+        print(f"Error: {ex}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
