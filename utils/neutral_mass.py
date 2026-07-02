@@ -1,31 +1,44 @@
-def neutral_mass_cal(Precursor_MZ, ion_mode):
-    """
-    Calcule la masse neutre à partir du rapport m/z du précurseur et du mode d'ionisation indiqué dans l'étape 1
+import math
 
-    :param Precursor_MZ: rapport m/z du précurseur.
+def neutral_mass(Precursor_MZ: float, ion_mode: str) -> float:
+    """
+    Calculate the neutral mass from the precursor m/z ratio and the ionization mode specified in step 1 of Integration page
+
+    :param Precursor_MZ: m/z ratio of the precursor.
     :type Precursor_MZ: float
-    :param ion_mode: mode d'ionisation "Positive" ou "Negative".
+    :param ion_mode: ionization mode "Positive" or "Negative"
     :type ion_mode: str
-    :raises TypeError: si Precursor_MZ ne peut pas être converti en float.
-    :raises ValueError: si ion_mode n'est ni "Positive" ni "Negative".
-    :return: masse neutre en Daltons, arrondie à 6 décimales.
+    :raises TypeError: if Precursor_MZ cannot be converted to a float.
+    :raises ValueError: if Precursor_MZ is NaN or not strictly positive, or if ion_mode is neither "Positive" nor "Negative".
+    :return: neutral mass in Daltons, rounded to 6 decimal places.
     :rtype: float
     """
     try:
         mz = float(Precursor_MZ)
     except (TypeError, ValueError):
         raise TypeError("Precursor_MZ must be a numeric value")
+
+    if math.isnan(mz):
+        raise ValueError("Precursor_MZ cannot be NaN")
     
-    # Masse du proton en Da
+    if mz <= 0:
+        raise ValueError(f"Precursor_MZ can be strictly positive : {mz}")
+
+    if not isinstance(ion_mode, str):
+        raise ValueError(f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'.")
+
+    mode = ion_mode.strip().capitalize()
+
+    # Proton mass in Da
     masse_proton = 1.007276
 
-    # En mode positif, la molécule a gagné un proton donc retrait pour obtenir la masse neutre
+    # In positive mode, the molecule has gained a proton, so subtract it to get the neutral mass
     # [M+H]+ : M = MZ - proton
-    if ion_mode == "Positive":
+    if mode == "Positive":
         return round(mz - masse_proton, 6)
-    # En mode négatif, la molécule a perdu un proton donc ajout pour obtenir la masse neutre
+    # In negative mode, the molecule has lost a proton, so add it to get the neutral mass
     # [M-H]- : M = MZ + proton
-    elif ion_mode == "Negative":
+    elif mode == "Negative":
         return round(mz + masse_proton, 6)
     else:
-        raise ValueError(f"ion_mode inconnu : {ion_mode!r}. Valeurs acceptées : 'Positive' ou 'Negative'.")
+        raise ValueError(f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'.")
