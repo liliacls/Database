@@ -13,12 +13,12 @@ Usage :
     python scripts/reset_db.py
 """
 
+import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from models.model import Annotation, Fragment, Detection, Lipid
 from config import DB_PATH
 from config import HISTORY_PATH
-import os
 
 
 def reset_db():
@@ -37,8 +37,8 @@ if __name__ == "__main__":
     confirm = input("Clear all records from the database ? (yes/no) : ").strip().lower()
     if confirm == "yes":
         reset_db()
-        if os.path.exists(HISTORY_PATH):
-            os.remove(HISTORY_PATH)
+        with open(HISTORY_PATH, "w", encoding="utf-8") as f:
+            json.dump([], f)
         print("Database cleared successfully.")
     else:
         print("Operation cancelled.")
