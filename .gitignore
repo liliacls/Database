@@ -4,3 +4,9 @@ __pycache__
 BacLipidDB.db
 database_app/pages/.streamlit/
 history.json
+.dockerignore
+DOCKER_GUIDE.html
+Dockerfile
+app/pages/2_BacLipidDB.py
+docker-compose.yml
+requirements.txt
