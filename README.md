@@ -7,19 +7,24 @@ BacLipidDB est une base de données relationnelle spécialisée dans l'annotatio
 # **Architecture**
 ```
 BacLipidDB/
-├──  📁.streamlit/
+├── 📁 .streamlit/
 │       └── config.toml
 ├── 📄 config.py
 ├── 📄 environment.yml
+├── 📄 requirements.txt
+├── 📄 Dockerfile
+├── 📄 docker-compose.yml
 ├── 📄 README.md
 ├── 📁 app/
 │       ├── 📄 Home.py
-│       └── pages/
+│       └── 📁 pages/
 │           ├── 📄 1_Integration.py
-│           ├── 📄 2_Database.py
-│           └── 📄 3_Export.py
+│           ├── 📄 2_BacLipidDB.py
+│           ├── 📄 3_Export.py
+│           └── 📄 4_Resources.py
 ├── 📁 assets/
-        └── pages/
+│       ├── 📄 APP.svg
+│       └── 📄 DB.svg
 ├── 📁 models/
 │       ├── __init__.py
 │       └── 📄 model.py
@@ -27,16 +32,14 @@ BacLipidDB/
 │       ├── __init__.py
 │       ├── 📄 neutral_mass.py
 │       ├── 📄 molecular_weight.py
+│       ├── 📄 monoisotopic.py
 │       ├── 📄 msp_export.py
-│       ├── 📄 precursor_type.py
 │       └── 📄 loading_MS1.py
-
 └── 📁 scripts/
-        ├── init_db.pY
         ├── 📄 init_db.py
-        ├── 📄 loading_MS2_msp.py
-        └── 📄 reset_db.py
-
+        ├── 📄 reset_db.py
+        ├── 📄 formula.py
+        └── 📄 loading_MS2.py
 ```
 
 ---
@@ -53,10 +56,11 @@ Pages de l'application web Streamlit accessibles depuis le navigateur.
 
 | Fichier | Rôle |
 |---|---|
-| `Home.py` | Page d'accueil, présente les trois modules de l'application |
+| `Home.py` | Page d'accueil, présente les quatre modules de l'application |
 | `1_Integration.py` | Importe un fichier d'annotations et l'intègre dans la base de données |
-| `2_Database.py` | Visualise le contenu des tables ou une vue complète de la base de données |
+| `2_BacLipidDB.py` | Visualise le contenu des tables ou une vue complète de la base de données |
 | `3_Export.py` | Filtre les données et les exporte en CSV (MS1) ou en MSP (MS2) compatible avec le logiciel MZmine |
+| `4_Resources.py` | Fournit les fichiers modèles pour l'intégration, un guide des colonnes attendues et une description des modules |
 
 ---
 
@@ -75,8 +79,8 @@ Fonctions de calcul et d'insertion utilisées par les modules d'intégration (Mo
 | Fichier | Rôle |
 |---|---|
 | `neutral_mass.py` | Calcule la masse neutre à partir du rapport m/z et du mode d'ionisation (positif/négatif) |
-| `molecular_weight.py` | Calcule le poids moléculaire à partir de la formule brute via la librairie `molmass` |
-| `precursor_type.py` | Déduit le type de précurseur (`[M+H]+` ou `[M-H]-`) à partir de la masse neutre et du m/z |
+| `molecular_weight.py` | Calcule le poids moléculaire moyen à partir de la formule brute via la librairie `molmass` |
+| `monoisotopic.py` | Calcule la masse monoisotopique à partir de la formule brute via la librairie `molmass` |
 | `msp_export.py` | Génère le contenu d'un fichier `.msp` à partir des annotations MS2 filtrées |
 | `loading_MS1.py` | Insère les données d'un DataFrame MS1 dans les tables `Detection`, `Lipid` et `Annotation` |
 
@@ -89,12 +93,32 @@ Scripts à lancer en ligne de commande pour initialiser, alimenter ou réinitial
 |---|---|
 | `init_db.py` | Initialise la base de données et crée toutes les tables |
 | `reset_db.py` | Supprime tous les enregistrements sans supprimer les tables |
-| `loading_MS2_msp.py` | Lit un fichier `.msp` MS2 et insère les détections, fragments et annotations dans la base |
+| `formula.py` | Normalise les formules chimiques d'une colonne CSV vers la notation canonique de `molmass` |
+| `loading_MS2.py` | Lit un fichier `.msp` MS2 et insère les détections, fragments et annotations dans la base |
 
 ---
 
-# **Create the conda environment**
+# **Installation**
+
+### Avec conda
 ```bash
-   conda create --file environment.yml
-   conda activate lipid_database
+conda env create -f environment.yml
+conda activate lipid_database
 ```
+
+### Avec pip
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# **Lancer l'application**
+
+```bash
+streamlit run app/Home.py
+```
+
+---
+
+
