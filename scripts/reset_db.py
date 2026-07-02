@@ -1,11 +1,11 @@
 """
 reset_db.py
 -----------
-Supprime tous les enregistrements de BacLipidDB sans supprimer les tables.
+Delete all records from BacLipidDB without dropping the tables.
 
-L'ordre de suppression respecte les contraintes de clés étrangères :
-    1. Annotation  (références vers Lipid et Detection)
-    2. Fragment    (référence vers Detection)
+The deletion order respects foreign key constraints:
+    1. Annotation  (references to Lipid and Detection)
+    2. Fragment    (reference to Detection)
     3. Detection
     4. Lipid
 
@@ -15,9 +15,10 @@ Usage :
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-
 from models.model import Annotation, Fragment, Detection, Lipid
 from config import DB_PATH
+from config import HISTORY_PATH
+import os
 
 
 def reset_db():
@@ -33,9 +34,11 @@ def reset_db():
 
 
 if __name__ == "__main__":
-    confirm = input("Vider toute la base de données ? (oui/non) : ").strip().lower()
-    if confirm == "oui":
+    confirm = input("Clear all records from the database ? (yes/no) : ").strip().lower()
+    if confirm == "yes":
         reset_db()
-        print("Base de données vidée avec succès.")
+        if os.path.exists(HISTORY_PATH):
+            os.remove(HISTORY_PATH)
+        print("Database cleared successfully.")
     else:
-        print("Opération annulée.")
+        print("Operation cancelled.")
