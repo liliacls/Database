@@ -5,12 +5,16 @@ import pandas as pd
 from sqlalchemy.orm import Session
 from models.model import Detection, Lipid, Annotation
 from config import get_engine, HISTORY_PATH
-from utils.monoisotopic import molecularw_calculation
-
 logger = logging.getLogger(__name__)
 
 
-def _history(entry: dict):
+def _history(entry: dict) -> None:
+    """
+    Append an entry to the integration history file (creates it if missing).
+
+    :param entry: history entry to append.
+    :type entry: dict
+    """
     history = []
     if HISTORY_PATH.exists():
         with open(HISTORY_PATH, "r", encoding="utf-8") as f:
@@ -20,19 +24,23 @@ def _history(entry: dict):
         json.dump(history, f, ensure_ascii=False, indent=2)
 
 
-def database_loading_MS1(df, confidence_level, filename):
+def database_loading_MS1(df: pd.DataFrame, confidence_level: int, filename: str, integrator: str = None) -> None:
     """
-    Insère les données d'annotation MS1 dans la base de données.
-    Pour chaque ligne du DataFrame, crée et insère un enregistrement dans les trois tables : Detection, Lipid et Annotation
+    Insert MS1 annotation data into the database.
+    For each row of the DataFrame, creates and inserts a record into the three tables: Detection, Lipid and Annotation.
 
-    :param df: DataFrame contenant les colonnes Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
-               et optionnellement RT et CCS.
+    :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
+               and optionally RT and CCS.
     :type df: pandas.DataFrame
-    :param confidence_level: niveau de confiance de l'annotation (1 à 4)
+    :param confidence_level: confidence level of the annotation (1 to 4).
     :type confidence_level: int
-    :raises Exception: en cas d'erreur aucune ligne n'est commitée (ROLLBACK automatique) et l'erreur est loggée.
+    :param filename: name of the file being integrated, recorded in the history.
+    :type filename: str
+    :param integrator: name of the person performing the integration.
+    :type integrator: str
+    :raises Exception: on error no row is committed (automatic ROLLBACK) and the error is logged.
     """
-    logger.info(f"Début de l'intégration - {len(df)} lignes à insérer.")
+    logger.info(f"Starting integration - {len(df)} rows to insert.")
     detection_ids = []
     with Session(get_engine()) as session:
         try:
@@ -57,7 +65,7 @@ def database_loading_MS1(df, confidence_level, filename):
                     Lipid_subclass    = row.get("Lipid_subclass") if pd.notna(row.get("Lipid_subclass")) else None,
                     Formula           = row.get("Formula"),
                     Molecular_weight  = row.get("Molecular_weight"),
-                    Monoisotopic_mass = molecularw_calculation(row.get("Formula")),
+                    Monoisotopic_mass = row.get("Monoisotopic_mass"),
                 )
                 session.add(lipid)
                 session.flush()
@@ -70,18 +78,19 @@ def database_loading_MS1(df, confidence_level, filename):
                 session.add(annotation)
 
             session.commit()
-            logger.info(f"Intégration terminée : {len(df)} lignes insérées avec succès.")
+            logger.info(f"Integration completed: {len(df)} rows inserted successfully.")
 
         except Exception as e:
-            logger.error(f"Erreur durant l'intégration : {e}")
+            logger.error(f"Error during integration: {e}")
             raise
 
     first_row = df.iloc[0]
     _history({
         "filename":         filename,
-        "inserted":         datetime.now().isoformat(),
+        "inserted":         datetime.now().strftime("%Y-%m-%d %H:%M"),
         "ms_level":         first_row.get("MS_level"),
         "ionisation_mode":  first_row.get("Ionisation_mode"),
         "num_rows":         len(df),
         "detection_ids":    detection_ids,
+        "integrator":       integrator,
     })
