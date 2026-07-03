@@ -1,84 +1,122 @@
-"""
-Data_Integration.py
--------------------
-Module 1 : Intégration de données lipidiques dans BacLipidDB.
-
-Colonnes obligatoires : Lipid_Name (champs obligatoires), Formula (champs obligatoires), Precursor_MZ (champs obligatoires), Lipid_category , Lipid_class, Lipid_subclass.
-Colonnes optionnelles : RT, CCS.
-
-Workflow en 5 étapes :
-    1. Settings      : sélection du niveau MS, mode d'ionisation et niveau de confiance.
-    2. File upload   : chargement d'un fichier .xlsx, .csv, .tsv
-    3. Verification  : contrôle de la présence des colonnes obligatoires.
-    4. Completion    : calcul automatique des colonnes dérivées, édition et validation.
-    5. Integration   : insertion dans les tables Detection, Lipid et Annotation.
-"""
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
 from utils.loading_MS1 import database_loading_MS1
-from utils.molecular_weight import molecularw_calculation
-from utils.neutral_mass import neutral_mass_cal
+from utils.molecular_weight import molecular_weight
+from utils.monoisotopic import monoisotopic_mass
+from utils.neutral_mass import neutral_mass
 
-# Colonnes obligatoires pour l'annotation MS1
+# ── Constants ───────────────────────────────────────────────────────────────────
+
+# Required columns in MS1 file
 REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "Lipid_class", "Lipid_subclass"]
 
+# Columns that must not contain empty values
+NON_EMPTY_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ"]
+
+CHART_COLOR_SCALE = [[0, "#4292C6"], [1, "#08306B"]]
+COLOR = "#1F77B4"
+
+# session_state keys
+DF = "df"
+DF_FILE_ID = "df_file_id"
+DF_COMPLETE = "df_complete"
+DF_VALID = "df_validated"
+COLUMNS_VALID = "columns_valid"
+INTEGRATION_DONE = "integration_done"
+EDITOR = "editor_integration"
+
+# Full reset (sidebar button): clears everything
+RESET_KEYS = [DF, DF_FILE_ID, DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
+
+# Reset on new file upload only: keeps step 1 settings and the file itself, but clears everything computed downstream
+RELOAD_RESET_KEYS = [DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 
 def _icon(done):
     return "✅" if done else "⬜"
 
-step1 = all(st.session_state.get(k) is not None for k in ["ms_level", "ion_mode", "confidence_level"])
+step1_done = all(st.session_state.get(k) not in (None, "") for k in ["ms_level", "ion_mode", "confidence_level", "integrator_name"])
 
 with st.sidebar:
     st.markdown("### Workflow")
-    st.markdown(f"{_icon(step1)} Step 1 - Settings")
-    st.markdown(f"{_icon('df' in st.session_state)} Step 2 - File upload")
+    st.markdown(f"{_icon(step1_done)} Step 1 - Settings")
+    st.markdown(f"{_icon(DF in st.session_state)} Step 2 - File upload")
     st.markdown(f"{_icon(st.session_state.get('columns_valid', False))} Step 3 - Verification")
-    st.markdown(f"{_icon('df_valide' in st.session_state)} Step 4 - Completion & Validation")
+    st.markdown(f"{_icon(DF_VALID in st.session_state)} Step 4 - Completion & Validation")
     st.markdown(f"{_icon(st.session_state.get('integration_done', False))} Step 5 - Integration")
     st.divider()
     if st.button("Reset 🔄", type="secondary", width="stretch"):
-        for key in ["df", "df_file_id", "df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration"]:
+        for key in RESET_KEYS:
             st.session_state.pop(key, None)
         st.session_state["ms_level"] = None
         st.session_state["ion_mode"] = None
         st.session_state["confidence_level"] = None
+        st.session_state["integrator_name"] = ""
         st.session_state["file_uploader"] = None
         st.rerun()
 
 # ── Header ────────────────────────────────────────────────────────────────────
+
 st.html("""
     <style>
     .module {
-        border: 2px solid #1F77B4;
+        border: 2px solid {COLOR};
         border-radius: 10px;
         text-align: center;
     }
     </style>
     <div class="module">
-        <h1><span style="color:#1F77B4">MODULE 1</span> : Data integration page</h1>
+        <h1><span style="color:{COLOR}">MODULE 1</span> : Data integration page</h1>
     </div>
 """)
+
+# ── Progress bar ──────────────────────────────────────────────────────────────
+
+steps_status = [
+    step1_done,
+    "df" in st.session_state,
+    st.session_state.get("columns_valid", False),
+    DF_VALID in st.session_state,
+    st.session_state.get("integration_done", False),
+]
+completed_step = sum(steps_status)
+
+st.progress(completed_step / len(steps_status), text=f"Step {completed_step} / {len(steps_status)} completed")
+
+# ── Info ──────────────────────────────────────────────────────────────
+
+with st.expander("ℹ️ How to use this page"):
+    st.markdown("""
+    This page integrates a lipid annotation file into BacLipidDB in 5 steps :
+
+    1. **Settings** - choose the MS level, ionization mode, confidence level and your name for this integration.
+    2. **File upload** - upload a `.csv`, `.tsv` or `.xlsx` file.
+    3. **Verification** - the app checks that all required columns are present (see **Resources** page for the expected format).
+    4. **Completion** - derived columns are computed automatically, you can then edit and validate the table.
+    5. **Integration** - the validated data is inserted into the BacLipidDB.
+
+    """)
 
 # ── STEP 1 ────────────────────────────────────────────────────────────────────
 
 st.header(":blue[STEP 1] - Settings", divider="blue", text_alignment="left")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
-_locked = "df_complete" in st.session_state
+# Once automatic completion (step 4) has run, step 1's parameters are locked to ensure consistency between the derived columns and the settings they were computed from.
+settings_locked = DF_COMPLETE in st.session_state
 
 with col1:
     ms_level = st.selectbox(
         "Annotation level",
-        options=["MS1", "MS2"],
+        options=["MS1"],
         index=None,
         key="ms_level",
-        disabled=_locked,
+        disabled=settings_locked,
+        help="MS1 for precursor-only annotations",
     )
 
 with col2:
@@ -87,7 +125,8 @@ with col2:
         options=["Positive", "Negative"],
         index=None,
         key="ion_mode",
-        disabled=_locked,
+        disabled=settings_locked,
+        help="Ionization mode used during acquisition : determines how the neutral mass is calculated from Precursor_MZ.",
     )
 
 with col3:
@@ -96,14 +135,23 @@ with col3:
         options=[1, 2, 3, 4],
         index=None,
         key="confidence_level",
-        disabled=_locked,
+        disabled=settings_locked,
+        help="Annotation confidence, from 1 (highest) to 4 (lowest), applied to the whole batch.",
     )
 
-if None in [ms_level, ion_mode, confidence_level]:
+with col4:
+    integrator_name = st.text_input(
+        "Your name",
+        key="integrator_name",
+        disabled=settings_locked,
+        help="Name of the person integrating this batch, recorded in the import history.",
+    )
+
+if None in [ms_level, ion_mode, confidence_level] or not integrator_name:
     st.warning("Please fill in all parameters before continuing.", icon="⚠️")
     st.stop()
 
-st.success(f"Selected : {ms_level} | {ion_mode} | Confidence {confidence_level}", icon="✅")
+st.success(f"Selected : {ms_level} | {ion_mode} | Confidence {confidence_level} | Integrator : {integrator_name}", icon="✅")
 
 # ── STEP 2 ────────────────────────────────────────────────────────────────────
 
@@ -119,7 +167,7 @@ if uploaded_file is None:
     st.stop()
 
 try:
-    if st.session_state.get("df_file_id") != uploaded_file.file_id:
+    if st.session_state.get(DF_FILE_ID) != uploaded_file.file_id:
 
         if uploaded_file.name.endswith(".csv"):
             df_new = pd.read_csv(uploaded_file)
@@ -130,20 +178,20 @@ try:
         else:
             df_new = pd.read_excel(uploaded_file)
 
-        for key in ["df_complete", "df_valide", "integration_done", "columns_valid", "editor_integration"]:
+        for key in RELOAD_RESET_KEYS:
             st.session_state.pop(key, None)
 
-        st.session_state["df"] = df_new
-        st.session_state["df_file_id"] = uploaded_file.file_id
+        st.session_state[DF] = df_new
+        st.session_state[DF_FILE_ID] = uploaded_file.file_id
         st.rerun()
 
-    st.success(f"File loaded : {uploaded_file.name} - {len(st.session_state['df'])} rows detected.", icon="✅")
+    st.success(f"File loaded : {uploaded_file.name} - {len(st.session_state[DF])} rows detected.", icon="✅")
 
 except Exception as e:
     st.error(f"Error loading file : {e}")
     st.stop()
 
-df = st.session_state["df"].copy()
+df = st.session_state[DF].copy()
 
 # ── STEP 3 ────────────────────────────────────────────────────────────────────
 
@@ -159,10 +207,33 @@ if missing_columns:
     )
     st.stop()
 else:
-    if not st.session_state.get("columns_valid", False):
-        st.session_state["columns_valid"] = True
+    if not st.session_state.get(COLUMNS_VALID, False):
+        st.session_state[COLUMNS_VALID] = True
         st.rerun()
     st.success("All required columns found", icon="✅")
+
+    required = NON_EMPTY_COLUMNS
+    empty_columns = [c for c in required if df[c].isnull().any()]
+    if empty_columns:
+        st.error(
+            f"The file contains empty cells in required columns : "
+            f"**{', '.join(empty_columns)}**\n\n"
+            f"Please correct your file and reload it."
+        )
+        st.stop()
+
+    numeric_precursor = pd.to_numeric(df["Precursor_MZ"], errors="coerce")
+    invalid_precursor_rows = df.index[numeric_precursor.isnull()].tolist()
+    if invalid_precursor_rows:
+        st.error(
+            f"The column **Precursor_MZ** must contain only numeric values. "
+            f"Non-numeric value(s) found at row(s) : "
+            f"{', '.join(str(i) for i in invalid_precursor_rows)}\n\n"
+            f"Please correct your file and reload it."
+        )
+        st.stop()
+    df["Precursor_MZ"] = numeric_precursor.astype(float)
+
     with st.expander("Preview raw data", expanded=True):
         st.dataframe(df, width="stretch", column_config={
             "Precursor_MZ": st.column_config.NumberColumn(format="%.6f"),
@@ -172,18 +243,19 @@ else:
 
 st.header(":blue[STEP 4] - Preview and automatic completion", divider="blue", text_alignment="left")
 
-if "df_complete" not in st.session_state:
+if DF_COMPLETE not in st.session_state:
     if st.button("Run automatic completion", type="primary", width="stretch"):
         with st.spinner("Computing derived columns..."):
             try:
                 df["Neutral_mass"] = df["Precursor_MZ"].apply(
-                    lambda mz: neutral_mass_cal(mz, ion_mode)
+                    lambda mz: neutral_mass(mz, ion_mode)
                 )
             except Exception as e:
                 st.error(f"Error calculating neutral mass : {e}")
                 st.stop()
 
-            df["Molecular_weight"] = df["Formula"].apply(molecularw_calculation)
+            df["Molecular_weight"] = df["Formula"].apply(molecular_weight)
+            df["Monoisotopic_mass"] = df["Formula"].apply(monoisotopic_mass)
             invalid_formulas = df.loc[df["Molecular_weight"].isna(), "Formula"].tolist()
             if invalid_formulas:
                 st.error(
@@ -197,22 +269,26 @@ if "df_complete" not in st.session_state:
             df["Num_Peaks"] = 0
             df["Ionisation_mode"] = ion_mode
 
-        st.session_state["df_complete"] = df
+        st.session_state[DF_COMPLETE] = df
         st.rerun()
 
-if "df_complete" not in st.session_state:
+if DF_COMPLETE not in st.session_state:
     st.stop()
 
 st.caption(f"Settings : {ms_level} | {ion_mode} | Confidence {confidence_level}")
-df_edite = st.data_editor(
-    st.session_state["df_complete"],
+df_edited = st.data_editor(
+    st.session_state[DF_COMPLETE],
     width="stretch",
     num_rows="dynamic",
     key="editor_integration",
+    
+    # These columns are computed automatically from Formula/Precursor_MZ and settings, disabling edition keeps them consistent with the values they were derived from.
     column_config={
-        "Precursor_MZ":     st.column_config.NumberColumn(format="%.6f"),
+        "Precursor_MZ":     st.column_config.NumberColumn(format="%.6f", disabled=True),
         "Neutral_mass":     st.column_config.NumberColumn(format="%.6f", disabled=True),
         "Molecular_weight": st.column_config.NumberColumn(format="%.6f", disabled=True),
+        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f", disabled=True),
+        "Formula":          st.column_config.TextColumn(disabled=True),
         "MS_level":         st.column_config.TextColumn(disabled=True),
         "Num_Peaks":        st.column_config.NumberColumn(disabled=True),
         "Ionisation_mode":  st.column_config.TextColumn(disabled=True),
@@ -220,28 +296,27 @@ df_edite = st.data_editor(
 )
 
 if st.button("Validate data", type="primary", width="stretch"):
-    required = ["Lipid_Name", "Formula", "Precursor_MZ"]
-    empty_columns = [c for c in required if df_edite[c].isnull().any()]
+    empty_columns = [c for c in NON_EMPTY_COLUMNS if df_edited[c].isnull().any()]
     if empty_columns:
         st.warning(
             f"The table contains empty cells in required columns : **{', '.join(empty_columns)}**",
             icon="⚠️",
         )
     else:
-        st.session_state["df_valide"] = df_edite
+        st.session_state[DF_VALID] = df_edited
         st.rerun()
 
-if "df_valide" in st.session_state:
+if DF_VALID in st.session_state:
     st.subheader("Summary")
 
-    df_valide = st.session_state["df_valide"]
-    total = len(df_valide)
+    df_validated = st.session_state[DF_VALID]
+    total = len(df_validated)
 
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Total lipids", total)
-    m2.metric("Categories", df_valide["Lipid_category"].nunique())
-    m3.metric("Classes", df_valide["Lipid_class"].nunique())
-    m4.metric("Subclasses", df_valide["Lipid_subclass"].nunique())
+    m2.metric("Categories", df_validated["Lipid_category"].nunique())
+    m3.metric("Classes", df_validated["Lipid_class"].nunique())
+    m4.metric("Subclasses", df_validated["Lipid_subclass"].nunique())
 
     st.markdown("")
     col_cat, col_class, col_subclass = st.columns(3)
@@ -251,7 +326,7 @@ if "df_valide" in st.session_state:
         (col_class, "Lipid_class", "By class"),
         (col_subclass, "Lipid_subclass", "By subclass"),
     ]:
-        counts = df_valide[field].value_counts(dropna=False).reset_index()
+        counts = df_validated[field].value_counts(dropna=False).reset_index()
         counts.columns = [field, "Count"]
         counts[field] = counts[field].fillna("Unknown").astype(str)
         fig = px.bar(
@@ -261,7 +336,7 @@ if "df_valide" in st.session_state:
             orientation="h",
             title=label,
             color="Count",
-            color_continuous_scale=[[0, "#4292C6"], [1, "#08306B"]],
+            color_continuous_scale=CHART_COLOR_SCALE,
             text="Count",
         )
         fig.update_layout(
@@ -277,13 +352,13 @@ if "df_valide" in st.session_state:
         fig.update_yaxes(tickfont=dict(color="black"))
         fig.update_xaxes(tickfont=dict(color="black"))
         with col:
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
 # ── STEP 5 ────────────────────────────────────────────────────────────────────
 
 st.header(":blue[STEP 5] - Database integration", divider="blue", text_alignment="left")
 
-if "df_valide" not in st.session_state:
+if DF_VALID not in st.session_state:
     st.warning("Please validate the data in step 4 before continuing.", icon="⚠️")
     st.stop()
 
@@ -295,11 +370,11 @@ if st.session_state.get("integration_done", False):
     if st.session_state.pop("show_balloons", False):
         st.balloons()
 else:
-    st.info(f"Ready to integrate **{len(st.session_state['df_valide'])}** lipids into the database.")
+    st.info(f"Ready to integrate **{len(st.session_state[DF_VALID])}** lipids into the database.")
     if st.button("Integrate data", type="primary", width="stretch"):
         with st.spinner("Integrating data into the database..."):
             try:
-                database_loading_MS1(st.session_state["df_valide"], confidence_level, uploaded_file.name)
+                database_loading_MS1(st.session_state[DF_VALID], confidence_level, uploaded_file.name, integrator_name)
                 st.session_state["integration_done"] = True
                 st.session_state["show_balloons"] = True
                 st.rerun()
