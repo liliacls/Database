@@ -14,6 +14,7 @@ from sqlalchemy import create_engine
 from models.model import Base
 from config import DB_PATH
 
+
 def main():
 
     engine = create_engine(DB_PATH, echo=True)
@@ -26,6 +27,7 @@ def main():
     except Exception as ex:
         print(f"Error: {ex}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

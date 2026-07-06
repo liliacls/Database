@@ -1,5 +1,6 @@
 import math
 
+
 def neutral_mass(Precursor_MZ: float, ion_mode: str) -> float:
     """
     Calculate the neutral mass from the precursor m/z ratio and the ionization mode specified in step 1 of Integration page
@@ -16,12 +17,14 @@ def neutral_mass(Precursor_MZ: float, ion_mode: str) -> float:
 
     if math.isnan(mz):
         raise ValueError("Precursor_MZ cannot be NaN")
-    
+
     if mz <= 0:
         raise ValueError(f"Precursor_MZ must be strictly positive : {mz}")
 
     if not isinstance(ion_mode, str):
-        raise ValueError(f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'.")
+        raise ValueError(
+            f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'."
+        )
 
     mode = ion_mode.strip().capitalize()
 
@@ -37,4 +40,6 @@ def neutral_mass(Precursor_MZ: float, ion_mode: str) -> float:
     elif mode == "Negative":
         return round(mz + masse_proton, 6)
     else:
-        raise ValueError(f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'.")
+        raise ValueError(
+            f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'."
+        )

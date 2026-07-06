@@ -20,6 +20,7 @@ import sys
 import pandas as pd
 from molmass import Formula, FormulaError
 
+
 def normalize_formula(formula: str) -> str:
     """
     Return the canonical notation for a single chemical formula.
@@ -66,12 +67,22 @@ def normalize_csv(input_path: str, output_path: str, column: str) -> None:
     print(f"{modified}/{len(df)} formulas modified")
     print(f"Saved to '{output_path}'")
 
+
 def main():
 
-    parser = argparse.ArgumentParser(description="Normalize chemical formulas in a CSV column.")
+    parser = argparse.ArgumentParser(
+        description="Normalize chemical formulas in a CSV column."
+    )
     parser.add_argument("input", help="path to the input CSV file")
-    parser.add_argument("-o", "--output", help="path to the output CSV file (default: overwrite input)")
-    parser.add_argument("-c", "--column", default="Formula", help="name of the formula column (default: Formula)")
+    parser.add_argument(
+        "-o", "--output", help="path to the output CSV file (default: overwrite input)"
+    )
+    parser.add_argument(
+        "-c",
+        "--column",
+        default="Formula",
+        help="name of the formula column (default: Formula)",
+    )
     args = parser.parse_args()
 
     output_path = args.output if args.output else args.input

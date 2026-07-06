@@ -1,5 +1,6 @@
 from molmass import Formula
 
+
 def molecular_weight(formula: str) -> float | None:
     """
     Compute the average molecular weight of the lipid from its chemical formula.
