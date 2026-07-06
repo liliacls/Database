@@ -9,3 +9,4 @@ DOCKER_GUIDE.html
 Dockerfile
 docker-compose.yml
 requirements.txt
+/Documentation
