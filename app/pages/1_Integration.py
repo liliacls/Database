@@ -7,7 +7,7 @@ from utils.molecular_weight import molecular_weight
 from utils.monoisotopic import monoisotopic_mass
 from utils.neutral_mass import neutral_mass
 
-# ── Constants ───────────────────────────────────────────────────────────────────
+# ── Constants ────────────────────────────────────────────────────────────────────
 
 # Required columns in MS1 file
 REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "Lipid_class", "Lipid_subclass"]
@@ -20,20 +20,20 @@ COLOR = "#1F77B4"
 
 # session_state keys
 DF = "df"
-DF_FILE_ID = "df_file_id"
-DF_COMPLETE = "df_complete"
-DF_VALID = "df_validated"
 COLUMNS_VALID = "columns_valid"
+DF_VALID = "df_validated"
 INTEGRATION_DONE = "integration_done"
+DF_COMPLETE = "df_complete"
+DF_ID = "df_file_id"
 EDITOR = "editor_integration"
 
 # Full reset (sidebar button): clears everything
-RESET_KEYS = [DF, DF_FILE_ID, DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
+RESET_KEYS = [DF, DF_ID, DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
 
 # Reset on new file upload only: keeps step 1 settings and the file itself, but clears everything computed downstream
 RELOAD_RESET_KEYS = [DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
+# ── Sidebar ────────────────────────────────────────────────────────────────────
 
 def _icon(done):
     return "✅" if done else "⬜"
@@ -73,7 +73,7 @@ st.html("""
     </div>
 """)
 
-# ── Progress bar ──────────────────────────────────────────────────────────────
+# ── Progress bar ────────────────────────────────────────────────────────────────────
 
 steps_status = [
     step1_done,
@@ -86,7 +86,7 @@ completed_step = sum(steps_status)
 
 st.progress(completed_step / len(steps_status), text=f"Step {completed_step} / {len(steps_status)} completed")
 
-# ── Info ──────────────────────────────────────────────────────────────
+# ── Info ────────────────────────────────────────────────────────────────────
 
 with st.expander("ℹ️ How to use this page"):
     st.markdown("""
@@ -167,7 +167,7 @@ if uploaded_file is None:
     st.stop()
 
 try:
-    if st.session_state.get(DF_FILE_ID) != uploaded_file.file_id:
+    if st.session_state.get(DF_ID) != uploaded_file.file_id:
 
         if uploaded_file.name.endswith(".csv"):
             df_new = pd.read_csv(uploaded_file)
@@ -182,7 +182,7 @@ try:
             st.session_state.pop(key, None)
 
         st.session_state[DF] = df_new
-        st.session_state[DF_FILE_ID] = uploaded_file.file_id
+        st.session_state[DF_ID] = uploaded_file.file_id
         st.rerun()
 
     st.success(f"File loaded : {uploaded_file.name} - {len(st.session_state[DF])} rows detected.", icon="✅")
@@ -281,7 +281,7 @@ df_edited = st.data_editor(
     width="stretch",
     num_rows="dynamic",
     key="editor_integration",
-    
+
     # These columns are computed automatically from Formula/Precursor_MZ and settings, disabling edition keeps them consistent with the values they were derived from.
     column_config={
         "Precursor_MZ":     st.column_config.NumberColumn(format="%.6f", disabled=True),
@@ -374,6 +374,7 @@ else:
     if st.button("Integrate data", type="primary", width="stretch"):
         with st.spinner("Integrating data into the database..."):
             try:
+                # Use the function in loading_MS1.py to insert the data into the database
                 database_loading_MS1(st.session_state[DF_VALID], confidence_level, uploaded_file.name, integrator_name)
                 st.session_state["integration_done"] = True
                 st.session_state["show_balloons"] = True
