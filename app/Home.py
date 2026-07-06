@@ -20,12 +20,23 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
 )
 
+
 @st.cache_data(ttl=60)
 def statistics():
     try:
         with Session(get_engine()) as s:
-            ms1 = s.query(func.count(Detection.Detection_ID)).filter(Detection.MS_level == "MS1").scalar() or 0
-            ms2 = s.query(func.count(Detection.Detection_ID)).filter(Detection.MS_level == "MS2").scalar() or 0
+            ms1 = (
+                s.query(func.count(Detection.Detection_ID))
+                .filter(Detection.MS_level == "MS1")
+                .scalar()
+                or 0
+            )
+            ms2 = (
+                s.query(func.count(Detection.Detection_ID))
+                .filter(Detection.MS_level == "MS2")
+                .scalar()
+                or 0
+            )
         DBsize = Path(__file__).parent.parent.joinpath("BacLipidDB.db").stat().st_size
         size_mb = DBsize / (1024 * 1024)
         db_size = f"{size_mb:.1f} Mo" if size_mb >= 1 else f"{DBsize / 1024:.1f} Ko"
@@ -33,19 +44,23 @@ def statistics():
     except Exception:
         return None
 
+
 logo_path = Path(__file__).parent.parent / "assets" / "APP.svg"
 
-col_left, col_center, col_right = st.columns([1, 1, 1])
+_, col_center, _ = st.columns([1, 1, 1])
 with col_center:
     if logo_path.exists():
         st.image(str(logo_path), width="stretch")
 
 # ── Description ────────────────────────────────────────────────────────────────
-st.markdown("""
+st.markdown(
+    """
 <p style="text-align: center;">
 <strong>BacLipidAPP</strong> is a web application for the integration, exploration and export of lipidomic data from <strong>BacLipidDB</strong>.
 </p>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 st.divider()
 
 # ── Modules ─────────────────────────────────────────────────────────────────────
@@ -96,7 +111,7 @@ else:
 
     with col3:
         with st.container(border=True):
-            st.metric("Database size", stats['db_size'])
+            st.metric("Database size", stats["db_size"])
 
 st.write("")
 st.divider()
