@@ -26,7 +26,10 @@ def _history(entry: dict) -> None:
 
 
 def database_loading_MS1(
-    df: pd.DataFrame, filename: str, integrator: str = None
+    df: pd.DataFrame,
+    filename: str,
+    integrator: str,
+    file_row_name: str,
 ) -> None:
     """
     Insert MS1 annotation data into the database.
@@ -35,12 +38,12 @@ def database_loading_MS1(
     :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
                and optionally RT and CCS.
     :type df: pandas.DataFrame
-    :param confidence_level: confidence level of the annotation (1 to 4).
-    :type confidence_level: int
-    :param filename: name of the file being integrated, recorded in the history.
+    :param filename: name of the file being integrated.
     :type filename: str
     :param integrator: name of the person performing the integration.
     :type integrator: str
+    :param file_row_name: name of the file that provided the annotations.
+    :type file_row_name: str
     :raises Exception: on error no row is committed (automatic ROLLBACK) and the error is logged.
     """
     logger.info(f"Starting integration - {len(df)} rows to insert.")
@@ -102,6 +105,7 @@ def database_loading_MS1(
     _history(
         {
             "filename": filename,
+            "row_file": file_row_name,
             "inserted": datetime.now().strftime("%Y-%m-%d %H:%M"),
             "ms_level": first_row.get("MS_level"),
             "ionisation_mode": first_row.get("Ionisation_mode"),

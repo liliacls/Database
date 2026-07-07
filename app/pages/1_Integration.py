@@ -104,7 +104,7 @@ with st.expander("ℹ️ How to use this page"):
 
 st.header(":blue[STEP 1] - Settings", divider="blue", text_alignment="left")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 # Once automatic completion (step 4) has run, step 1's parameters are locked to ensure consistency between the derived columns and the settings they were computed from.
 settings_locked = DF_COMPLETE in st.session_state
@@ -136,6 +136,15 @@ with col3:
         disabled=settings_locked,
         help="Name of the person integrating this batch, recorded in the import history.",
     )
+
+with col4:
+    file_row_name = st.text_input(
+        "File row name",
+        key="file_row_name",
+        disabled=settings_locked,
+        help="Name of the file who provided annotations",
+    )
+
 
 if None in [ms_level, ion_mode] or not integrator_name:
     st.warning("Please fill in all parameters before continuing.", icon="⚠️")
@@ -365,7 +374,12 @@ else:
         with st.spinner("Integrating data into the database..."):
             try:
                 # Use the function in loading_MS1.py to insert the data into the database
-                database_loading_MS1(st.session_state[DF_VALID], uploaded_file.name, integrator_name)
+                database_loading_MS1(
+                    st.session_state[DF_VALID],
+                    uploaded_file.name,
+                    integrator_name,
+                    file_row_name,
+                )
                 st.session_state["integration_done"] = True
                 st.session_state["show_balloons"] = True
                 st.rerun()
