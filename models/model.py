@@ -79,8 +79,6 @@ class Annotation(Base):
         ForeignKey("Detection.Detection_ID"), unique=True
     )
 
-    Confidence_level: Mapped[int | None] = (mapped_column()) # annotation confidence, from 1 (highest) to 4 (lowest)
-
     # Relationship N→1: an annotation is attached to a single lipid
     lipid: Mapped["Lipid"] = relationship(back_populates="annotation")
 
@@ -88,4 +86,4 @@ class Annotation(Base):
     detection: Mapped["Detection"] = relationship(back_populates="annotation")
 
     def __repr__(self):
-        return f"Annotation(Annotation_ID={self.Annotation_ID}, Lipid_id={self.Lipid_id}, Detection_id={self.Detection_id}, Confidence_level={self.Confidence_level})"
+        return f"Annotation(Annotation_ID={self.Annotation_ID}, Lipid_id={self.Lipid_id}, Detection_id={self.Detection_id})"
