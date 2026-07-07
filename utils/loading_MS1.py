@@ -26,7 +26,7 @@ def _history(entry: dict) -> None:
 
 
 def database_loading_MS1(
-    df: pd.DataFrame, confidence_level: int, filename: str, integrator: str = None
+    df: pd.DataFrame, filename: str, integrator: str = None
 ) -> None:
     """
     Insert MS1 annotation data into the database.
@@ -88,7 +88,6 @@ def database_loading_MS1(
                 annotation = Annotation(
                     Lipid_id=lipid.Lipid_ID,
                     Detection_id=detection.Detection_ID,
-                    Confidence_level=confidence_level,
                 )
                 session.add(annotation)
 

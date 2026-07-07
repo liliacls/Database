@@ -38,7 +38,7 @@ RELOAD_RESET_KEYS = [DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDI
 def _icon(done):
     return "✅" if done else "⬜"
 
-step1_done = all(st.session_state.get(k) not in (None, "") for k in ["ms_level", "ion_mode", "confidence_level", "integrator_name"])
+step1_done = all(st.session_state.get(k) not in (None, "") for k in ["ms_level", "ion_mode", "integrator_name"])
 
 with st.sidebar:
     st.markdown("### Workflow")
@@ -104,7 +104,7 @@ with st.expander("ℹ️ How to use this page"):
 
 st.header(":blue[STEP 1] - Settings", divider="blue", text_alignment="left")
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 # Once automatic completion (step 4) has run, step 1's parameters are locked to ensure consistency between the derived columns and the settings they were computed from.
 settings_locked = DF_COMPLETE in st.session_state
@@ -130,16 +130,6 @@ with col2:
     )
 
 with col3:
-    confidence_level = st.selectbox(
-        "Confidence level",
-        options=[1, 2, 3, 4],
-        index=None,
-        key="confidence_level",
-        disabled=settings_locked,
-        help="Annotation confidence, from 1 (highest) to 4 (lowest), applied to the whole batch.",
-    )
-
-with col4:
     integrator_name = st.text_input(
         "Your name",
         key="integrator_name",
@@ -147,11 +137,11 @@ with col4:
         help="Name of the person integrating this batch, recorded in the import history.",
     )
 
-if None in [ms_level, ion_mode, confidence_level] or not integrator_name:
+if None in [ms_level, ion_mode] or not integrator_name:
     st.warning("Please fill in all parameters before continuing.", icon="⚠️")
     st.stop()
 
-st.success(f"Selected : {ms_level} | {ion_mode} | Confidence {confidence_level} | Integrator : {integrator_name}", icon="✅")
+st.success(f"Selected : {ms_level} | {ion_mode} | Integrator : {integrator_name}", icon="✅")
 
 # ── STEP 2 ────────────────────────────────────────────────────────────────────
 
@@ -275,7 +265,7 @@ if DF_COMPLETE not in st.session_state:
 if DF_COMPLETE not in st.session_state:
     st.stop()
 
-st.caption(f"Settings : {ms_level} | {ion_mode} | Confidence {confidence_level}")
+st.caption(f"Settings : {ms_level} | {ion_mode}")
 df_edited = st.data_editor(
     st.session_state[DF_COMPLETE],
     width="stretch",
@@ -375,7 +365,7 @@ else:
         with st.spinner("Integrating data into the database..."):
             try:
                 # Use the function in loading_MS1.py to insert the data into the database
-                database_loading_MS1(st.session_state[DF_VALID], confidence_level, uploaded_file.name, integrator_name)
+                database_loading_MS1(st.session_state[DF_VALID], uploaded_file.name, integrator_name)
                 st.session_state["integration_done"] = True
                 st.session_state["show_balloons"] = True
                 st.rerun()
