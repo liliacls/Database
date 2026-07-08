@@ -60,13 +60,13 @@ with st.sidebar:
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
-st.html("""
+st.html(f"""
     <style>
-    .module {
+    .module {{
         border: 2px solid {COLOR};
         border-radius: 10px;
         text-align: center;
-    }
+    }}
     </style>
     <div class="module">
         <h1><span style="color:{COLOR}">MODULE 1</span> : Data integration page</h1>
