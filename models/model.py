@@ -22,8 +22,9 @@ class Detection(Base):
     Precursor_MZ: Mapped[float] = mapped_column()       # m/z of the precursor ion (Da)
     MS_level: Mapped[str] = (mapped_column())           # "MS1" (precursor only) or "MS2" (with fragment spectrum)
     Ionisation_mode: Mapped[str] = mapped_column()      # "Positive" or "Negative"
+    Adduct: Mapped[str | None] = mapped_column()        # precursor adduct
     Num_Peaks: Mapped[int | None] = (mapped_column())   # number of fragment peaks (MS2 only)
-    Neutral_mass: Mapped[float] = (mapped_column())     # neutral mass derived from Precursor_MZ and Ionisation_mode (Da)
+    Neutral_mass: Mapped[float] = (mapped_column())     # neutral mass derived from Precursor_MZ, Ionisation_mode and Adduct (Da)
     RT: Mapped[float | None] = mapped_column()          # retention time (minutes)
     CCS: Mapped[float | None] = mapped_column()         # collision cross section (Ų)
 
@@ -34,7 +35,7 @@ class Detection(Base):
     annotation: Mapped["Annotation | None"] = relationship(back_populates="detection")
 
     def __repr__(self):
-        return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, MS_level={self.MS_level}, Ionisation_mode={self.Ionisation_mode}, Num_Peaks={self.Num_Peaks}, Neutral_mass={self.Neutral_mass}, RT={self.RT}, CCS={self.CCS})"
+        return f"Detection(Detection_ID={self.Detection_ID}, Precursor_MZ={self.Precursor_MZ}, MS_level={self.MS_level}, Ionisation_mode={self.Ionisation_mode}, Adduct={self.Adduct}, Num_Peaks={self.Num_Peaks}, Neutral_mass={self.Neutral_mass}, RT={self.RT}, CCS={self.CCS})"
 
 
 class Fragment(Base):
