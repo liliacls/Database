@@ -43,6 +43,7 @@ class Fragment(Base):
     Fragment_ID: Mapped[int] = mapped_column(primary_key=True)
     Detection_id: Mapped[int] = mapped_column(ForeignKey("Detection.Detection_ID"))
 
+    FA_composition: Mapped[str | None] = mapped_column()  # fatty acyl composition
     MZ: Mapped[float | None] = mapped_column()          # m/z of the fragment ion (Da)
     Intensity: Mapped[float | None] = mapped_column()   # fragment peak intensity
 
@@ -50,7 +51,7 @@ class Fragment(Base):
     detection: Mapped["Detection"] = relationship(back_populates="fragments")
 
     def __repr__(self):
-        return f"Fragment(Fragment_ID={self.Fragment_ID}, Detection_id={self.Detection_id}, MZ={self.MZ}, Intensity={self.Intensity})"
+        return f"Fragment(Fragment_ID={self.Fragment_ID}, Detection_id={self.Detection_id}, FA_composition='{self.FA_composition}', MZ={self.MZ}, Intensity={self.Intensity})"
 
 
 class Lipid(Base):
