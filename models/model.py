@@ -23,8 +23,8 @@ class Detection(Base):
     MS_level: Mapped[str] = (mapped_column())           # "MS1" (precursor only) or "MS2" (with fragment spectrum)
     Ionisation_mode: Mapped[str] = mapped_column()      # "Positive" or "Negative"
     Adduct: Mapped[str | None] = mapped_column()        # precursor adduct
-    Num_Peaks: Mapped[int | None] = (mapped_column())   # number of fragment peaks (MS2 only)
-    Neutral_mass: Mapped[float] = (mapped_column())     # neutral mass derived from Precursor_MZ, Ionisation_mode and Adduct (Da)
+    Num_Peaks: Mapped[int | None] = (mapped_column())   # number of fragment (MS2 only)
+    Neutral_mass: Mapped[float] = (mapped_column())     # neutral mass derived from Precursor_MZ and Adduct (Da)
     RT: Mapped[float | None] = mapped_column()          # retention time (minutes)
     CCS: Mapped[float | None] = mapped_column()         # collision cross section (Ų)
 
@@ -43,7 +43,6 @@ class Fragment(Base):
     Fragment_ID: Mapped[int] = mapped_column(primary_key=True)
     Detection_id: Mapped[int] = mapped_column(ForeignKey("Detection.Detection_ID"))
 
-    FA_composition: Mapped[str | None] = mapped_column()  # fatty acyl composition
     MZ: Mapped[float | None] = mapped_column()          # m/z of the fragment ion (Da)
     Intensity: Mapped[float | None] = mapped_column()   # fragment peak intensity
 
@@ -51,7 +50,7 @@ class Fragment(Base):
     detection: Mapped["Detection"] = relationship(back_populates="fragments")
 
     def __repr__(self):
-        return f"Fragment(Fragment_ID={self.Fragment_ID}, Detection_id={self.Detection_id}, FA_composition='{self.FA_composition}', MZ={self.MZ}, Intensity={self.Intensity})"
+        return f"Fragment(Fragment_ID={self.Fragment_ID}, Detection_id={self.Detection_id}, MZ={self.MZ}, Intensity={self.Intensity})"
 
 
 class Lipid(Base):
@@ -63,6 +62,7 @@ class Lipid(Base):
     Lipid_class: Mapped[str | None] = mapped_column()     # LIPID MAPS class
     Lipid_subclass: Mapped[str | None] = mapped_column()  # LIPID MAPS subclass
     Formula: Mapped[str] = mapped_column()
+    FA_composition: Mapped[str | None] = mapped_column()  # fatty acyl composition
     Molecular_weight: Mapped[float] = mapped_column()     # average molecular weight (Da)
     Monoisotopic_mass: Mapped[float] = mapped_column()    # monoisotopic mass (Da)
 
@@ -70,7 +70,7 @@ class Lipid(Base):
     annotation: Mapped["Annotation | None"] = relationship(back_populates="lipid")
 
     def __repr__(self):
-        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_category='{self.Lipid_category}', Lipid_class='{self.Lipid_class}', Lipid_subclass='{self.Lipid_subclass}', Formula='{self.Formula}', Molecular_weight={self.Molecular_weight}, Monoisotopic_mass={self.Monoisotopic_mass})"
+        return f"Lipid(Lipid_ID={self.Lipid_ID}, Lipid_name='{self.Lipid_name}', Lipid_category='{self.Lipid_category}', Lipid_class='{self.Lipid_class}', Lipid_subclass='{self.Lipid_subclass}', Formula='{self.Formula}', FA_composition='{self.FA_composition}', Molecular_weight={self.Molecular_weight}, Monoisotopic_mass={self.Monoisotopic_mass})"
 
 
 class Annotation(Base):
