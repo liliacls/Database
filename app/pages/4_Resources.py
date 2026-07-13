@@ -192,7 +192,7 @@ guide_ms2 = pd.DataFrame(
             "Column": "FA_composition",
             "Required": "❌",
             "Type": "text",
-            "Description": "Fatty acid composition (16:0_18:1). Leave empty if not available",
+            "Description": "Fatty acid composition (16:0_18:1) (delete this column if not available)",
         },
         {
             "Column": "Lipid_Name",
@@ -237,6 +237,18 @@ guide_ms2 = pd.DataFrame(
             "Type": "float",
             "Description": "Fragment peak intensity (292725.5)",
         },
+        {
+            "Column": "RT",
+            "Required": "❌",
+            "Type": "float",
+            "Description": "Retention time in minutes (delete this column if not available)",
+        },
+        {
+            "Column": "CCS",
+            "Required": "❌",
+            "Type": "float",
+            "Description": "Collision cross section in Å² (delete this column if not available)",
+        },
     ]
 )
 
@@ -252,6 +264,8 @@ template_ms2 = [
     ["Lipid_category", "Glycerophospholipids (GP)"],
     ["Lipid_class", "Glycerophosphoethanolamines (GP02)"],
     ["Lipid_subclass", "Diacylglycerophosphoethanolamines (GP0201)"],
+    ["RT", 6.42],
+    ["CCS", 245.8],
     ["Num_peaks", 6],
     ["m/z", "Intensity"],
     [122.001441956, 10847.9541015625],
@@ -289,5 +303,7 @@ st.download_button(
 )
 
 st.caption(
-    "The template contains 2 example scans showing the expected block structure, separated by a single blank line."
+    "The template contains 2 example scans showing the expected block structure, separated by a single blank "
+    "line. The first scan includes the optional RT and CCS fields, the second shows that these lines can be "
+    "omitted entirely when not available."
 )
