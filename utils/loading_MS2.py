@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from models.model import Detection, Fragment, Lipid, Annotation
 from config import get_engine
 from utils.db_backup import backup_database
-from utils.history import append_history_entry
+from utils.history import append_history
 
 logger = logging.getLogger(__name__)
 
@@ -251,7 +251,7 @@ def DB_MS2(
 
     backup_path = backup_database(label=filename)
 
-    append_history_entry(
+    append_history(
         {
             "filename": filename,
             "row_file": file_row_name,
