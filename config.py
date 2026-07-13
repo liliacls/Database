@@ -16,10 +16,14 @@ from sqlalchemy import create_engine
 PROJECT_ROOT = Path(__file__).parent
 
 # Database path
-DB_PATH = f"sqlite:///{PROJECT_ROOT / 'BacLipidDB.db'}"
+DB_FILE = PROJECT_ROOT / "BacLipidDB.db"
+DB_PATH = f"sqlite:///{DB_FILE}"
 
 # History file path
 HISTORY_PATH = PROJECT_ROOT / "history.json"
+
+# Directory where database snapshots are stored (one per import)
+BACKUP_DIR = PROJECT_ROOT / "backups"
 
 
 @st.cache_resource
