@@ -1,31 +1,16 @@
-import json
 import logging
 from datetime import datetime
 import pandas as pd
 from sqlalchemy.orm import Session
 from models.model import Detection, Lipid, Annotation
-from config import get_engine, HISTORY_PATH
+from config import get_engine
+from utils.db_backup import backup_database
+from utils.history import append_history
 
 logger = logging.getLogger(__name__)
 
 
-def _history(entry: dict) -> None:
-    """
-    Append an entry to the integration history file (creates it if missing).
-
-    :param entry: history entry to append.
-    :type entry: dict
-    """
-    history = []
-    if HISTORY_PATH.exists():
-        with open(HISTORY_PATH, "r", encoding="utf-8") as f:
-            history = json.load(f)
-    history.append(entry)
-    with open(HISTORY_PATH, "w", encoding="utf-8") as f:
-        json.dump(history, f, ensure_ascii=False, indent=2)
-
-
-def database_loading_MS1(
+def DB_MS1(
     df: pd.DataFrame,
     filename: str,
     integrator: str,
@@ -35,7 +20,7 @@ def database_loading_MS1(
     Insert MS1 annotation data into the database.
     For each row of the DataFrame, creates and inserts a record into the three tables: Detection, Lipid and Annotation.
 
-    :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
+    :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
                and optionally RT and CCS.
     :type df: pandas.DataFrame
     :param filename: name of the file being integrated.
@@ -55,6 +40,7 @@ def database_loading_MS1(
                     Precursor_MZ=row.get("Precursor_MZ"),
                     MS_level=row.get("MS_level"),
                     Ionisation_mode=row.get("Ionisation_mode"),
+                    Adduct=row.get("Adduct"),
                     Num_Peaks=row.get("Num_Peaks"),
                     Neutral_mass=row.get("Neutral_mass"),
                     RT=row.get("RT") if pd.notna(row.get("RT")) else None,
@@ -101,8 +87,10 @@ def database_loading_MS1(
             logger.error(f"Error during integration: {e}")
             raise
 
+    backup_path = backup_database(label=filename)
+
     first_row = df.iloc[0]
-    _history(
+    append_history(
         {
             "filename": filename,
             "row_file": file_row_name,
@@ -112,5 +100,6 @@ def database_loading_MS1(
             "num_rows": len(df),
             "detection_ids": detection_ids,
             "integrator": integrator,
+            "backup": backup_path.name,
         }
     )
