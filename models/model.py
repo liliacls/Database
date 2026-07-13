@@ -26,11 +26,11 @@ class Detection(Base):
     Detection_ID: Mapped[int] = mapped_column(primary_key=True)
 
     Precursor_MZ: Mapped[float] = mapped_column()       # m/z of the ion (Da) - called "precursor" for consistency with MS2, but in MS1 it's not a true precursor since there is no fragmentation
-    MS_level: Mapped[str] = (mapped_column)           # "MS1" (precursor only) or "MS2" (with fragment spectrum)
+    MS_level: Mapped[str] = mapped_column()           # "MS1" (precursor only) or "MS2" (with fragment spectrum)
     Ionisation_mode: Mapped[str] = mapped_column()      # "Positive" or "Negative"
     Adduct: Mapped[str] = mapped_column()               # precursor adduct
-    Num_Peaks: Mapped[int | None] = (mapped_column)   # number of fragment (MS2 only)
-    Neutral_mass: Mapped[float] = (mapped_column)     # neutral mass derived from Precursor_MZ and Adduct (Da)
+    Num_Peaks: Mapped[int | None] = mapped_column()   # number of fragment (MS2 only)
+    Neutral_mass: Mapped[float] = mapped_column()     # neutral mass derived from Precursor_MZ and Adduct (Da)
     RT: Mapped[float | None] = mapped_column()          # retention time (minutes)
     CCS: Mapped[float | None] = mapped_column()         # collision cross section (Ų)
 
