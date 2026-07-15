@@ -191,7 +191,7 @@ def DB_MS2(
     :raises Exception: SQLAlchemy rollback if an insertion error occurs.
     """
     logger.info(f"Starting MS2 integration - {len(scans)} scans to insert.")
-    detection_ids = []
+    detections = []
 
     with Session(get_engine()) as session:
         try:
@@ -206,8 +206,6 @@ def DB_MS2(
                     Molecular_weight=scan["molecular_weight"],
                     Monoisotopic_mass=scan["monoisotopic_mass"],
                 )
-                session.add(lipid)
-                session.flush()
 
                 detection = Detection(
                     Precursor_MZ=scan["precursor_mz"],
@@ -219,23 +217,24 @@ def DB_MS2(
                     RT=scan.get("rt"),
                     CCS=scan.get("ccs"),
                 )
+
+                annotation = Annotation(lipid=lipid, detection=detection)
+
+                session.add(lipid)
                 session.add(detection)
-                session.flush()
-                detection_ids.append(detection.Detection_ID)
+                session.add(annotation)
+                detections.append(detection)
 
                 for mz, intensity in scan["fragments"]:
                     fragment = Fragment(
-                        Detection_id=detection.Detection_ID,
+                        detection=detection,
                         MZ=mz,
                         Intensity=intensity,
                     )
                     session.add(fragment)
 
-                annotation = Annotation(
-                    Lipid_id=lipid.Lipid_ID,
-                    Detection_id=detection.Detection_ID,
-                )
-                session.add(annotation)
+            session.flush()
+            detection_ids = [detection.Detection_ID for detection in detections]
 
             session.commit()
             logger.info(f"MS2 integration completed: {len(scans)} scans inserted.")

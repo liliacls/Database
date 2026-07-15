@@ -31,7 +31,7 @@ def DB_MS1(
     :raises Exception: on error no row is committed (automatic ROLLBACK) and the error is logged.
     """
     logger.info(f"Starting integration - {len(df)} rows to insert.")
-    detection_ids = []
+    detections = []
     with Session(get_engine()) as session:
         try:
             for _, row in df.iterrows():
@@ -45,9 +45,6 @@ def DB_MS1(
                     RT=row.get("RT") if pd.notna(row.get("RT")) else None,
                     CCS=row.get("CCS") if pd.notna(row.get("CCS")) else None,
                 )
-                session.add(detection)
-                session.flush()
-                detection_ids.append(detection.Detection_ID)
 
                 lipid = Lipid(
                     Lipid_name=row.get("Lipid_Name"),
@@ -70,14 +67,16 @@ def DB_MS1(
                     Molecular_weight=row.get("Molecular_weight"),
                     Monoisotopic_mass=row.get("Monoisotopic_mass"),
                 )
-                session.add(lipid)
-                session.flush()
 
-                annotation = Annotation(
-                    Lipid_id=lipid.Lipid_ID,
-                    Detection_id=detection.Detection_ID,
-                )
+                annotation = Annotation(lipid=lipid, detection=detection)
+
+                session.add(detection)
+                session.add(lipid)
                 session.add(annotation)
+                detections.append(detection)
+
+            session.flush()
+            detection_ids = [detection.Detection_ID for detection in detections]
 
             session.commit()
             logger.info(f"Integration completed: {len(df)} rows inserted successfully.")
