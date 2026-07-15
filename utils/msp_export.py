@@ -1,28 +1,24 @@
-"""
-msp_export.py
--------------
-Génère le contenu d'un fichier .msp à partir des annotations MS2 filtrées.
-"""
-
 from sqlalchemy.orm import Session, joinedload
-from utils.precursor_type import precursor_type
-
 from models.model import Annotation, Detection
 
+def generate_msp(
+    engine,
+    categories: list,
+    classes: list,
+    sub_classes: list,
+    mz_range: tuple,
+) -> str:
+    """ Returns a string in .msp format for MS2 detections matching the filters.
 
-def generate_msp(engine, categories: list, classes: list, sub_classes: list, mz_range: tuple) -> str:
-    """
-    Retourne une chaîne au format .msp pour les détections MS2 correspondant aux filtres.
-
-    :param engine: moteur SQLAlchemy connecté à la base de données.
-    :param categories: liste de catégories lipidiques sélectionnées (vide = toutes).
-    :param classes: liste de classes lipidiques sélectionnées (vide = toutes).
-    :param sub_classes: liste de sous-classes lipidiques sélectionnées (vide = toutes).
-    :param mz_range: tuple (mz_min, mz_max) pour filtrer sur le Precursor_MZ.
-    :return: fichier .msp prêt à être téléchargé.
+    :param engine: engine: SQLAlchemy engine connected to the database.
+    :param categories: selected lipid category list (empty = all).
+    :param classes: selected lipid class list (empty = all).
+    :param sub_classes: selected lipid subclass list (empty = all).
+    :param mz_range: tuple (mz_min, mz_max) for filtering on Precursor_MZ.
+    :return: .msp file ready to be downloaded.
     :rtype: str
     """
-    
+
     with Session(engine) as session:
         annotations = (
             session.query(Annotation)
@@ -51,15 +47,12 @@ def generate_msp(engine, categories: list, classes: list, sub_classes: list, mz_
         if not d.fragments:
             continue
 
-        ptype = precursor_type(d.Neutral_mass, d.Precursor_MZ)
-
         lines.append(f"Name: {l.Lipid_name}")
         lines.append(f"PrecursorMZ: {d.Precursor_MZ}")
-        lines.append(f"Precursor_type: {ptype}")
         lines.append(f"MW: {int(l.Molecular_weight)}")
         lines.append(f"ExactMass: {d.Neutral_mass}")
         lines.append(f"Num Peaks: {d.Num_Peaks}")
-        
+
         for frag in d.fragments:
             lines.append(f"{frag.MZ} {int(frag.Intensity)}")
         lines.append("")
