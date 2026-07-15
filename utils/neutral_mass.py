@@ -1,16 +1,54 @@
 import math
 
+PROTON_MASS = 1.007276
+AMMONIUM_MASS = 18.033823
 
-def neutral_mass(Precursor_MZ: float, ion_mode: str) -> float:
+ADDUCT_SHIFTS = {
+    "[M+H]+": PROTON_MASS,
+    "[M+NH4]+": AMMONIUM_MASS,
+    "[M-H]-": PROTON_MASS,
+}
+
+ADDUCT_SIGNS = {
+    "[M+H]+": -1,
+    "[M+NH4]+": -1,
+    "[M-H]-": 1,
+}
+
+def adduct(raw_adduct) -> str:
     """
-    Calculate the neutral mass from the precursor m/z ratio and the ionization mode specified in step 1 of Integration page
+    Validate and normalize a raw adduct value into one of the standard adduct strings. The adduct is required for the neutral mass calculation 
+    and the completion of the "Adduct" column in the output table.
 
-    :param Precursor_MZ: m/z ratio of the precursor.
+    :param raw_adduct: raw value to resolve
+    :raises ValueError: if raw_adduct is missing or not a recognized adduct.
+    :return: standard adduct string
+    :rtype: str
+    """
+    if (
+        raw_adduct is None
+        or (isinstance(raw_adduct, float) and math.isnan(raw_adduct))
+        or str(raw_adduct).strip() == ""
+    ):
+        raise ValueError(f"Adduct is required. Accepted values : {', '.join(ADDUCT_SHIFTS)}.")
+
+    value = str(raw_adduct).strip()
+    normalized = {a.upper(): a for a in ADDUCT_SHIFTS}.get(value.upper())
+    if normalized is None:
+        raise ValueError(
+            f"Unsupported adduct '{raw_adduct}'. Accepted values : {', '.join(ADDUCT_SHIFTS)}."
+        )
+    return normalized
+
+def _mz(Precursor_MZ: float) -> float:
+    """
+    Validate and normalize a precursor m/z value.
+
+    :param Precursor_MZ: m/z ratio of the precursor to validate.
     :type Precursor_MZ: float
-    :param ion_mode: ionization mode "Positive" or "Negative"
-    :type ion_mode: str
-    :raises ValueError: if Precursor_MZ is NaN or not strictly positive, or if ion_mode is neither "Positive" nor "Negative".
-    :return: neutral mass in Daltons, rounded to 6 decimal places.
+    :raises ValueError: if Precursor_MZ cannot be converted to float, is NaN, or is not
+        strictly positive.
+    :return: the validated m/z value, as a float.
     :rtype: float
     """
     mz = float(Precursor_MZ)
@@ -21,25 +59,41 @@ def neutral_mass(Precursor_MZ: float, ion_mode: str) -> float:
     if mz <= 0:
         raise ValueError(f"Precursor_MZ must be strictly positive : {mz}")
 
-    if not isinstance(ion_mode, str):
+    return mz
+
+
+def _validate_adduct(adduct: str) -> str:
+    """
+    Validate that an adduct string is one of the known standard adducts.
+
+    :param adduct: adduct string to validate
+    :type adduct: str
+    :raises ValueError: if adduct is not a string or is not a recognized adduct.
+    :return: the validated adduct string, unchanged.
+    :rtype: str
+    """
+    if not isinstance(adduct, str) or adduct not in ADDUCT_SHIFTS:
         raise ValueError(
-            f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'."
+            f"adduct unknown : {adduct!r}. Accepted values : {list(ADDUCT_SHIFTS)}."
         )
 
-    mode = ion_mode.strip().capitalize()
+    return adduct
 
-    # Proton mass in Da
-    masse_proton = 1.007276
+def neutral_mass(Precursor_MZ: float, adduct: str) -> float:
+    """
+    Calculate the neutral mass from the precursor m/z ratio and the precursor adduct.
 
-    # In positive mode, the molecule has gained a proton, so subtract it to get the neutral mass
-    # [M+H]+ : M = MZ - proton
-    if mode == "Positive":
-        return round(mz - masse_proton, 6)
-    # In negative mode, the molecule has lost a proton, so add it to get the neutral mass
-    # [M-H]- : M = MZ + proton
-    elif mode == "Negative":
-        return round(mz + masse_proton, 6)
-    else:
-        raise ValueError(
-            f"ion_mode unknown : {ion_mode!r}. Accepted values : 'Positive' or 'Negative'."
-        )
+    :param Precursor_MZ: m/z ratio of the precursor.
+    :type Precursor_MZ: float
+    :param adduct: precursor adduct
+    :type adduct: str
+    :return: neutral mass in Daltons, rounded to 6 decimal places.
+    :rtype: float
+    """
+    mz = _mz(Precursor_MZ)
+    adduct = _validate_adduct(adduct)
+
+    shift = ADDUCT_SHIFTS[adduct]
+    sign = ADDUCT_SIGNS[adduct]
+
+    return round(mz + sign * shift, 6)
