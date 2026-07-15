@@ -1,13 +1,3 @@
-"""
-config.py
------------
-Configuration file for the BacLipidDB application.
-
-# Documentation :
-# - @st.cache_resource : https://docs.streamlit.io/1.55.0/develop/api-reference/caching-and-state/st.cache_resource#input-widgets
-# - create_engine : https://docs.sqlalchemy.org/en/21/core/engines.html
-"""
-
 from pathlib import Path
 import streamlit as st
 from sqlalchemy import create_engine
