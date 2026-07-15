@@ -1,4 +1,4 @@
-import json
+import colorsys
 import logging
 import re
 import streamlit as st
@@ -8,23 +8,28 @@ import plotly.graph_objects as go
 from sqlalchemy.orm import Session, joinedload
 
 from models.model import Annotation
-from config import get_engine, HISTORY_PATH, PROJECT_ROOT
+from config import get_engine, PROJECT_ROOT
+from utils.history import load_history
 
 logger = logging.getLogger(__name__)
 
-# Distinct pastel colors used to tag "Full view" rows by import batch
-PALETTE = [
-    "#FFB3B3", "#FFD9B3", "#FFFCB3", "#D4FFB3", "#B3FFD1",
-    "#B3FFF6", "#B3E0FF", "#B3C2FF", "#D4B3FF", "#FFB3F0",
-    "#FF8080", "#FFBE80", "#FFF980", "#AAFF80", "#80FFC0",
-    "#80FFF2", "#80CCFF", "#809FFF", "#BE80FF", "#FF80E8",
-    "#FFCCD5", "#FFE8CC", "#FFFBCC", "#DFFFCC", "#CCFFE8",
-    "#CCFFFB", "#CCE8FF", "#CCD5FF", "#DFCCFF", "#FFCCF9",
-    "#E8A0A0", "#E8C4A0", "#E8E7A0", "#C5E8A0", "#A0E8BE",
-    "#A0E8E3", "#A0CBE8", "#A0AEE8", "#C5A0E8", "#E8A0DC",
-    "#FFC4A0", "#E8D5A0", "#D5E8A0", "#A0D5E8", "#A0B8E8",
-    "#D5A0E8", "#E8A0C4", "#C4E8A0", "#A0E8C4", "#E8C4D5",
-]
+_GOLDEN_RATIO_CONJUGATE = 0.6180339887498949
+
+
+def _pastel_color(index: int) -> str:
+    """Generate a pastel color for a batch index, without repeating a fixed palette.
+
+    Hues are spaced using the golden angle so consecutive indices stay visually
+    distinct even as the number of import batches grows unbounded.
+
+    :param index: batch index (any non-negative integer).
+    :type index: int
+    :return: hex color string, e.g. "#ffb3b3".
+    :rtype: str
+    """
+    hue = (index * _GOLDEN_RATIO_CONJUGATE) % 1.0
+    r, g, b = colorsys.hls_to_rgb(hue, 0.85, 0.55)
+    return "#{:02x}{:02x}{:02x}".format(round(r * 255), round(g * 255), round(b * 255))
 
 logo_path = PROJECT_ROOT / "assets" / "DB.svg"
 
@@ -67,23 +72,10 @@ table = st.radio(
 st.divider()
 
 
-def _load_history() -> list[dict]:
-    """Load the import history from history.json.
-
-    :return: list of import records, or an empty list if the file does not exist or is empty.
-    :rtype: list[dict]
-    """
-    if not HISTORY_PATH.exists():
-        return []
-    with open(HISTORY_PATH, "r", encoding="utf-8") as f:
-        content = f.read().strip()
-        return json.loads(content) if content else []
-
-
 def _formula(formula: str) -> dict:
     """Parse a chemical formula into a dict of element symbol -> atom count.
 
-    :param formula: chemical formula, e.g. "C40H80NO8P".
+    :param formula: chemical formula
     :type formula: str
     :return: mapping of element symbol to atom count.
     :rtype: dict
@@ -95,12 +87,12 @@ def _formula(formula: str) -> dict:
     return counts
 
 
-def _detection_batch_map(history: list[dict]) -> dict[int, int]:
+def _batch_map(history: list[dict]) -> dict[int, int]:
     """Map each Detection_ID to the index of the import batch it belongs to.
 
-    Used to color-code "Full view" rows by import batch (see PALETTE).
+    Used to color-code "Full view" rows by import batch (see _pastel_color).
 
-    :param history: import history, as returned by _load_history().
+    :param history: import history, as returned by load_history().
     :type history: list[dict]
     :return: mapping of Detection_ID to batch index.
     :rtype: dict[int, int]
@@ -116,7 +108,7 @@ try:
     if table == "History":
 
         # Function to load the import history from history.json and display it in a table
-        history = _load_history()
+        history = load_history()
         if not history:
             st.info("No imports recorded yet.")
         else:
@@ -149,6 +141,7 @@ try:
                     "Detection_ID":      a.detection.Detection_ID,
                     "Lipid_name":        a.lipid.Lipid_name,
                     "Formula":           a.lipid.Formula,
+                    "FA_composition":    a.lipid.FA_composition,
                     "Lipid_class":       a.lipid.Lipid_class,
                     "Lipid_subclass":    a.lipid.Lipid_subclass,
                     "Lipid_category":    a.lipid.Lipid_category,
@@ -161,7 +154,6 @@ try:
                     "Num_Peaks":         a.detection.Num_Peaks,
                     "RT":                a.detection.RT,
                     "CCS":               a.detection.CCS,
-                    "Confidence_level":  a.Confidence_level,
                 }
                 for a in results
             ])
@@ -170,15 +162,15 @@ try:
         if df.empty:
             st.info("This table contains no data yet.")
         else:
-            history = _load_history()
-            id_caption = _detection_batch_map(history)
+            history = load_history()
+            id_caption = _batch_map(history)
             df = df.reset_index(drop=True)
             caption_values = df["Detection_ID"].map(id_caption).values
 
             columns = {
                 "Precursor_MZ":      st.column_config.NumberColumn(format="%.6f"),
                 "Neutral_mass":      st.column_config.NumberColumn(format="%.6f"),
-                "Molecular_weight":  st.column_config.NumberColumn(format="%.6f"),
+                "Molecular_weight":  st.column_config.NumberColumn(format="%.0f"),
                 "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f"),
                 "RT":                st.column_config.NumberColumn(format="%.4f"),
                 "CCS":               st.column_config.NumberColumn(format="%.4f"),
@@ -188,7 +180,7 @@ try:
                 caption = caption_values[row.name]
                 if pd.isna(caption):
                     return [""] * len(row)
-                batch_color = PALETTE[int(caption) % len(PALETTE)]
+                batch_color = _pastel_color(int(caption))
                 return [f"background-color: {batch_color}"] * len(row)
 
             styled = df.style.apply(color, axis=1)
@@ -197,7 +189,7 @@ try:
             if history:
                 with st.expander("color caption"):
                     for i, entry in enumerate(history):
-                        batch_color = PALETTE[i % len(PALETTE)]
+                        batch_color = _pastel_color(i)
                         submitted_by = entry.get("integrator")
                         by_suffix = f", by {submitted_by}" if submitted_by else ""
                         st.markdown(
@@ -250,8 +242,51 @@ try:
                 with col:
                     st.plotly_chart(fig_scatter, width='stretch')
 
+            # ── Graphique 2 : Mass error (ppm) vs neutral mass ──────────────────
 
-            # ── Graphique 2 : Van Krevelen (H/C vs O/C) ────────────────────────
+            df_plot = df.dropna(subset=["Neutral_mass", "Monoisotopic_mass"]).copy()
+
+            st.subheader("Mass error (ppm) vs. precursor neutral mass")
+            if df_plot.empty:
+                st.info("No rows with both Neutral_mass and Monoisotopic_mass to plot.")
+            else:
+                df_plot["Delta (Da)"] = df_plot["Neutral_mass"] - df_plot["Monoisotopic_mass"]
+                df_plot["Error (ppm)"] = (df_plot["Delta (Da)"] / df_plot["Monoisotopic_mass"]) * 1e6
+
+                fig_scatter = px.scatter(
+                    df_plot,
+                    x="Neutral_mass",
+                    y="Error (ppm)",
+                    color="Lipid_class",
+                    hover_data=["Lipid_name", "Error (ppm)"],
+                    labels={
+                        "Error (ppm)": "Mass error (ppm)",
+                        "Neutral_mass": "Precursor neutral mass (Da)",
+                    },
+                )
+            
+                _, col, _ = st.columns([1, 18, 1])
+                with col:
+                    st.plotly_chart(fig_scatter, width='stretch')
+
+                st.subheader("Mass error table")
+                df_error = (
+                    df_plot[["Lipid_name", "Formula", "Neutral_mass", "Monoisotopic_mass", "Delta (Da)", "Error (ppm)"]]
+                    .sort_values("Error (ppm)", key=lambda s: s.abs(), ascending=False)
+                    .reset_index(drop=True)
+                )
+                st.dataframe(
+                    df_error,
+                    column_config={
+                        "Neutral_mass":      st.column_config.NumberColumn(format="%.6f"),
+                        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f"),
+                        "Delta (Da)":        st.column_config.NumberColumn(format="%.6f"),
+                        "Error (ppm)":       st.column_config.NumberColumn(format="%.4f"),
+                    },
+                    width='stretch',
+                )
+
+            # ── Graphique 3 : Van Krevelen (H/C vs O/C) ────────────────────────
             df_vk = df.dropna(subset=["Formula"]).copy()
             df_vk["_atoms"] = df_vk["Formula"].apply(_formula)
             df_vk["C"] = df_vk["_atoms"].apply(lambda d: d.get("C", 0))
