@@ -17,21 +17,9 @@ def generate_msp(
     sub_classes: list[str | None],
     mz_range: tuple[float, float],
 ) -> str:
-    """Generate and cache the MSP export for MS2 detections matching the filters.
+    """Cached wrapper around utils.msp_export.generate_msp (see there for parameter details).
 
-    :param _engine: SQLAlchemy engine connected to the database (leading underscore
-        so Streamlit does not attempt to hash it as a cache key).
-    :type _engine: sqlalchemy.engine.Engine
-    :param categories: selected lipid categories (empty = all).
-    :type categories: list[str | None]
-    :param classes: selected lipid classes (empty = all).
-    :type classes: list[str | None]
-    :param sub_classes: selected lipid subclasses (empty = all).
-    :type sub_classes: list[str | None]
-    :param mz_range: (mz_min, mz_max) range used to filter on Precursor_MZ.
-    :type mz_range: tuple[float, float]
-    :return: MSP-formatted string ready to be downloaded.
-    :rtype: str
+    Leading underscore on _engine so Streamlit does not attempt to hash it as a cache key.
     """
     return _generate_msp(_engine, categories, classes, sub_classes, mz_range)
 
@@ -42,9 +30,8 @@ def load_data(_engine: Engine) -> pd.DataFrame:
 
     :param _engine: SQLAlchemy engine connected to the database
     :type _engine: sqlalchemy.engine.Engine
-    :return: DataFrame with columns name, formula, Lipid_category, Lipid_class,
-             Lipid_subclass, mz, neutral_mass, MS_level, Ionisation_mode,
-             Confidence_level, RT, CCS and Num_Peaks (RT/CCS are None if not provided).
+    :return: DataFrame with columns name, formula, Lipid_category, Lipid_class, Lipid_subclass, mz, neutral_mass, MS_level, Ionisation_mode, Adduct, 
+    RT, CCS and Num_Peaks (RT/CCS are None if not provided).
     :rtype: pandas.DataFrame
     """
     with Session(_engine) as session:
@@ -66,6 +53,7 @@ def load_data(_engine: Engine) -> pd.DataFrame:
                     "neutral_mass": a.detection.Neutral_mass,
                     "MS_level": a.detection.MS_level,
                     "Ionisation_mode": a.detection.Ionisation_mode,
+                    "Adduct": a.detection.Adduct,
                     "RT": a.detection.RT,
                     "CCS": a.detection.CCS,
                     "Num_Peaks": a.detection.Num_Peaks,
@@ -95,13 +83,18 @@ with st.expander("ℹ️ How to use this page"):
     st.markdown("""
     This page lets you filter and export annotations from BacLipidDB.
 
-    1. **Filters** — narrow down the data by lipid category/class/subclass, MS level,
-       ionization mode and Precursor m/z range. Leave a filter empty to include all values.
-    2. **Preview** — check the filtered rows before exporting.
-    3. **Download** — export the filtered data :
-       - **CSV (MS1)** — precursor-only annotations, compatible with MZmine.
-       - **MSP (MS2)** — annotations with fragment spectra, in `.msp` format.
-       - **CSV (MS1 + MS2)** — combined export (only available when both levels are present).
+    1. **Filters** - narrow down the data by lipid category/class/subclass, MS level,
+       ionization mode and Precursor m/z. Leave a filter empty to include all values.
+    2. **Preview** - check the filtered rows before exporting.
+    3. **Download** - export the filtered data :
+       - **CSV (MS1 + MS2)** - all filtered annotations, in the MS1 CSV format compatible
+         with MZmine.
+       - **MSP (MS2)** - annotations with fragment spectra, in `.msp` format. RT and CCS
+         are included in the header of each entry when available.
+       - **CSV (CCS + RT)** - annotations that have both an RT and a CCS value, with
+         those columns included (only available when such rows exist). MZmine does not
+         accept a CSV for MS1 annotation where some rows have CCS/RT values and others don't, so this
+         export is kept separate from the plain CSV export above.
     """)
 
 engine = get_engine()
@@ -242,9 +235,6 @@ if df_filtered.empty:
 
 preview_columns = ["name", "formula", "mz", "MS_level", "RT", "CCS", "Num_Peaks"]
 df_preview = df_filtered[preview_columns].copy().reset_index(drop=True)
-df_preview["Num_Peaks"] = df_preview.apply(
-    lambda r: r["Num_Peaks"] if r["MS_level"] == "MS2" else None, axis=1
-)
 st.dataframe(
     df_preview,
     height=400,
@@ -257,27 +247,24 @@ st.dataframe(
 
 st.divider()
 
-ms1 = (df_filtered["MS_level"] == "MS1").any()
 ms2 = (df_filtered["MS_level"] == "MS2").any()
+rt_ccs = (df_filtered["RT"].notna() & df_filtered["CCS"].notna()).any()
 
 col_1, col_2, col_3 = st.columns(3)
 
 with col_1:
-    if ms1:
-        df_export = df_filtered[df_filtered["MS_level"] == "MS1"][
-            ["neutral_mass", "mz", "formula", "name"]
-        ].reset_index(drop=True)
-        csv = df_export.to_csv(index=False, lineterminator="\r\n")
-        st.download_button(
-            label="Download CSV (MS1)",
-            data=csv,
-            file_name=f"annotation_export_MS1_{datetime.now().strftime('%Y%m%d')}.csv",
-            mime="text/csv",
-            type="primary",
-            width="stretch",
-        )
-    else:
-        st.button("Download CSV (MS1)", disabled=True, width="stretch")
+    df_export_all = df_filtered[
+        ["neutral_mass", "mz", "formula", "name"]
+    ].reset_index(drop=True)
+    csv_all = df_export_all.to_csv(index=False, lineterminator="\r\n")
+    st.download_button(
+        label="Download CSV (MS1 + MS2)",
+        data=csv_all,
+        file_name=f"annotation_export_MS1+MS2_{datetime.now().strftime('%Y%m%d')}.csv",
+        mime="text/csv",
+        type="primary",
+        width="stretch",
+    )
 
 with col_2:
     if ms2:
@@ -300,18 +287,20 @@ with col_2:
         st.button("Download MSP (MS2)", disabled=True, width="stretch")
 
 with col_3:
-    if ms1 and ms2:
-        df_export_all = df_filtered[
-            ["neutral_mass", "mz", "formula", "name"]
-        ].reset_index(drop=True)
-        csv_all = df_export_all.to_csv(index=False, lineterminator="\r\n")
+    if rt_ccs:
+        df_export_rt_ccs = df_filtered[
+            df_filtered["RT"].notna() & df_filtered["CCS"].notna()
+        ][["neutral_mass", "mz", "formula", "name", "RT", "CCS"]].reset_index(
+            drop=True
+        )
+        csv_rt_ccs = df_export_rt_ccs.to_csv(index=False, lineterminator="\r\n")
         st.download_button(
-            label="Download CSV (MS1 + MS2)",
-            data=csv_all,
-            file_name=f"annotation_export_MS1+MS2_{datetime.now().strftime('%Y%m%d')}.csv",
+            label="Download CSV (CCS + RT)",
+            data=csv_rt_ccs,
+            file_name=f"annotation_export_CCS_RT_{datetime.now().strftime('%Y%m%d')}.csv",
             mime="text/csv",
             type="primary",
             width="stretch",
         )
     else:
-        st.button("Download CSV (MS1 + MS2)", disabled=True, width="stretch")
+        st.button("Download CSV (CCS + RT)", disabled=True, width="stretch")
