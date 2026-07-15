@@ -1,6 +1,5 @@
 from molmass import Formula
 
-
 def monoisotopic_mass(formula: str | None) -> float | None:
     """
     Compute the monoisotopic mass of the lipid from its chemical formula.

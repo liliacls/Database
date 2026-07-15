@@ -1,13 +1,5 @@
-"""
-history.py
------------
-Read/write helpers for the import history file (history.json).
-"""
-
 import json
-
 from config import HISTORY_PATH
-
 
 def load_history() -> list[dict]:
     """Load the import history.
@@ -21,7 +13,6 @@ def load_history() -> list[dict]:
         content = f.read().strip()
         return json.loads(content) if content else []
 
-
 def save_history(history: list[dict]) -> None:
     """Overwrite the import history file with the given list of entries.
 
@@ -30,7 +21,6 @@ def save_history(history: list[dict]) -> None:
     """
     with open(HISTORY_PATH, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
-
 
 def append_history(entry: dict) -> None:
     """Append a single entry to the import history file.
@@ -41,7 +31,6 @@ def append_history(entry: dict) -> None:
     history = load_history()
     history.append(entry)
     save_history(history)
-
 
 def remove_history(index: int) -> None:
     """Remove a single entry from the import history by index.

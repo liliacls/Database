@@ -8,7 +8,8 @@ def generate_msp(
     sub_classes: list,
     mz_range: tuple,
 ) -> str:
-    """ Returns a string in .msp format for MS2 detections matching the filters.
+    """ 
+    Returns a string in .msp format for MS2 detections matching the filters.
 
     :param engine: engine: SQLAlchemy engine connected to the database.
     :param categories: selected lipid category list (empty = all).

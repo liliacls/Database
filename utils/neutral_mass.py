@@ -61,7 +61,6 @@ def _mz(Precursor_MZ: float) -> float:
 
     return mz
 
-
 def _validate_adduct(adduct: str) -> str:
     """
     Validate that an adduct string is one of the known standard adducts.

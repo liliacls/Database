@@ -9,7 +9,6 @@ from utils.history import append_history
 
 logger = logging.getLogger(__name__)
 
-
 def DB_MS1(
     df: pd.DataFrame,
     filename: str,

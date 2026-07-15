@@ -3,9 +3,7 @@ import io
 import logging
 from datetime import datetime
 from pathlib import Path
-
 from sqlalchemy.orm import Session
-
 from models.model import Detection, Fragment, Lipid, Annotation
 from config import get_engine
 from utils.db_backup import backup_database
@@ -29,30 +27,27 @@ REQUIRED_SCAN_FIELDS = [
 ]
 OPTIONAL_SCAN_FIELDS = ["FA_composition", "RT", "CCS"]
 
-
 def _empty(row: list[str]) -> bool:
     """Retourne True si la ligne est vide ou ne contient que des cellules vides."""
     return not row or not row[0].strip()
 
-
 def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
     """
-    Parse un fichier MS2 (.csv/.tsv) organisé en blocs empilés et retourne une liste
-    de scans sous forme de dictionnaires.
+    Parse an MS2 file (.csv/.tsv) organized into stacked blocks and returns a list
+    of entries as dictionaries.
 
-    :param source: chemin vers le fichier .csv ou .tsv, ou objet fichier en mémoire
-        exposant `.getvalue()` (ex. `st.file_uploader`) ou `.read()`.
+    :param source: path to the .csv or .tsv file
     :type source: Path or str or file-like object
-    :param delimiter: séparateur de colonnes. Si None, déduit de l'extension/du nom du
-        fichier ("\\t" pour .tsv, "," sinon).
+    :param delimiter: column separator. If None, inferred from the file's
+        extension/name ("\\t" for .tsv, "," otherwise).
     :type delimiter: str or None
-    :return: liste de dictionnaires avec les clés "scan_id", "precursor_mz", "formula",
+    :return: list of dictionaries with the keys "scan_id", "precursor_mz", "formula",
         "lipid_name", "fa_composition", "adduct", "lipid_category", "lipid_class",
-        "lipid_subclass", "rt", "ccs", "num_peaks" et "fragments" (liste de tuples (mz, intensity)).
+        "lipid_subclass", "rt", "ccs", "num_peaks" and "fragments" (list of (mz, intensity) tuples).
     :rtype: list[dict]
-    :raises ValueError: si un bloc de scan est mal formé (champ requis manquant, RT/CCS non
-        numérique, en-tête de fragments manquant, aucun fragment trouvé, ou nombre de fragments
-        incohérent avec Num_peaks) ou si aucun scan n'est trouvé dans le fichier.
+    :raises ValueError: if a scan block is malformed (missing required field, non-numeric
+        RT/CCS, missing fragment header, no fragments found, or fragment count
+        inconsistent with Num_peaks) or if no scan is found in the file.
     """
 
     if isinstance(source, (str, Path)):
@@ -179,21 +174,21 @@ def DB_MS2(
     file_row_name: str,
 ) -> None:
     """
-    Insère des scans MS2 dans la base de données.
-    Pour chaque scan, crée et insère un enregistrement dans les tables Lipid, Detection
-    (+ ses Fragments) et Annotation.
+    Inserts MS2 scans into the database.
+    For each scan, creates and inserts a record in the Lipid, Detection
+    (+ its Fragments) and Annotation tables.
 
-    :param scans: liste de dictionnaires (voir :func:`parse_ms2_file`), où chaque scan doit
-        en plus porter les champs dérivés "molecular_weight", "monoisotopic_mass" et
-        "neutral_mass" (calculés par l'appelant).
+    :param scans: list of dictionaries (see :func:`parse_ms2_file`), where each scan must
+        also carry the derived fields "molecular_weight", "monoisotopic_mass" and
+        "neutral_mass" (computed by the caller).
     :type scans: list[dict]
-    :param filename: nom du fichier intégré.
+    :param filename: name of the integrated file.
     :type filename: str
-    :param integrator: nom de la personne réalisant l'intégration.
+    :param integrator: name of the person performing the integration.
     :type integrator: str
-    :param file_row_name: nom du fichier ayant fourni les annotations.
+    :param file_row_name: name of the file that provided the annotations.
     :type file_row_name: str
-    :raises Exception: rollback SQLAlchemy en cas de problème lors de l'insertion.
+    :raises Exception: SQLAlchemy rollback if an insertion error occurs.
     """
     logger.info(f"Starting MS2 integration - {len(scans)} scans to insert.")
     detection_ids = []
