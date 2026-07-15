@@ -51,6 +51,10 @@ def generate_msp(
         lines.append(f"PrecursorMZ: {d.Precursor_MZ}")
         lines.append(f"MW: {int(l.Molecular_weight)}")
         lines.append(f"ExactMass: {d.Neutral_mass}")
+        if d.RT is not None:
+            lines.append(f"RT: {d.RT}")
+        if d.CCS is not None:
+            lines.append(f"CCS: {d.CCS}")
         lines.append(f"Num Peaks: {d.Num_Peaks}")
 
         for frag in d.fragments:
