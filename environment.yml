@@ -6,7 +6,6 @@ dependencies:
   - pandas=2.3.3
   - sqlalchemy=2.0.48
   - streamlit=1.55.0
-  - molmass
-  - openpyxl
-  - plotly
-
+  - molmass==2026.1.8
+  - openpyxl==3.1.5
+  - plotly==6.6.0
