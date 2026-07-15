@@ -19,6 +19,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s — %(message)s",
 )
+logger = logging.getLogger(__name__)
 
 
 @st.cache_data(ttl=60)
@@ -42,6 +43,7 @@ def statistics():
         db_size = f"{size_mb:.1f} Mo" if size_mb >= 1 else f"{DBsize / 1024:.1f} Ko"
         return {"ms1": ms1, "ms2": ms2, "db_size": db_size}
     except Exception:
+        logger.exception("Unable to compute statistics")
         return None
 
 
