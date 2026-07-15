@@ -1,10 +1,12 @@
 import colorsys
+import html
 import logging
 import re
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, joinedload
 
 from models.model import Annotation
@@ -87,6 +89,49 @@ def _formula(formula: str) -> dict:
     return counts
 
 
+@st.cache_data(ttl=60)
+def load_full_view(_engine: Engine) -> pd.DataFrame:
+    """Load and cache the full joined view (Annotation + Lipid + Detection).
+
+    Leading underscore on _engine so Streamlit does not attempt to hash it as a cache key.
+
+    :param _engine: SQLAlchemy engine connected to the database
+    :type _engine: sqlalchemy.engine.Engine
+    :return: DataFrame with one row per Annotation, joined with its Lipid and Detection.
+    :rtype: pandas.DataFrame
+    """
+    with Session(_engine) as session:
+        results = (
+            session.query(Annotation)
+            .options(
+                joinedload(Annotation.lipid),
+                joinedload(Annotation.detection),
+            )
+            .all()
+        )
+        return pd.DataFrame([
+            {
+                "Detection_ID":      a.detection.Detection_ID,
+                "Lipid_name":        a.lipid.Lipid_name,
+                "Formula":           a.lipid.Formula,
+                "FA_composition":    a.lipid.FA_composition,
+                "Lipid_class":       a.lipid.Lipid_class,
+                "Lipid_subclass":    a.lipid.Lipid_subclass,
+                "Lipid_category":    a.lipid.Lipid_category,
+                "Precursor_MZ":      a.detection.Precursor_MZ,
+                "Neutral_mass":      a.detection.Neutral_mass,
+                "Molecular_weight":  a.lipid.Molecular_weight,
+                "Monoisotopic_mass": a.lipid.Monoisotopic_mass,
+                "MS_level":          a.detection.MS_level,
+                "Ionisation_mode":   a.detection.Ionisation_mode,
+                "Num_Peaks":         a.detection.Num_Peaks,
+                "RT":                a.detection.RT,
+                "CCS":               a.detection.CCS,
+            }
+            for a in results
+        ])
+
+
 def _batch_map(history: list[dict]) -> dict[int, int]:
     """Map each Detection_ID to the index of the import batch it belongs to.
 
@@ -127,36 +172,7 @@ try:
             st.dataframe(df_hist, width='stretch')
 
     elif table == "Full view":
-        with Session(engine) as session:
-            results = (
-                session.query(Annotation)
-                .options(
-                    joinedload(Annotation.lipid),
-                    joinedload(Annotation.detection),
-                )
-                .all()
-            )
-            df = pd.DataFrame([
-                {
-                    "Detection_ID":      a.detection.Detection_ID,
-                    "Lipid_name":        a.lipid.Lipid_name,
-                    "Formula":           a.lipid.Formula,
-                    "FA_composition":    a.lipid.FA_composition,
-                    "Lipid_class":       a.lipid.Lipid_class,
-                    "Lipid_subclass":    a.lipid.Lipid_subclass,
-                    "Lipid_category":    a.lipid.Lipid_category,
-                    "Precursor_MZ":      a.detection.Precursor_MZ,
-                    "Neutral_mass":      a.detection.Neutral_mass,
-                    "Molecular_weight":  a.lipid.Molecular_weight,
-                    "Monoisotopic_mass": a.lipid.Monoisotopic_mass,
-                    "MS_level":          a.detection.MS_level,
-                    "Ionisation_mode":   a.detection.Ionisation_mode,
-                    "Num_Peaks":         a.detection.Num_Peaks,
-                    "RT":                a.detection.RT,
-                    "CCS":               a.detection.CCS,
-                }
-                for a in results
-            ])
+        df = load_full_view(engine)
 
         st.subheader(f"Table : Full view - {len(df)} rows")
         if df.empty:
@@ -191,10 +207,11 @@ try:
                     for i, entry in enumerate(history):
                         batch_color = _pastel_color(i)
                         submitted_by = entry.get("integrator")
-                        by_suffix = f", by {submitted_by}" if submitted_by else ""
+                        by_suffix = f", by {html.escape(submitted_by)}" if submitted_by else ""
+                        filename = html.escape(entry.get("filename", "-"))
                         st.markdown(
                             f'<span style="background-color:{batch_color};padding:2px 12px;border-radius:4px;">'
-                            f'&nbsp;</span>&nbsp; **File {i + 1}** - {entry.get("filename", "-")} '
+                            f'&nbsp;</span>&nbsp; **File {i + 1}** - {filename} '
                             f'({entry.get("inserted", "")}, {entry.get("num_rows", "-")} rows{by_suffix})',
                             unsafe_allow_html=True,
                         )
