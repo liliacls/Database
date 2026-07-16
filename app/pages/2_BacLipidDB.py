@@ -7,36 +7,33 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session, joinedload
 
-from models.model import Annotation
 from config import get_engine, PROJECT_ROOT
+from utils.data_access import load_database
 from utils.history import load_history
 
 logger = logging.getLogger(__name__)
 
-_GOLDEN_RATIO_CONJUGATE = 0.6180339887498949
-
+GOLDEN_RATIO = 0.618
 
 def _pastel_color(index: int) -> str:
-    """Generate a pastel color for a batch index, without repeating a fixed palette.
-
-    Hues are spaced using the golden angle so consecutive indices stay visually
-    distinct even as the number of import batches grows unbounded.
+    """
+    Generate a pastel color for a batch index without cycling through a
+    fixed-size palette.
 
     :param index: batch index (any non-negative integer).
     :type index: int
-    :return: hex color string, e.g. "#ffb3b3".
+    :return: hex color string
     :rtype: str
     """
-    hue = (index * _GOLDEN_RATIO_CONJUGATE) % 1.0
+    hue = (index * GOLDEN_RATIO) % 1.0
     r, g, b = colorsys.hls_to_rgb(hue, 0.85, 0.55)
     return "#{:02x}{:02x}{:02x}".format(round(r * 255), round(g * 255), round(b * 255))
 
 logo_path = PROJECT_ROOT / "assets" / "DB.svg"
 
-_, col_center, _ = st.columns([1, 1, 1])
-with col_center:
+_, col, _ = st.columns([1, 1, 1])
+with col:
     if logo_path.exists():
         st.image(str(logo_path), width="stretch")
 
@@ -73,7 +70,6 @@ table = st.radio(
 
 st.divider()
 
-
 def _formula(formula: str) -> dict:
     """Parse a chemical formula into a dict of element symbol -> atom count.
 
@@ -88,49 +84,20 @@ def _formula(formula: str) -> dict:
             counts[element] = counts.get(element, 0) + (int(num) if num else 1)
     return counts
 
-
-@st.cache_data(ttl=60)
-def load_full_view(_engine: Engine) -> pd.DataFrame:
-    """Load and cache the full joined view (Annotation + Lipid + Detection).
-
-    Leading underscore on _engine so Streamlit does not attempt to hash it as a cache key.
+def _full_view(_engine: Engine) -> pd.DataFrame:
+    """Load the full joined view (Annotation + Lipid + Detection) with the columns shown on this page.
 
     :param _engine: SQLAlchemy engine connected to the database
     :type _engine: sqlalchemy.engine.Engine
     :return: DataFrame with one row per Annotation, joined with its Lipid and Detection.
     :rtype: pandas.DataFrame
     """
-    with Session(_engine) as session:
-        results = (
-            session.query(Annotation)
-            .options(
-                joinedload(Annotation.lipid),
-                joinedload(Annotation.detection),
-            )
-            .all()
-        )
-        return pd.DataFrame([
-            {
-                "Detection_ID":      a.detection.Detection_ID,
-                "Lipid_name":        a.lipid.Lipid_name,
-                "Formula":           a.lipid.Formula,
-                "FA_composition":    a.lipid.FA_composition,
-                "Lipid_class":       a.lipid.Lipid_class,
-                "Lipid_subclass":    a.lipid.Lipid_subclass,
-                "Lipid_category":    a.lipid.Lipid_category,
-                "Precursor_MZ":      a.detection.Precursor_MZ,
-                "Neutral_mass":      a.detection.Neutral_mass,
-                "Molecular_weight":  a.lipid.Molecular_weight,
-                "Monoisotopic_mass": a.lipid.Monoisotopic_mass,
-                "MS_level":          a.detection.MS_level,
-                "Ionisation_mode":   a.detection.Ionisation_mode,
-                "Num_Peaks":         a.detection.Num_Peaks,
-                "RT":                a.detection.RT,
-                "CCS":               a.detection.CCS,
-            }
-            for a in results
-        ])
-
+    return load_database(_engine)[[
+        "Detection_ID", "Lipid_name", "Formula", "FA_composition", "Lipid_class",
+        "Lipid_subclass", "Lipid_category", "Precursor_MZ", "Adduct", "Neutral_mass",
+        "Molecular_weight", "Monoisotopic_mass", "MS_level", "Ionisation_mode",
+        "Num_Peaks", "RT", "CCS",
+    ]]
 
 def _batch_map(history: list[dict]) -> dict[int, int]:
     """Map each Detection_ID to the index of the import batch it belongs to.
@@ -148,11 +115,9 @@ def _batch_map(history: list[dict]) -> dict[int, int]:
             mapping[detection_id] = batch_id
     return mapping
 
-
 try:
     if table == "History":
 
-        # Function to load the import history from history.json and display it in a table
         history = load_history()
         if not history:
             st.info("No imports recorded yet.")
@@ -172,7 +137,7 @@ try:
             st.dataframe(df_hist, width='stretch')
 
     elif table == "Full view":
-        df = load_full_view(engine)
+        df = _full_view(engine)
 
         st.subheader(f"Table : Full view - {len(df)} rows")
         if df.empty:
@@ -192,14 +157,14 @@ try:
                 "CCS":               st.column_config.NumberColumn(format="%.4f"),
             }
 
-            def color(row):
+            def _color(row):
                 caption = caption_values[row.name]
                 if pd.isna(caption):
                     return [""] * len(row)
                 batch_color = _pastel_color(int(caption))
                 return [f"background-color: {batch_color}"] * len(row)
 
-            styled = df.style.apply(color, axis=1)
+            styled = df.style.apply(_color, axis=1)
             st.dataframe(styled, column_config=columns, width='stretch')
 
             if history:
