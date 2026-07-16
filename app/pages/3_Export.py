@@ -1,13 +1,10 @@
 import streamlit as st
 import pandas as pd
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session
 from datetime import datetime
-
-from models.model import Annotation
 from config import get_engine
+from utils.data_access import load_database
 from utils.msp_export import generate_msp as _generate_msp
-
 
 @st.cache_data(ttl=60)
 def generate_msp(
@@ -16,52 +13,32 @@ def generate_msp(
     classes: list[str | None],
     sub_classes: list[str | None],
     mz_range: tuple[float, float],
+    ionisation_modes: list[str],
 ) -> str:
-    """Cached wrapper around utils.msp_export.generate_msp (see there for parameter details).
+    """ Cached wrapper around utils.msp_export.generate_msp (see there for parameter details)."""
+    return _generate_msp(_engine, categories, classes, sub_classes, mz_range, ionisation_modes)
 
-    Leading underscore on _engine so Streamlit does not attempt to hash it as a cache key.
-    """
-    return _generate_msp(_engine, categories, classes, sub_classes, mz_range)
-
-
-@st.cache_data(ttl=60)
 def load_data(_engine: Engine) -> pd.DataFrame:
-    """Load and cache all annotations along with their associated Lipid and Detection data.
+    """
+    Load all annotations along with their associated Lipid and Detection data.Renames load_database's columns (Lipid_name, Formula, Precursor_MZ, Neutral_mass)
+    to (name, formula, mz, neutral_mass) before selecting the columns to keep.
 
     :param _engine: SQLAlchemy engine connected to the database
     :type _engine: sqlalchemy.engine.Engine
-    :return: DataFrame with columns name, formula, Lipid_category, Lipid_class, Lipid_subclass, mz, neutral_mass, MS_level, Ionisation_mode, Adduct, 
+    :return: DataFrame with columns name, formula, Lipid_category, Lipid_class, Lipid_subclass, mz, neutral_mass, MS_level, Ionisation_mode, Adduct,
     RT, CCS and Num_Peaks (RT/CCS are None if not provided).
     :rtype: pandas.DataFrame
     """
-    with Session(_engine) as session:
-        results = (
-            session.query(Annotation)
-            .join(Annotation.lipid)
-            .join(Annotation.detection)
-            .all()
-        )
-        return pd.DataFrame(
-            [
-                {
-                    "name": a.lipid.Lipid_name,
-                    "formula": a.lipid.Formula,
-                    "Lipid_category": a.lipid.Lipid_category,
-                    "Lipid_class": a.lipid.Lipid_class,
-                    "Lipid_subclass": a.lipid.Lipid_subclass,
-                    "mz": a.detection.Precursor_MZ,
-                    "neutral_mass": a.detection.Neutral_mass,
-                    "MS_level": a.detection.MS_level,
-                    "Ionisation_mode": a.detection.Ionisation_mode,
-                    "Adduct": a.detection.Adduct,
-                    "RT": a.detection.RT,
-                    "CCS": a.detection.CCS,
-                    "Num_Peaks": a.detection.Num_Peaks,
-                }
-                for a in results
-            ]
-        )
-
+    df = load_database(_engine).rename(columns={
+        "Lipid_name": "name",
+        "Formula": "formula",
+        "Precursor_MZ": "mz",
+        "Neutral_mass": "neutral_mass",
+    })
+    return df[[
+        "name", "formula", "Lipid_category", "Lipid_class", "Lipid_subclass",
+        "mz", "neutral_mass", "MS_level", "Ionisation_mode", "Adduct", "RT", "CCS", "Num_Peaks",
+    ]]
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
@@ -274,6 +251,7 @@ with col_2:
             classes=[None if c == "(None)" else c for c in selected_classes],
             sub_classes=[None if c == "(None)" else c for c in selected_sub_classes],
             mz_range=mz_range,
+            ionisation_modes=ionisation_modes,
         )
         st.download_button(
             label="Download MSP (MS2)",
