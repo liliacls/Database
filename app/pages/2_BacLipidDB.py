@@ -71,7 +71,8 @@ table = st.radio(
 st.divider()
 
 def _formula(formula: str) -> dict:
-    """Parse a chemical formula into a dict of element symbol -> atom count.
+    """
+    Parse a chemical formula into a dict of element symbol -> atom count.
 
     :param formula: chemical formula
     :type formula: str
@@ -85,7 +86,8 @@ def _formula(formula: str) -> dict:
     return counts
 
 def _full_view(_engine: Engine) -> pd.DataFrame:
-    """Load the full joined view (Annotation + Lipid + Detection) with the columns shown on this page.
+    """
+    Load the full joined view (Annotation + Lipid + Detection) with the columns shown on this page.
 
     :param _engine: SQLAlchemy engine connected to the database
     :type _engine: sqlalchemy.engine.Engine
@@ -100,7 +102,8 @@ def _full_view(_engine: Engine) -> pd.DataFrame:
     ]]
 
 def _batch_map(history: list[dict]) -> dict[int, int]:
-    """Map each Detection_ID to the index of the import batch it belongs to.
+    """
+    Map each Detection_ID to the index of the import batch it belongs to.
 
     Used to color-code "Full view" rows by import batch (see _pastel_color).
 
