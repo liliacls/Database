@@ -28,7 +28,7 @@ REQUIRED_SCAN_FIELDS = [
 OPTIONAL_SCAN_FIELDS = ["FA_composition", "RT", "CCS"]
 
 def _empty(row: list[str]) -> bool:
-    """Retourne True si la ligne est vide ou ne contient que des cellules vides."""
+    """Returns True if the row is empty or contains only empty cells."""
     return not row or not row[0].strip()
 
 def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
@@ -83,7 +83,7 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
         while i < n and tuple(c.strip() for c in rows[i][:2]) != FRAGMENT_HEADER:
             if _empty(rows[i]):
                 raise ValueError(
-                    f"En-tête 'm/z' / 'Intensity' non trouvé avant une ligne vide dans le bloc '{first_cell}'."
+                    f"'m/z' / 'Intensity' header not found before an empty row in block '{first_cell}'."
                 )
             label = rows[i][0].strip()
             value = rows[i][1].strip() if len(rows[i]) > 1 else ""
@@ -91,27 +91,27 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
             i += 1
 
         if i >= n:
-            raise ValueError(f"En-tête 'm/z' / 'Intensity' attendu pour le scan '{first_cell}'.")
+            raise ValueError(f"'m/z' / 'Intensity' header expected for scan '{first_cell}'.")
         i += 1
 
         missing = [f for f in REQUIRED_SCAN_FIELDS if not fields.get(f)]
         if missing:
             raise ValueError(
-                f"Champ(s) manquant(s) pour le scan '{first_cell}' : {', '.join(missing)}."
+                f"Missing field(s) for scan '{first_cell}': {', '.join(missing)}."
             )
 
         try:
             precursor_mz = float(fields["Precursor_MZ"])
         except ValueError:
             raise ValueError(
-                f"Precursor_MZ invalide pour le scan '{first_cell}' : '{fields['Precursor_MZ']}'."
+                f"Invalid Precursor_MZ for scan '{first_cell}': '{fields['Precursor_MZ']}'."
             )
 
         try:
             num_peaks = int(fields["Num_peaks"])
         except ValueError:
             raise ValueError(
-                f"Num_peaks invalide pour le scan '{first_cell}' : '{fields['Num_peaks']}'."
+                f"Invalid Num_peaks for scan '{first_cell}': '{fields['Num_peaks']}'."
             )
 
         rt = None
@@ -119,14 +119,14 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
             try:
                 rt = float(fields["RT"])
             except ValueError:
-                raise ValueError(f"RT invalide pour le scan '{first_cell}' : '{fields['RT']}'.")
+                raise ValueError(f"Invalid RT for scan '{first_cell}': '{fields['RT']}'.")
 
         ccs = None
         if fields.get("CCS"):
             try:
                 ccs = float(fields["CCS"])
             except ValueError:
-                raise ValueError(f"CCS invalide pour le scan '{first_cell}' : '{fields['CCS']}'.")
+                raise ValueError(f"Invalid CCS for scan '{first_cell}': '{fields['CCS']}'.")
 
         fragments = []
         while i < n and not _empty(rows[i]):
@@ -135,12 +135,12 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
             i += 1
 
         if not fragments:
-            raise ValueError(f"Aucun fragment trouvé pour '{first_cell}'.")
+            raise ValueError(f"No fragments found for '{first_cell}'.")
 
         if len(fragments) != num_peaks:
             raise ValueError(
-                f"'Num_peaks'={num_peaks} ne correspond pas au nombre de fragments "
-                f"trouvés ({len(fragments)}) pour '{first_cell}'."
+                f"'Num_peaks'={num_peaks} does not match the number of fragments "
+                f"found ({len(fragments)}) for '{first_cell}'."
             )
 
         scans.append(
@@ -162,7 +162,7 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
         )
 
     if not scans:
-        raise ValueError("Aucun scan trouvé dans le fichier.")
+        raise ValueError("No scan found in the file.")
 
     return scans
 
