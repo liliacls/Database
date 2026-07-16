@@ -22,7 +22,7 @@ def get_engine():
     engine = create_engine(DB_PATH, echo=False)
 
     @event.listens_for(engine, "connect")
-    def _enable_foreign_keys(dbapi_connection, connection_record):
+    def enable_foreign_keys(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
