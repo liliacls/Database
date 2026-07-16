@@ -20,22 +20,43 @@ CHART_COLOR_SCALE = [[0, "#4292C6"], [1, "#08306B"]]
 COLOR = "#1F77B4"
 
 # session_state keys
-DF = "df"
+MS1 = "ms1"
 MS2 = "ms2"
 COLUMNS_VALID = "columns_valid"
 DF_VALID = "df_validated"
 INTEGRATION_DONE = "integration_done"
 DF_COMPLETE = "df_complete"
 DF_ID = "df_file_id"
-DF_ID_MS_LEVEL = "df_file_ms_level"  # ms_level used when the currently cached file was parsed
+DF_MS_LEVEL = "df_ms_level"
 EDITOR = "editor_integration"
 UPLOADER_VERSION = "uploader_version"
 
 # Full reset (sidebar button): clears everything
-RESET_KEYS = [DF, MS2, DF_ID, DF_ID_MS_LEVEL, DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
+RESET_KEYS = [MS1, MS2, DF_ID, DF_MS_LEVEL, DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
 
 # Reset on new file upload only: keeps step 1 settings and the file itself, but clears everything computed downstream
 RELOAD_RESET_KEYS = [DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
+
+
+def _adducts(records):
+    """Resolve the adduct and neutral mass for a batch of (label, lipid_name, precursor_mz, raw_adduct) records.
+
+    :param records: iterable of (label, lipid_name, precursor_mz, raw_adduct) tuples
+    :return: (adducts, masses, error_messages) lists, aligned with records ; failed entries resolve to None
+    :rtype: tuple[list, list, list[str]]
+    """
+    adducts, masses, errors = [], [], []
+    for label, lipid_name, precursor_mz, raw_adduct in records:
+        try:
+            resolved_adduct = adduct(raw_adduct)
+            mass = neutral_mass(precursor_mz, resolved_adduct)
+        except ValueError as e:
+            errors.append(f"{label} ({lipid_name}) : {e}")
+            resolved_adduct, mass = None, None
+        adducts.append(resolved_adduct)
+        masses.append(mass)
+    return adducts, masses, errors
+
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 
@@ -47,7 +68,7 @@ step1_done = all(st.session_state.get(k) not in (None, "") for k in ["ms_level",
 with st.sidebar:
     st.markdown("### Workflow")
     st.markdown(f"{_workflow(step1_done)} Step 1 - Settings")
-    st.markdown(f"{_workflow(DF in st.session_state or MS2 in st.session_state)} Step 2 - File upload")
+    st.markdown(f"{_workflow(MS1 in st.session_state or MS2 in st.session_state)} Step 2 - File upload")
     st.markdown(f"{_workflow(st.session_state.get('columns_valid', False))} Step 3 - Verification")
     st.markdown(f"{_workflow(DF_VALID in st.session_state)} Step 4 - Completion & Validation")
     st.markdown(f"{_workflow(st.session_state.get('integration_done', False))} Step 5 - Integration")
@@ -81,7 +102,7 @@ st.html(f"""
 
 steps_status = [
     step1_done,
-    DF in st.session_state or MS2 in st.session_state,
+    MS1 in st.session_state or MS2 in st.session_state,
     st.session_state.get("columns_valid", False),
     DF_VALID in st.session_state,
     st.session_state.get("integration_done", False),
@@ -171,7 +192,7 @@ if uploaded_file is None:
 try:
     if (
         st.session_state.get(DF_ID) != uploaded_file.file_id
-        or st.session_state.get(DF_ID_MS_LEVEL) != ms_level
+        or st.session_state.get(DF_MS_LEVEL) != ms_level
     ):
 
         if ms_level == "MS2":
@@ -187,24 +208,24 @@ try:
 
         for key in RELOAD_RESET_KEYS:
             st.session_state.pop(key, None)
-        st.session_state.pop(DF if ms_level == "MS2" else MS2, None)
+        st.session_state.pop(MS1 if ms_level == "MS2" else MS2, None)
 
-        st.session_state[MS2 if ms_level == "MS2" else DF] = new_value
+        st.session_state[MS2 if ms_level == "MS2" else MS1] = new_value
         st.session_state[DF_ID] = uploaded_file.file_id
-        st.session_state[DF_ID_MS_LEVEL] = ms_level
+        st.session_state[DF_MS_LEVEL] = ms_level
         st.rerun()
 
     if ms_level == "MS2":
         st.success(f"File loaded : {uploaded_file.name} - {len(st.session_state[MS2])} scans detected.", icon="✅")
     else:
-        st.success(f"File loaded : {uploaded_file.name} - {len(st.session_state[DF])} rows detected.", icon="✅")
+        st.success(f"File loaded : {uploaded_file.name} - {len(st.session_state[MS1])} rows detected.", icon="✅")
 
 except Exception as e:
     st.error(f"Error loading file : {e}")
     st.stop()
 
 if ms_level != "MS2":
-    df = st.session_state[DF].copy()
+    df = st.session_state[MS1].copy()
 
 # ── STEP 3 ────────────────────────────────────────────────────────────────────
 
@@ -325,16 +346,10 @@ if DF_COMPLETE not in st.session_state:
                     )
                     st.stop()
 
-                adducts, n_mass, e_adduct = [], [], []
-                for data in ms2:
-                    try:
-                        resolved_adduct = adduct(data.get("adduct"))
-                        mass = neutral_mass(data["precursor_mz"], resolved_adduct)
-                    except ValueError as e:
-                        e_adduct.append(f"Scan {data['scan_id']} ({data['lipid_name']}) : {e}")
-                        resolved_adduct, mass = None, None
-                    adducts.append(resolved_adduct)
-                    n_mass.append(mass)
+                adducts, n_mass, e_adduct = _adducts(
+                    (f"Scan {data['scan_id']}", data["lipid_name"], data["precursor_mz"], data.get("adduct"))
+                    for data in ms2
+                )
 
                 if e_adduct:
                     st.error(
@@ -359,16 +374,10 @@ if DF_COMPLETE not in st.session_state:
                     )
                     st.stop()
 
-                adducts, neutral_masses, e_adduct = [], [], []
-                for idx, row in df.iterrows():
-                    try:
-                        resolved_adduct = adduct(row.get("Adduct"))
-                        mass = neutral_mass(row["Precursor_MZ"], resolved_adduct)
-                    except ValueError as e:
-                        e_adduct.append(f"Row {idx} ({row['Lipid_Name']}) : {e}")
-                        resolved_adduct, mass = None, None
-                    adducts.append(resolved_adduct)
-                    neutral_masses.append(mass)
+                adducts, neutral_masses, e_adduct = _adducts(
+                    (f"Row {idx}", row["Lipid_Name"], row["Precursor_MZ"], row.get("Adduct"))
+                    for idx, row in df.iterrows()
+                )
 
                 if e_adduct:
                     st.error(
