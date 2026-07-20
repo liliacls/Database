@@ -2,10 +2,11 @@ import logging
 
 import pandas as pd
 import streamlit as st
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
 from models.model import Annotation, Detection, Fragment, Lipid
 from config import get_engine
+from utils.data_access import load_database
 from utils.db_backup import backup_database
 from utils.history import load_history, remove_history
 from utils.molecular_weight import molecular_weight
@@ -20,8 +21,9 @@ NON_EMPTY_COLUMNS = ["Lipid_name", "Formula", "Precursor_MZ"]
 EDITABLE_LIPID_FIELDS = ["Lipid_name", "Lipid_category", "Lipid_class", "Lipid_subclass"]
 EDITABLE_DETECTION_FIELDS = ["Num_Peaks", "RT", "CCS"]
 
-EDITOR_KEY = "editor_manage"
-HISTORY_SELECT_KEY = "history_delete_select"
+EDITOR_KEY = "editor"
+HISTORY_SELECT_KEY = "history_select"
+HISTORY_DELETE_KEY = "history_delete"
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
@@ -62,45 +64,23 @@ st.header(":blue[Edit & delete records]", divider="blue", text_alignment="left")
 
 
 def _load_database() -> pd.DataFrame:
-    """Load the joined Detection/Lipid/Annotation view used for editing.
+    """
+    Load the joined table  (Annotation + Lipid + Detection) view used for editing.
 
     :return: one row per annotation, with the IDs needed to map edits back to the database.
     :rtype: pandas.DataFrame
     """
-    with Session(engine) as session:
-        results = (
-            session.query(Annotation)
-            .options(joinedload(Annotation.lipid), joinedload(Annotation.detection))
-            .order_by(Annotation.Annotation_ID)
-            .all()
-        )
-        return pd.DataFrame([
-            {
-                "Annotation_ID":     a.Annotation_ID,
-                "Detection_ID":      a.detection.Detection_ID,
-                "Lipid_ID":          a.lipid.Lipid_ID,
-                "Lipid_name":        a.lipid.Lipid_name,
-                "Formula":           a.lipid.Formula,
-                "Lipid_category":    a.lipid.Lipid_category,
-                "Lipid_class":       a.lipid.Lipid_class,
-                "Lipid_subclass":    a.lipid.Lipid_subclass,
-                "Precursor_MZ":      a.detection.Precursor_MZ,
-                "Ionisation_mode":   a.detection.Ionisation_mode,
-                "Adduct":            a.detection.Adduct,
-                "Neutral_mass":      a.detection.Neutral_mass,
-                "Molecular_weight":  a.lipid.Molecular_weight,
-                "Monoisotopic_mass": a.lipid.Monoisotopic_mass,
-                "MS_level":          a.detection.MS_level,
-                "Num_Peaks":         a.detection.Num_Peaks,
-                "RT":                a.detection.RT,
-                "CCS":               a.detection.CCS,
-            }
-            for a in results
-        ])
+    return load_database(engine)[[
+        "Annotation_ID", "Detection_ID", "Lipid_ID", "Lipid_name", "Formula",
+        "Lipid_category", "Lipid_class", "Lipid_subclass", "Precursor_MZ",
+        "Ionisation_mode", "Adduct", "Neutral_mass", "Molecular_weight",
+        "Monoisotopic_mass", "MS_level", "Num_Peaks", "RT", "CCS",
+    ]]
 
 
 def _database_modif(original: pd.DataFrame, edited: pd.DataFrame) -> dict:
-    """Diff the edited table against the original one and compute an update/delete plan.
+    """
+    Diff the edited table against the original one and compute an update/delete plan.
 
     Rows ticked for deletion are skipped entirely. For the remaining rows, a changed
     **Formula** recomputes Molecular_weight/Monoisotopic_mass - mirroring the automatic
@@ -117,10 +97,10 @@ def _database_modif(original: pd.DataFrame, edited: pd.DataFrame) -> dict:
     updates, deletes, errors = [], [], []
 
     for idx in edited.index:
-        row, orig = edited.loc[idx], original.loc[idx]
+        new, orig = edited.loc[idx], original.loc[idx]
         label = orig["Lipid_name"]
 
-        if bool(row["Delete"]):
+        if bool(new["Delete"]):
             deletes.append({
                 "Annotation_ID": int(orig["Annotation_ID"]),
                 "Detection_ID":  int(orig["Detection_ID"]),
@@ -130,20 +110,20 @@ def _database_modif(original: pd.DataFrame, edited: pd.DataFrame) -> dict:
             continue
 
         for col in NON_EMPTY_COLUMNS:
-            if pd.isna(row[col]) or str(row[col]).strip() == "":
+            if pd.isna(new[col]) or str(new[col]).strip() == "":
                 errors.append(f"Row '{label}' : '{col}' cannot be empty.")
 
         def _changed(col):
-            return not (pd.isna(row[col]) and pd.isna(orig[col])) and row[col] != orig[col]
+            return not (pd.isna(new[col]) and pd.isna(orig[col])) and new[col] != orig[col]
 
-        lipid_fields = {col: row[col] for col in EDITABLE_LIPID_FIELDS if _changed(col)}
-        detection_fields = {col: row[col] for col in EDITABLE_DETECTION_FIELDS if _changed(col)}
+        lipid_fields = {col: new[col] for col in EDITABLE_LIPID_FIELDS if _changed(col)}
+        detection_fields = {col: new[col] for col in EDITABLE_DETECTION_FIELDS if _changed(col)}
 
         if _changed("Formula"):
-            lipid_fields["Formula"] = row["Formula"]
-            mw, mm = molecular_weight(row["Formula"]), monoisotopic_mass(row["Formula"])
+            lipid_fields["Formula"] = new["Formula"]
+            mw, mm = molecular_weight(new["Formula"]), monoisotopic_mass(new["Formula"])
             if mw is None or mm is None:
-                errors.append(f"Row '{label}' : cannot compute masses for formula '{row['Formula']}'.")
+                errors.append(f"Row '{label}' : cannot compute masses for formula '{new['Formula']}'.")
             else:
                 lipid_fields["Molecular_weight"] = mw
                 lipid_fields["Monoisotopic_mass"] = mm
@@ -159,7 +139,7 @@ def _database_modif(original: pd.DataFrame, edited: pd.DataFrame) -> dict:
     return {"updates": updates, "deletes": deletes, "errors": errors}
 
 
-def _apply_plan(plan: dict) -> None:
+def _apply(plan: dict) -> None:
     """Apply a validated update/delete plan to the database.
 
     :param plan: plan as returned by _build_plan(), assumed free of errors.
@@ -178,6 +158,7 @@ def _apply_plan(plan: dict) -> None:
             if u["detection_fields"]:
                 session.query(Detection).filter(Detection.Detection_ID == u["Detection_ID"]).update(u["detection_fields"], synchronize_session=False)
         session.commit()
+    load_database.clear()
 
 
 @st.dialog("Confirm changes")
@@ -195,7 +176,7 @@ def _confirm_apply(plan: dict) -> None:
 
     c1, c2 = st.columns(2)
     if c1.button("Confirm", type="primary", width="stretch"):
-        _apply_plan(plan)
+        _apply(plan)
         st.session_state.pop("pending_plan", None)
         st.session_state.pop(EDITOR_KEY, None)
         st.success("Changes applied.")
@@ -206,20 +187,20 @@ def _confirm_apply(plan: dict) -> None:
 
 
 try:
-    df_original = _load_database()
+    df_database = _load_database()
 except Exception as e:
     logger.exception("Error loading records for editing")
     st.error(f"Error loading records : {e}")
     st.stop()
 
-if df_original.empty:
+if df_database.empty:
     st.info("This table contains no data yet.")
 else:
-    df_display = df_original.copy()
-    df_display.insert(0, "Delete", False)
+    df_new = df_database.copy()
+    df_new.insert(0, "Delete", False)
 
-    edited_df = st.data_editor(
-        df_display,
+    df_edited = st.data_editor(
+        df_new,
         width="stretch",
         num_rows="fixed",
         hide_index=True,
@@ -242,10 +223,10 @@ else:
     )
 
     if st.button("Apply changes", type="primary", width="stretch"):
-        plan = _database_modif(df_original, edited_df)
+        plan = _database_modif(df_database, df_edited)
         if plan["errors"]:
-            for err in plan["errors"]:
-                st.error(err)
+            for error in plan["errors"]:
+                st.error(error)
         elif not plan["updates"] and not plan["deletes"]:
             st.info("No changes detected.")
         else:
@@ -260,9 +241,9 @@ if "pending_plan" in st.session_state:
 st.divider()
 st.header(":blue[Delete an entire import]", divider="blue", text_alignment="left")
 
-
 def _delete_import(entry: dict, index: int) -> None:
-    """Delete every record inserted by one import batch, then drop it from the history.
+    """
+    Delete every record inserted by one import batch, then drop it from the history.
 
     :param entry: history entry to delete, as returned by load_history().
     :type entry: dict
@@ -285,6 +266,7 @@ def _delete_import(entry: dict, index: int) -> None:
             if lipid_ids:
                 session.query(Lipid).filter(Lipid.Lipid_ID.in_(lipid_ids)).delete(synchronize_session=False)
         session.commit()
+    load_database.clear()
 
     remove_history(index)
 
@@ -301,12 +283,12 @@ def _confirm_history_delete(entry: dict, index: int) -> None:
     c1, c2 = st.columns(2)
     if c1.button("Confirm deletion", type="primary", width="stretch"):
         _delete_import(entry, index)
-        st.session_state.pop("pending_history_delete", None)
+        st.session_state.pop(HISTORY_DELETE_KEY, None)
         st.session_state.pop(HISTORY_SELECT_KEY, None)
         st.success("Import deleted.")
         st.rerun()
     if c2.button("Cancel", width="stretch"):
-        st.session_state.pop("pending_history_delete", None)
+        st.session_state.pop(HISTORY_DELETE_KEY, None)
         st.rerun()
 
 
@@ -346,12 +328,12 @@ else:
         )
 
         if st.button("Delete this import", type="primary", width="stretch"):
-            st.session_state["pending_history_delete"] = selected
+            st.session_state[HISTORY_DELETE_KEY] = selected
             st.rerun()
 
-if "pending_history_delete" in st.session_state:
-    idx = st.session_state["pending_history_delete"]
+if HISTORY_DELETE_KEY in st.session_state:
+    idx = st.session_state[HISTORY_DELETE_KEY]
     if 0 <= idx < len(history):
         _confirm_history_delete(history[idx], idx)
     else:
-        st.session_state.pop("pending_history_delete", None)
+        st.session_state.pop(HISTORY_DELETE_KEY, None)
