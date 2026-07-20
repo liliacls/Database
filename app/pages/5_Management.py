@@ -22,8 +22,8 @@ EDITABLE_LIPID_FIELDS = ["Lipid_name", "Lipid_category", "Lipid_class", "Lipid_s
 EDITABLE_DETECTION_FIELDS = ["Num_Peaks", "RT", "CCS"]
 
 EDITOR_KEY = "editor"
-HISTORY_SELECT_KEY = "history_select"
-HISTORY_DELETE_KEY = "history_delete"
+HISTORY_KEY = "history_delete"
+HISTORY_DEL = "pending_history_delete"
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
@@ -272,7 +272,7 @@ def _delete_import(entry: dict, index: int) -> None:
 
 
 @st.dialog("Confirm import deletion")
-def _confirm_history_delete(entry: dict, index: int) -> None:
+def _history_del(entry: dict, index: int) -> None:
     detection_ids = entry.get("detection_ids", [])
     st.warning(
         f"This will permanently delete **{len(detection_ids)}** record(s) from "
@@ -283,12 +283,12 @@ def _confirm_history_delete(entry: dict, index: int) -> None:
     c1, c2 = st.columns(2)
     if c1.button("Confirm deletion", type="primary", width="stretch"):
         _delete_import(entry, index)
-        st.session_state.pop(HISTORY_DELETE_KEY, None)
-        st.session_state.pop(HISTORY_SELECT_KEY, None)
+        st.session_state.pop("pending_history_delete", None)
+        st.session_state.pop(HISTORY_KEY, None)
         st.success("Import deleted.")
         st.rerun()
     if c2.button("Cancel", width="stretch"):
-        st.session_state.pop(HISTORY_DELETE_KEY, None)
+        st.session_state.pop("pending_history_delete", None)
         st.rerun()
 
 
@@ -300,14 +300,14 @@ else:
     def _label(i: int) -> str:
         e = history[i]
         by = f", by {e.get('integrator')}" if e.get("integrator") else ""
-        return f"{e.get('filename', '-')} — {e.get('inserted', '-')} — {e.get('num_rows', '-')} rows{by}"
+        return f"{e.get('filename', '-')} - {e.get('inserted', '-')} - {e.get('num_rows', '-')} rows{by}"
 
     selected = st.selectbox(
         "Select an import to delete",
         options=list(range(len(history))),
         format_func=_label,
         index=None,
-        key=HISTORY_SELECT_KEY,
+        key=HISTORY_KEY,
     )
 
     if selected is not None:
@@ -328,12 +328,12 @@ else:
         )
 
         if st.button("Delete this import", type="primary", width="stretch"):
-            st.session_state[HISTORY_DELETE_KEY] = selected
+            st.session_state[HISTORY_DEL] = selected
             st.rerun()
 
-if HISTORY_DELETE_KEY in st.session_state:
-    idx = st.session_state[HISTORY_DELETE_KEY]
+if HISTORY_DEL in st.session_state:
+    idx = st.session_state[HISTORY_DEL]
     if 0 <= idx < len(history):
-        _confirm_history_delete(history[idx], idx)
+        _history_del(history[idx], idx)
     else:
-        st.session_state.pop(HISTORY_DELETE_KEY, None)
+        st.session_state.pop(HISTORY_DEL, None)
