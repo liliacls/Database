@@ -24,6 +24,12 @@ def load_database(_engine: Engine) -> pd.DataFrame:
             .order_by(Annotation.Annotation_ID)
             .all()
         )
+        columns = [
+            "Annotation_ID", "Detection_ID", "Lipid_ID", "Lipid_name", "Formula",
+            "FA_composition", "Lipid_category", "Lipid_class", "Lipid_subclass",
+            "Precursor_MZ", "Adduct", "Neutral_mass", "Molecular_weight",
+            "Monoisotopic_mass", "MS_level", "Ionisation_mode", "Num_Peaks", "RT", "CCS",
+        ]
         return pd.DataFrame([
             {
                 "Annotation_ID":     a.Annotation_ID,
@@ -47,4 +53,4 @@ def load_database(_engine: Engine) -> pd.DataFrame:
                 "CCS":               a.detection.CCS,
             }
             for a in results
-        ])
+        ], columns=columns)
