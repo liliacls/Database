@@ -16,6 +16,9 @@ REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "
 # Columns that must not contain empty values
 NON_EMPTY_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Adduct"]
 
+# Text columns stripped of stray leading/trailing whitespace
+STRIP_COLUMNS = ["Lipid_category", "Lipid_class", "Lipid_subclass"]
+
 CHART_COLOR_SCALE = [[0, "#4292C6"], [1, "#08306B"]]
 COLOR = "#1F77B4"
 
@@ -205,6 +208,11 @@ try:
             new_value = pd.read_csv(uploaded_file, sep="\t")
         else:
             new_value = pd.read_excel(uploaded_file)
+
+        if ms_level != "MS2":
+            for col in STRIP_COLUMNS:
+                if col in new_value.columns:
+                    new_value[col] = new_value[col].str.strip()
 
         for key in RELOAD_RESET_KEYS:
             st.session_state.pop(key, None)
@@ -415,7 +423,6 @@ if ms_level == "MS2":
         "Num_Peaks":         st.column_config.NumberColumn(disabled=True),
         "Ionisation_mode":   st.column_config.TextColumn(disabled=True),
         "Adduct":            st.column_config.TextColumn(disabled=True),
-        "Scan_id":           st.column_config.TextColumn(disabled=True),
     }
 else:
     editor_num_rows = "dynamic"
