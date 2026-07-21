@@ -2,17 +2,23 @@ import math
 
 PROTON_MASS = 1.007276
 AMMONIUM_MASS = 18.033823
+SODIUM_MASS = 22.989221
+POTASSIUM_MASS = 38.963158
 
 ADDUCT_SHIFTS = {
     "[M+H]+": PROTON_MASS,
     "[M+NH4]+": AMMONIUM_MASS,
     "[M-H]-": PROTON_MASS,
+    "[M+Na]+": SODIUM_MASS,
+    "[M+K]+": POTASSIUM_MASS,
 }
 
 ADDUCT_SIGNS = {
     "[M+H]+": -1,
     "[M+NH4]+": -1,
     "[M-H]-": 1,
+    "[M+Na]+": -1,
+    "[M+K]+": -1,
 }
 
 def adduct(raw_adduct) -> str:
