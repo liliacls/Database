@@ -381,13 +381,14 @@ try:
             st.info("This table contains no data yet.")
         else:
             columns = {
-                "Precursor_MZ":     st.column_config.NumberColumn(format="%.6f"),
-                "Neutral_mass":     st.column_config.NumberColumn(format="%.6f"),
-                "MZ":               st.column_config.NumberColumn(format="%.6f"),
-                "Molecular_weight": st.column_config.NumberColumn(format="%.0f"),
-                "RT":               st.column_config.NumberColumn(format="%.4f"),
-                "CCS":              st.column_config.NumberColumn(format="%.4f"),
-                "Intensity":        st.column_config.NumberColumn(format="%.6f"),
+                "Precursor_MZ":      st.column_config.NumberColumn(format="%.6f"),
+                "Neutral_mass":      st.column_config.NumberColumn(format="%.6f"),
+                "MZ":                st.column_config.NumberColumn(format="%.6f"),
+                "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f"),
+                "Molecular_weight":  st.column_config.NumberColumn(format="%.0f"),
+                "RT":                st.column_config.NumberColumn(format="%.4f"),
+                "CCS":               st.column_config.NumberColumn(format="%.4f"),
+                "Intensity":         st.column_config.NumberColumn(format="%.6f"),
             }
             st.dataframe(df, column_config=columns, width='stretch')
 
