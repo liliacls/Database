@@ -18,7 +18,7 @@ def generate_msp(
     """ Cached wrapper around utils.msp_export.generate_msp (see there for parameter details)."""
     return _generate_msp(_engine, categories, classes, sub_classes, mz_range, ionisation_modes)
 
-def load_data(_engine: Engine) -> pd.DataFrame:
+def _load_data(_engine: Engine) -> pd.DataFrame:
     """
     Load all annotations along with their associated Lipid and Detection data.Renames load_database's columns (Lipid_name, Formula, Precursor_MZ, Neutral_mass)
     to (name, formula, mz, neutral_mass) before selecting the columns to keep.
@@ -76,7 +76,7 @@ with st.expander("ℹ️ How to use this page"):
 
 engine = get_engine()
 try:
-    df_all = load_data(engine)
+    df_all = _load_data(engine)
 except Exception as e:
     st.error(f"Unable to load data from the database: {e}")
     st.stop()
@@ -251,7 +251,7 @@ with col_2:
             classes=[None if c == "(None)" else c for c in selected_classes],
             sub_classes=[None if c == "(None)" else c for c in selected_sub_classes],
             mz_range=mz_range,
-            ionisation_modes=ionisation_modes,
+            ionisation_modes=selected_ionisation_modes,
         )
         st.download_button(
             label="Download MSP (MS2)",
