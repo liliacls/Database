@@ -6,6 +6,7 @@ from models.model import Detection, Lipid, Annotation
 from config import get_engine
 from utils.db_backup import backup_database
 from utils.history import append_history
+from utils.exceptions import PostIntegrationError
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,9 @@ def DB_MS1(
     :type integrator: str
     :param file_row_name: name of the file that provided the annotations.
     :type file_row_name: str
-    :raises Exception: on error no row is committed (automatic ROLLBACK) and the error is logged.
+    :raises Exception: on insertion error no row is committed (automatic ROLLBACK) and the error is logged.
+    :raises PostIntegrationError: if the rows were committed successfully but the post-commit
+        backup or history logging failed - the data is already in the database.
     """
     logger.info(f"Starting integration - {len(df)} rows to insert.")
     detections = []
@@ -90,19 +93,26 @@ def DB_MS1(
             logger.error(f"Error during integration: {e}")
             raise
 
-    backup_path = backup_database(label=filename)
+    try:
+        backup_path = backup_database(label=filename)
 
-    first_row = df.iloc[0]
-    append_history(
-        {
-            "filename": filename,
-            "row_file": file_row_name,
-            "inserted": datetime.now().strftime("%Y-%m-%d %H:%M"),
-            "ms_level": first_row.get("MS_level"),
-            "ionisation_mode": first_row.get("Ionisation_mode"),
-            "num_rows": len(df),
-            "detection_ids": detection_ids,
-            "integrator": integrator,
-            "backup": backup_path.name,
-        }
-    )
+        first_row = df.iloc[0]
+        append_history(
+            {
+                "filename": filename,
+                "row_file": file_row_name,
+                "inserted": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                "ms_level": first_row.get("MS_level"),
+                "ionisation_mode": first_row.get("Ionisation_mode"),
+                "num_rows": len(df),
+                "detection_ids": detection_ids,
+                "integrator": integrator,
+                "backup": backup_path.name,
+            }
+        )
+    except Exception as e:
+        logger.error(f"Rows were committed but post-integration housekeeping failed: {e}")
+        raise PostIntegrationError(
+            f"Rows were committed but backup/history logging failed: {e}",
+            detection_ids,
+        ) from e

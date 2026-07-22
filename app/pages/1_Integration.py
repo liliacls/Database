@@ -7,6 +7,7 @@ from utils.loading_MS2 import ms2_parsing, DB_MS2
 from utils.molecular_weight import molecular_weight
 from utils.monoisotopic import monoisotopic_mass
 from utils.neutral_mass import neutral_mass, adduct
+from utils.exceptions import PostIntegrationError
 
 # ── Constants ────────────────────────────────────────────────────────────────────
 
@@ -515,10 +516,19 @@ if DF_VALID not in st.session_state:
     st.stop()
 
 if st.session_state.get("integration_done", False):
-    st.success(
-        "Integration already completed. Use the **Reset** button in the sidebar to start a new integration.",
-        icon="✅",
-    )
+    integration_warning = st.session_state.pop("integration_warning", None)
+    if integration_warning:
+        st.warning(
+            f"Data was integrated successfully, but a post-integration step failed : "
+            f"{integration_warning}. Do **not** re-integrate this file - the data is already "
+            f"in the database. Use the **Reset** button in the sidebar to start a new integration.",
+            icon="⚠️",
+        )
+    else:
+        st.success(
+            "Integration already completed. Use the **Reset** button in the sidebar to start a new integration.",
+            icon="✅",
+        )
     if st.session_state.pop("show_balloons", False):
         st.balloons()
 else:
@@ -560,6 +570,10 @@ else:
                     )
                 st.session_state["integration_done"] = True
                 st.session_state["show_balloons"] = True
+                st.rerun()
+            except PostIntegrationError as e:
+                st.session_state["integration_done"] = True
+                st.session_state["integration_warning"] = str(e)
                 st.rerun()
             except Exception as e:
                 st.error(f"Error during database integration : {e}")

@@ -8,6 +8,7 @@ from models.model import Detection, Fragment, Lipid, Annotation
 from config import get_engine
 from utils.db_backup import backup_database
 from utils.history import append_history
+from utils.exceptions import PostIntegrationError
 
 logger = logging.getLogger(__name__)
 
@@ -189,6 +190,8 @@ def DB_MS2(
     :param file_row_name: name of the file that provided the annotations.
     :type file_row_name: str
     :raises Exception: SQLAlchemy rollback if an insertion error occurs.
+    :raises PostIntegrationError: if the scans were committed successfully but the post-commit
+        backup or history logging failed - the data is already in the database.
     """
     logger.info(f"Starting MS2 integration - {len(scans)} scans to insert.")
     detections = []
@@ -243,18 +246,25 @@ def DB_MS2(
             logger.error(f"Error during MS2 integration: {e}")
             raise
 
-    backup_path = backup_database(label=filename)
+    try:
+        backup_path = backup_database(label=filename)
 
-    append_history(
-        {
-            "filename": filename,
-            "row_file": file_row_name,
-            "inserted": datetime.now().strftime("%Y-%m-%d %H:%M"),
-            "ms_level": "MS2",
-            "ionisation_mode": scans[0]["ion_mode"],
-            "num_rows": len(scans),
-            "detection_ids": detection_ids,
-            "integrator": integrator,
-            "backup": backup_path.name,
-        }
-    )
+        append_history(
+            {
+                "filename": filename,
+                "row_file": file_row_name,
+                "inserted": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                "ms_level": "MS2",
+                "ionisation_mode": scans[0]["ion_mode"],
+                "num_rows": len(scans),
+                "detection_ids": detection_ids,
+                "integrator": integrator,
+                "backup": backup_path.name,
+            }
+        )
+    except Exception as e:
+        logger.error(f"Scans were committed but post-integration housekeeping failed: {e}")
+        raise PostIntegrationError(
+            f"Scans were committed but backup/history logging failed: {e}",
+            detection_ids,
+        ) from e
