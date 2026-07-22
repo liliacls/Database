@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 COLOR = "#1F77B4"
 NON_EMPTY_COLUMNS = ["Lipid_name", "Formula", "Precursor_MZ"]
 
-# Fields the user can freely edit; changing them never triggers a recalculation.
 EDITABLE_LIPID_FIELDS = ["Lipid_name", "Lipid_category", "Lipid_class", "Lipid_subclass"]
 EDITABLE_DETECTION_FIELDS = ["Num_Peaks", "RT", "CCS"]
 
