@@ -24,6 +24,8 @@ EDITABLE_DETECTION_FIELDS = ["Num_Peaks", "RT", "CCS"]
 EDITOR_KEY = "editor"
 HISTORY_KEY = "history_delete"
 HISTORY_DEL = "pending_history_delete"
+HISTORY_KEY_VERSION = "history_delete_version"
+HISTORY_DELETED_MSG = "history_deleted_msg"
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
@@ -283,14 +285,19 @@ def _history_del(entry: dict, index: int) -> None:
     c1, c2 = st.columns(2)
     if c1.button("Confirm deletion", type="primary", width="stretch"):
         _delete_import(entry, index)
-        st.session_state.pop("pending_history_delete", None)
-        st.session_state.pop(HISTORY_KEY, None)
-        st.success("Import deleted.")
+        st.session_state.pop(HISTORY_DEL, None)
+        # Changer la version de la clé force Streamlit à recréer le widget
+        # (un simple pop() ne suffit pas à vider le champ de recherche affiché).
+        st.session_state[HISTORY_KEY_VERSION] = st.session_state.get(HISTORY_KEY_VERSION, 0) + 1
+        st.session_state[HISTORY_DELETED_MSG] = entry.get("filename", "-")
         st.rerun()
     if c2.button("Cancel", width="stretch"):
         st.session_state.pop("pending_history_delete", None)
         st.rerun()
 
+
+if HISTORY_DELETED_MSG in st.session_state:
+    st.success(f"Import **{st.session_state.pop(HISTORY_DELETED_MSG)}** deleted.")
 
 history = load_history()
 
@@ -307,7 +314,7 @@ else:
         options=list(range(len(history))),
         format_func=_label,
         index=None,
-        key=HISTORY_KEY,
+        key=f"{HISTORY_KEY}_{st.session_state.get(HISTORY_KEY_VERSION, 0)}",
     )
 
     if selected is not None:
