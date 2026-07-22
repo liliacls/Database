@@ -113,6 +113,7 @@ template_ms1 = pd.DataFrame(
             "Precursor_MZ": 716.52358,
             "Adduct": "[M-H]-",
             "Formula": "C39H76NO8P",
+            "FA_composition": "",
             "Lipid_Name": "PE 34:1",
             "Lipid_category": "Glycerophospholipids (GP)",
             "Lipid_class": "Glycerophosphoethanolamines (GP02)",
@@ -135,7 +136,7 @@ st.download_button(
 )
 
 st.caption(
-    "The template contains the 7 required columns and the 2 optional columns (RT, CCS). Leave optional columns empty if not available."
+    "The template contains the 7 required columns and the 3 optional columns (FA_composition, RT, CCS). Leave optional columns empty if not available."
 )
 
 st.divider()

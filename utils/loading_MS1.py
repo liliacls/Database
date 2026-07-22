@@ -64,6 +64,11 @@ def DB_MS1(
                         else None
                     ),
                     Formula=row.get("Formula"),
+                    FA_composition=(
+                        row.get("FA_composition")
+                        if pd.notna(row.get("FA_composition"))
+                        else None
+                    ),
                     Molecular_weight=row.get("Molecular_weight"),
                     Monoisotopic_mass=row.get("Monoisotopic_mass"),
                 )
