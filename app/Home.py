@@ -69,7 +69,7 @@ st.divider()
 st.subheader("Available modules")
 st.write("")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
     with st.container(border=True):
@@ -88,6 +88,18 @@ with col3:
         st.page_link("pages/3_Export.py", label="MODULE 3")
         st.markdown("##### ⬆️ Export data")
         st.write("Export data from the database in the desired format.")
+
+with col4:
+    with st.container(border=True):
+        st.page_link("pages/4_Resources.py", label="MODULE 4")
+        st.markdown("##### 📖 Resources")
+        st.write("Column guide for building integration files.")
+
+with col5:
+    with st.container(border=True):
+        st.page_link("pages/5_Management.py", label="MODULE 5")
+        st.markdown("##### ✏️ Manage data")
+        st.write("Correct, delete records already integrated into the database.")
 
 st.write("")
 st.divider()
