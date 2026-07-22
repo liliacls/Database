@@ -3,6 +3,14 @@ import pandas as pd
 import io
 import csv
 
+from utils.neutral_mass import (
+    ADDUCT_SHIFTS,
+    ADDUCT_SIGNS,
+    add_adduct,
+    list_adducts,
+    remove_adduct,
+)
+
 # ── Header ────────────────────────────────────────────────────────────────────
 
 st.html("""
@@ -307,3 +315,68 @@ st.caption(
     "line. The first scan includes the optional RT and CCS fields, the second shows that these lines can be "
     "omitted entirely when not available."
 )
+
+st.divider()
+
+# ── Adducts ─────────────────────────────────────────────────────────────────
+
+st.subheader("Adducts")
+st.write("")
+
+st.markdown(
+    "Adducts accepted in the `Adduct` column (MS1 and MS2 integration). Custom adducts added "
+    "below are saved locally and stay available across sessions."
+)
+
+custom_adducts = list_adducts()
+
+adducts_table = pd.DataFrame(
+    [
+        {
+            "Adduct": name,
+            "Mass shift (Da)": ADDUCT_SHIFTS[name],
+            "Operation to get neutral mass": "m/z − shift" if ADDUCT_SIGNS[name] == -1 else "m/z + shift",
+            "Custom": "✅" if name in custom_adducts else "❌",
+        }
+        for name in ADDUCT_SHIFTS
+    ]
+)
+
+st.dataframe(adducts_table, hide_index=True, width="stretch")
+
+st.write("")
+
+with st.form("add_adduct_form", clear_on_submit=True):
+    st.markdown("**Add a custom adduct**")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        new_name = st.text_input("Adduct name", placeholder="[M+Cl]-")
+    with col2:
+        new_shift = st.number_input("Mass shift (Da)", min_value=0.0, step=0.000001, format="%.6f")
+    with col3:
+        new_operation = st.radio(
+            "Ion formed by",
+            ["Addition (e.g. [M+H]+, [M+Na]+)", "Loss (e.g. [M-H]-)"],
+        )
+    submitted = st.form_submit_button("Add adduct", type="primary")
+
+if submitted:
+    sign = -1 if new_operation.startswith("Addition") else 1
+    try:
+        add_adduct(new_name, new_shift, sign)
+        st.success(f"Adduct '{new_name.strip()}' added.")
+        st.rerun()
+    except ValueError as e:
+        st.error(str(e))
+
+if custom_adducts:
+    st.write("")
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        to_remove = st.selectbox("Remove a custom adduct", list(custom_adducts))
+    with col2:
+        st.write("")
+        st.write("")
+        if st.button("Remove"):
+            remove_adduct(to_remove)
+            st.rerun()
