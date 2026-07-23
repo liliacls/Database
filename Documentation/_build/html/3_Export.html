@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Export &mdash; BacLipidAPP 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Resources" href="4_Resources.html" />
+    <link rel="prev" title="BacLipidDB" href="2_BacLipidDB.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BacLipidAPP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_Integration.html">Data_Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_BacLipidDB.html">BacLipidDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">Vue d’ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#chargement-des-donnees">Chargement des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres">Filtres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#application-des-filtres">Application des filtres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#apercu">Aperçu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#telechargement">Téléchargement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fonctions-internes">Fonctions internes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependances-internes">Dépendances internes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="4_Resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_Management.html">Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Modèle de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Référence API (générée automatiquement)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BacLipidAPP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Export</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/3_Export.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="export">
+<h1>Export<a class="headerlink" href="#export" title="Link to this heading"></a></h1>
+<p>Fichier source : <code class="docutils literal notranslate"><span class="pre">app/pages/3_Export.py</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cette page contient la documentation du module Streamlit (<code class="docutils literal notranslate"><span class="pre">3_Export.py</span></code>).
+La majorité du code n’est pas écrit sous forme de fonction, il n’est donc pas possible d’utiliser <code class="docutils literal notranslate"><span class="pre">automodule</span></code>
+pour générer cette page automatiquement. La documentation ci-dessous est rédigée manuellement
+à partir du code source.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2>Vue d’ensemble<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Ce module Streamlit (<strong>MODULE 3</strong>) permet de filtrer les annotations de
+<strong>BacLipidDB</strong> par catégorie, classe et sous-classe lipidique, niveau MS,
+mode d’ionisation et plage de m/z. Si des RT et des CCS sont renseignés,
+il est également possible de filtrer sur ces valeurs. Les annotations filtrées peuvent ensuite être visualisées
+puis téléchargées dans des formats compatible avec MZmine .csv, .msp.</p>
+</section>
+<section id="chargement-des-donnees">
+<h2>Chargement des données<a class="headerlink" href="#chargement-des-donnees" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">_load_data(_engine)</span></code> s’appuie sur <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code> (la vue jointe
+commune <code class="docutils literal notranslate"><span class="pre">Annotation</span></code> + <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> + <code class="docutils literal notranslate"><span class="pre">Detection</span></code>, mise en cache via <code class="docutils literal notranslate"><span class="pre">st.cache_data(ttl=60)</span></code>
+et partagée avec les pages 2_BacLipidDB et 5_Management), renomme certaines colonnes (<code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code> → <code class="docutils literal notranslate"><span class="pre">name</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Formula</span></code> → <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> → <code class="docutils literal notranslate"><span class="pre">mz</span></code>, <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code> → <code class="docutils literal notranslate"><span class="pre">neutral_mass</span></code>). Les lignes conservées sont :
+<code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_category</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_subclass</span></code>, <code class="docutils literal notranslate"><span class="pre">mz</span></code>, <code class="docutils literal notranslate"><span class="pre">neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">MS_level</span></code>, <code class="docutils literal notranslate"><span class="pre">Ionisation_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">Adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code> et
+<code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code>. Les colonnes <code class="docutils literal notranslate"><span class="pre">RT</span></code>/<code class="docutils literal notranslate"><span class="pre">CCS</span></code>/<code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code> valent <code class="docutils literal notranslate"><span class="pre">None</span></code> si non renseignés en base, <code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code> n’est renseigné que pour les détections <code class="docutils literal notranslate"><span class="pre">MS2</span></code>. Si le chargement échoue, un message <code class="docutils literal notranslate"><span class="pre">st.error</span></code> est affiché
+(« <em>Unable to load data from the database: {e}</em> ») et la page s’arrête (<code class="docutils literal notranslate"><span class="pre">st.stop()</span></code>). Sinon si la base est vide, un message <code class="docutils literal notranslate"><span class="pre">st.info</span></code> est affiché à la place (« <em>The database contains no data yet.</em> »).</p>
+</section>
+<section id="filtres">
+<h2>Filtres<a class="headerlink" href="#filtres" title="Link to this heading"></a></h2>
+<p>Les filtres sont répartis sur deux lignes de 3 colonnes (<code class="docutils literal notranslate"><span class="pre">st.columns</span></code>) :</p>
+<ul class="simple">
+<li><p><strong>Lipid category</strong>, <strong>Lipid class</strong>, <strong>Lipid subclass</strong> (<code class="docutils literal notranslate"><span class="pre">st.multiselect</span></code>) : les valeurs
+possibles sont extraites des colonnes présente dans la base de données chargée. Une option
+<code class="docutils literal notranslate"><span class="pre">(None)</span></code> est ajoutée si la colonne contient des valeurs manquantes.</p></li>
+<li><p><strong>MS level</strong> et <strong>Ionisation mode</strong> (<code class="docutils literal notranslate"><span class="pre">st.multiselect</span></code>) : mêmes principes mais sans option
+<a href="#id1"><span class="problematic" id="id2">``</span></a>(None)``car toutes les lignes ont une valeur pour ces colonnes.</p></li>
+<li><p><strong>Precursor m/z range</strong> : deux <code class="docutils literal notranslate"><span class="pre">st.number_input</span></code> (<code class="docutils literal notranslate"><span class="pre">Min</span> <span class="pre">m/z</span></code> / <code class="docutils literal notranslate"><span class="pre">Max</span> <span class="pre">m/z</span></code>,
+format <code class="docutils literal notranslate"><span class="pre">%.6f</span></code>), initialisés au min/max de la colonne <code class="docutils literal notranslate"><span class="pre">mz</span></code>. Les deux valeurs sont triées (<code class="docutils literal notranslate"><span class="pre">min</span></code>/<code class="docutils literal notranslate"><span class="pre">max</span></code>) pour former <code class="docutils literal notranslate"><span class="pre">mz_range</span></code>.</p></li>
+</ul>
+</section>
+<section id="application-des-filtres">
+<h2>Application des filtres<a class="headerlink" href="#application-des-filtres" title="Link to this heading"></a></h2>
+<p>Le DataFrame <code class="docutils literal notranslate"><span class="pre">df_all</span></code> est copié dans <code class="docutils literal notranslate"><span class="pre">df_filtered</span></code>, puis chaque filtre est appliqué
+l’un après l’autre (chaque étape réduit <code class="docutils literal notranslate"><span class="pre">df_filtered</span></code> obtenu à l’étape précédente) :</p>
+<ul class="simple">
+<li><p><strong>Lipid_category</strong>, <strong>Lipid_class</strong>, <strong>Lipid_subclass</strong> : si aucune valeur n’est
+sélectionnée pour la colonne, aucun filtre n’est appliqué (toutes les lignes sont
+conservées). Sinon, seules les lignes dont la valeur figure parmi les filtres sélectionnés
+sont conservées. Si l’option <code class="docutils literal notranslate"><span class="pre">(None)</span></code> fait partie de la sélection, les lignes où la
+colonne est manquante (<code class="docutils literal notranslate"><span class="pre">NaN</span></code>) sont conservées en plus.</p></li>
+<li><p><strong>MS_level</strong>, <strong>Ionisation_mode</strong> : même principe, mais sans option <code class="docutils literal notranslate"><span class="pre">(None)</span></code> (ces
+colonnes sont toujours renseignées). Aucun filtre n’est appliqué si la sélection est vide,
+sinon seules les lignes dont la valeur figure parmi les filtres sélectionnés sont conservées.</p></li>
+<li><p><strong>mz</strong> : seules les lignes dont la valeur de <code class="docutils literal notranslate"><span class="pre">mz</span></code> est comprise entre les deux bornes
+de <code class="docutils literal notranslate"><span class="pre">mz_range</span></code> (bornes incluses) sont conservées. Ce filtre est toujours appliqué
+(les bornes valent par défaut le min/max de la colonne, donc rien n’est exclu tant que
+l’utilisateur ne les modifie pas).</p></li>
+</ul>
+</section>
+<section id="apercu">
+<h2>Aperçu<a class="headerlink" href="#apercu" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">st.subheader</span></code> affiche le nombre de lignes filtrées. Si aucune ligne ne correspond,
+un message <code class="docutils literal notranslate"><span class="pre">st.warning</span></code> est affiché et la page s’arrête. Sinon, un extrait des colonnes
+<code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">mz</span></code>, <code class="docutils literal notranslate"><span class="pre">MS_level</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code> et <code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code> est affiché
+via <code class="docutils literal notranslate"><span class="pre">st.dataframe`.</span> <span class="pre">``Num_Peaks</span></code> vaut <code class="docutils literal notranslate"><span class="pre">None</span></code> pour les lignes <code class="docutils literal notranslate"><span class="pre">MS1</span></code> (le nombre de pics n’a de sens qu’en MS2).</p>
+</section>
+<section id="telechargement">
+<h2>Téléchargement<a class="headerlink" href="#telechargement" title="Link to this heading"></a></h2>
+<p>Trois boutons de téléchargement (<code class="docutils literal notranslate"><span class="pre">st.columns</span></code> à 3 colonnes) :</p>
+<ul class="simple">
+<li><p><strong>CSV (MS1 + MS2)</strong> : colonnes <code class="docutils literal notranslate"><span class="pre">neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">mz</span></code>, <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code> de
+l’ensemble de <code class="docutils literal notranslate"><span class="pre">df_filtered</span></code>, exportées en CSV. Toujours disponible dès que des données sont présentes dans BacLipidDB.</p></li>
+<li><p><strong>MSP (MS2)</strong> : disponible uniquement si <code class="docutils literal notranslate"><span class="pre">df_filtered</span></code> contient au moins une ligne
+<code class="docutils literal notranslate"><span class="pre">MS2</span></code> (bouton <code class="docutils literal notranslate"><span class="pre">st.button</span></code> désactivé sinon). Généré par <code class="docutils literal notranslate"><span class="pre">generate_msp()</span></code> (mise en
+cache via <code class="docutils literal notranslate"><span class="pre">st.cache_data(ttl=60)</span></code>), qui délègue à <a class="reference internal" href="api.html#utils.msp_export.generate_msp" title="utils.msp_export.generate_msp"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.msp_export.generate_msp()</span></code></a>
+avec les catégories, classes et sous-classes sélectionnées, <code class="docutils literal notranslate"><span class="pre">mz_range</span></code> ainsi que les
+modes d’ionisation sélectionnés (<code class="docutils literal notranslate"><span class="pre">selected_ionisation_modes</span></code>). Le filtre <strong>MS level</strong>
+choisi par l’utilisateur n’est en revanche pas transmis à cette fonction : elle filtre
+elle-même en dur sur <code class="docutils literal notranslate"><span class="pre">Detection.MS_level</span> <span class="pre">==</span> <span class="pre">&quot;MS2&quot;</span></code>, si bien que ce filtre n’aurait de
+toute façon aucun effet sur cet export. Cette fonction ne conserve que les annotations <code class="docutils literal notranslate"><span class="pre">MS2</span></code> possédant au moins un fragment, et écrit
+pour chacune un bloc <code class="docutils literal notranslate"><span class="pre">Name</span></code>/<code class="docutils literal notranslate"><span class="pre">PrecursorMZ</span></code>/<code class="docutils literal notranslate"><span class="pre">MW</span></code>/<code class="docutils literal notranslate"><span class="pre">ExactMass</span></code>/<code class="docutils literal notranslate"><span class="pre">Ion_mode</span></code>/<code class="docutils literal notranslate"><span class="pre">RT</span></code>/<code class="docutils literal notranslate"><span class="pre">CCS</span></code>/<code class="docutils literal notranslate"><span class="pre">Num</span> <span class="pre">Peaks</span></code>
+(<code class="docutils literal notranslate"><span class="pre">RT</span></code>/<code class="docutils literal notranslate"><span class="pre">CCS</span></code> omis si absents) suivi de la liste des fragments (<code class="docutils literal notranslate"><span class="pre">MZ</span> <span class="pre">Intensity</span></code>).
+<code class="docutils literal notranslate"><span class="pre">Ion_mode</span></code> reprend le mode d’ionisation de la détection, encodé comme dans les fichiers
+MSP de LipidMaps (<code class="docutils literal notranslate"><span class="pre">P</span></code> pour <code class="docutils literal notranslate"><span class="pre">Positive</span></code>, <code class="docutils literal notranslate"><span class="pre">N</span></code> pour <code class="docutils literal notranslate"><span class="pre">Negative</span></code>).</p></li>
+<li><p><strong>CSV (CCS + RT)</strong> : disponible uniquement si <code class="docutils literal notranslate"><span class="pre">df_filtered</span></code> contient au moins une ligne
+avec à la fois <code class="docutils literal notranslate"><span class="pre">RT</span></code> et <code class="docutils literal notranslate"><span class="pre">CCS</span></code> renseignés (bouton désactivé sinon). Colonnes
+<code class="docutils literal notranslate"><span class="pre">neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">mz</span></code>, <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code> des lignes concernées,
+qu’il s’agisse d’annotations <code class="docutils literal notranslate"><span class="pre">MS1</span></code> ou <code class="docutils literal notranslate"><span class="pre">MS2</span></code>. MZmine n’acceptant pas un CSV MS1 où
+certaines lignes ont des valeurs RT/CCS et d’autres non, cet export est volontairement
+séparé du CSV MS1 + MS2 ci-dessus.</p></li>
+</ul>
+<p>Chaque fichier est nommé <code class="docutils literal notranslate"><span class="pre">annotation_export_&lt;niveau&gt;_&lt;date</span> <span class="pre">du</span> <span class="pre">jour</span> <span class="pre">AAAAMMJJ&gt;.&lt;ext&gt;</span></code>
+(<code class="docutils literal notranslate"><span class="pre">MS1+MS2</span></code>, <code class="docutils literal notranslate"><span class="pre">MS2</span></code> ou <code class="docutils literal notranslate"><span class="pre">CCS_RT</span></code>).</p>
+</section>
+<section id="fonctions-internes">
+<h2>Fonctions internes<a class="headerlink" href="#fonctions-internes" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Fonction</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_load_data(_engine:</span> <span class="pre">Engine)</span> <span class="pre">-&gt;</span> <span class="pre">pandas.DataFrame</span></code></p></td>
+<td><p>Recadre et renomme les colonnes utiles de la vue jointe renvoyée par
+<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generate_msp(_engine,</span> <span class="pre">categories,</span> <span class="pre">classes,</span> <span class="pre">sub_classes,</span> <span class="pre">mz_range,</span> <span class="pre">ionisation_modes)</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code></p></td>
+<td><p>Met en cache l’appel à <a class="reference internal" href="api.html#utils.msp_export.generate_msp" title="utils.msp_export.generate_msp"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.msp_export.generate_msp()</span></code></a> pour l’export MSP
+des détections MS2 correspondant aux filtres.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dependances-internes">
+<h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></p></li>
+<li><p><a class="reference internal" href="api.html#module-config" title="config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a> (<code class="docutils literal notranslate"><span class="pre">get_engine</span></code>)</p></li>
+<li><p><a class="reference internal" href="api.html#utils.msp_export.generate_msp" title="utils.msp_export.generate_msp"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.msp_export.generate_msp()</span></code></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2_BacLipidDB.html" class="btn btn-neutral float-left" title="BacLipidDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="4_Resources.html" class="btn btn-neutral float-right" title="Resources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Lilia CHALES.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

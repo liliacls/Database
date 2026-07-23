@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BacLipidDB &mdash; BacLipidAPP 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Export" href="3_Export.html" />
+    <link rel="prev" title="Data_Integration" href="1_Integration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BacLipidAPP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_Integration.html">Data_Integration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">BacLipidDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">Vue d’ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tables-brutes">Tables brutes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#full-view">Full view</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#importation-des-donnees">Importation des données</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colorisation-par-lot-d-import">Colorisation par lot d’import</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#exemple-batch-map">Exemple (<code class="docutils literal notranslate"><span class="pre">_batch_map</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exemple-color-1">Exemple (<code class="docutils literal notranslate"><span class="pre">_color(1)</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exemple">Exemple</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#groupe-d-import">Groupe d’import</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Exemple</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#graphique-1-masse-mesuree-vs-masse-theorique">Graphique 1 - Masse mesurée vs masse théorique</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graphique-2-erreur-de-masse-ppm-vs-masse-neutre">Graphique 2 - Erreur de masse (ppm) vs masse neutre</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graphique-3-erreur-de-masse-da-vs-masse-neutre">Graphique 3 - Erreur de masse (Da) vs masse neutre</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#graphique-4-diagramme-de-van-krevelen">Graphique 4 - Diagramme de Van Krevelen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#exemple-parsing-de-formule">Exemple (parsing de formule)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#history">History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fonctions-internes">Fonctions internes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependances-internes">Dépendances internes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="3_Export.html">Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_Resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_Management.html">Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Modèle de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Référence API (générée automatiquement)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BacLipidAPP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">BacLipidDB</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/2_BacLipidDB.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="baclipiddb">
+<h1>BacLipidDB<a class="headerlink" href="#baclipiddb" title="Link to this heading"></a></h1>
+<p>Fichier source : <code class="docutils literal notranslate"><span class="pre">app/pages/2_BacLipidDB.py</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cette page contient la documentation du module Streamlit (<code class="docutils literal notranslate"><span class="pre">2_BacLipidDB.py</span></code>).
+La majorité du code n’est pas écrit sous forme de fonction, il n’est donc pas possible d’utiliser <code class="docutils literal notranslate"><span class="pre">automodule</span></code>
+pour générer cette page automatiquement. La documentation ci-dessous est rédigée manuellement
+à partir du code source.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2>Vue d’ensemble<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Ce module Streamlit (<strong>MODULE 2</strong>) permet d’explorer le contenu de la base de données
+<strong>BacLipidDB</strong>, via un sélecteur (<code class="docutils literal notranslate"><span class="pre">st.radio</span></code>) proposant :</p>
+<ul class="simple">
+<li><p>une vue des 3 tables de la base de données : <code class="docutils literal notranslate"><span class="pre">Detection</span></code>, <code class="docutils literal notranslate"><span class="pre">Fragment</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> ;</p></li>
+<li><p><strong>Full view</strong> : une vue jointe combinant les champs des tables <code class="docutils literal notranslate"><span class="pre">Detection``et</span> <span class="pre">``Lipid</span></code>,
+colorée par lot d’import et accompagnée de 4 graphiques ;</p></li>
+<li><p><strong>History</strong> : l’historique des imports passés.</p></li>
+</ul>
+</section>
+<section id="tables-brutes">
+<h2>Tables brutes<a class="headerlink" href="#tables-brutes" title="Link to this heading"></a></h2>
+<p>Pour <code class="docutils literal notranslate"><span class="pre">Detection</span></code>, <code class="docutils literal notranslate"><span class="pre">Fragment</span></code> et <code class="docutils literal notranslate"><span class="pre">Lipid</span></code>, le contenu de la table est lu
+directement depuis BacLipidDB via <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.read_sql_table()</span></code> puis affiché avec
+<code class="xref py py-func docutils literal notranslate"><span class="pre">st.dataframe()</span></code>. Les colonnes numériques suivantes sont formatées via
+<code class="docutils literal notranslate"><span class="pre">st.column_config.NumberColumn</span></code> :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Intensity</span></code> : 6 décimales</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code> : 4 décimales</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Molecular_weight</span></code> : 0 décimale</p></li>
+</ul>
+<p>Si la table ne contient aucune ligne, un message <code class="docutils literal notranslate"><span class="pre">st.info(&quot;This</span> <span class="pre">table</span> <span class="pre">contains</span> <span class="pre">no</span> <span class="pre">data</span> <span class="pre">yet.&quot;)</span></code>
+est affiché à la place.</p>
+</section>
+<section id="full-view">
+<h2>Full view<a class="headerlink" href="#full-view" title="Link to this heading"></a></h2>
+<section id="importation-des-donnees">
+<h3>Importation des données<a class="headerlink" href="#importation-des-donnees" title="Link to this heading"></a></h3>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">_load_data(_engine)</span></code> s’appuie sur <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code>
+(requête SQLAlchemy commune sur <code class="docutils literal notranslate"><span class="pre">Annotation</span></code>, avec chargement des relations avec les tables
+<code class="docutils literal notranslate"><span class="pre">lipid</span></code> et <code class="docutils literal notranslate"><span class="pre">detection</span></code>, partagée avec les pages <strong>3_Export</strong> et <strong>5_Management</strong> pour éviter de
+dupliquer cette requête). Cette fonction ne conserve que les colonnes :
+<code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Formula</span></code>, <code class="docutils literal notranslate"><span class="pre">FA_composition</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Lipid_subclass</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_category</span></code>, <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Molecular_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">MS_level</span></code>, <code class="docutils literal notranslate"><span class="pre">Ionisation_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code>,
+<code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code>. Les autres clé primaires (_ID) et étrangères (_id) ne sont pas affichées pour question de lisibilité.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Exemple</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Appel</p></th>
+<th class="head"><p>Résultat</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">load_database(engine)</span></code></p></td>
+<td><p>DataFrame complet : une ligne par <code class="docutils literal notranslate"><span class="pre">Annotation</span></code>, avec en plus <code class="docutils literal notranslate"><span class="pre">Annotation_ID</span></code> et
+<code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_load_data(engine)</span></code></p></td>
+<td><p>Le même DataFrame, restreint aux 17 colonnes listées ci-dessus</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="colorisation-par-lot-d-import">
+<h3>Colorisation par lot d’import<a class="headerlink" href="#colorisation-par-lot-d-import" title="Link to this heading"></a></h3>
+<p>Chaque ligne du tableau <strong>Full view</strong> est colorée selon le fichier d’import (<code class="docutils literal notranslate"><span class="pre">History</span></code>)
+auquel appartient sa <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> :</p>
+<ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code> charge l’historique des imports depuis <code class="docutils literal notranslate"><span class="pre">history.json</span></code>
+(<code class="docutils literal notranslate"><span class="pre">config.HISTORY_PATH</span></code>, lu indirectement par <code class="docutils literal notranslate"><span class="pre">load_history</span></code>) ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_batch_map(history)</span></code> associe chaque <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> à l’indice du lot
+d’import auquel il appartient (champ <code class="docutils literal notranslate"><span class="pre">detection_ids</span></code> de chaque entrée de l’historique) ;</p></li>
+<li><p>la fonction <code class="docutils literal notranslate"><span class="pre">_row_color(row)</span></code> applique, via <code class="docutils literal notranslate"><span class="pre">df.style.apply(...,</span> <span class="pre">axis=1)</span></code>, une couleur de
+fond calculée par <code class="docutils literal notranslate"><span class="pre">_color(index)</span></code> à chaque ligne selon son lot.</p></li>
+</ul>
+<section id="exemple-batch-map">
+<h4>Exemple (<code class="docutils literal notranslate"><span class="pre">_batch_map</span></code>)<a class="headerlink" href="#exemple-batch-map" title="Link to this heading"></a></h4>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">history</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;batch1.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;detection_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">101</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">103</span><span class="p">]},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;batch2.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;detection_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">104</span><span class="p">,</span> <span class="mi">105</span><span class="p">]},</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_batch_map</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+<span class="go">{101: 0, 102: 0, 103: 0, 104: 1, 105: 1}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">_color(index)</span></code> ne repose pas sur une palette figée : la teinte (<code class="docutils literal notranslate"><span class="pre">hue</span></code>) est calculée
+par <code class="docutils literal notranslate"><span class="pre">(index</span> <span class="pre">*</span> <span class="pre">0.618)</span> <span class="pre">%</span> <span class="pre">1.0</span></code> (technique du <em>golden angle</em> avec le nombre d’or conjugé <em>0.618</em>) puis convertie en couleur pastel via <code class="xref py py-func docutils literal notranslate"><span class="pre">colorsys.hls_to_rgb()</span></code> (luminosité 0.85,
+saturation 0.55 fixes).</p>
+</section>
+<section id="exemple-color-1">
+<h4>Exemple (<code class="docutils literal notranslate"><span class="pre">_color(1)</span></code>)<a class="headerlink" href="#exemple-color-1" title="Link to this heading"></a></h4>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hue</span> <span class="pre">=</span> <span class="pre">(1</span> <span class="pre">*</span> <span class="pre">0.618)</span> <span class="pre">%</span> <span class="pre">1.0</span> <span class="pre">=</span> <span class="pre">0.618</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">colorsys.hls_to_rgb()</span></code> (0.618, 0.85, 0.55) convertit HLS en RGB (flottants dans [0, 1)) :
+<code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">0.7675</span></code>, <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">0.8157</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">0.9325</span></code></p></li>
+<li><p>chaque flottant est mis à l’échelle [0, 255] et arrondi à l’entier le plus proche :
+<code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">=</span> <span class="pre">196</span></code>, <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">208</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">238</span></code></p></li>
+<li><p>chaque entier est formaté en paire hexadécimale sur 2 chiffres : <code class="docutils literal notranslate"><span class="pre">196</span> <span class="pre">=</span> <span class="pre">c4</span></code>,
+<code class="docutils literal notranslate"><span class="pre">208</span> <span class="pre">=</span> <span class="pre">d0</span></code>, <code class="docutils literal notranslate"><span class="pre">238</span> <span class="pre">=</span> <span class="pre">ee</span></code> → <code class="docutils literal notranslate"><span class="pre">#c4d0ee</span></code></p></li>
+</ol>
+<p>Un encadré <strong>color caption</strong> (<code class="docutils literal notranslate"><span class="pre">st.expander</span></code>) rappelle, pour chaque fichier importé, sa
+couleur, son nom, sa date d’import, son nombre de lignes et son intégrateur.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cette coloration par lot ne concerne que les lignes du tableau <strong>Full view</strong>. Les graphiques 1 à 3 (masses),
+plus bas, utilisent un code couleur différent, à 3 catégories fixes : voir <a class="reference internal" href="#groupe-d-import">Groupe d’import</a>.</p>
+</div>
+</section>
+<section id="exemple">
+<h4>Exemple<a class="headerlink" href="#exemple" title="Link to this heading"></a></h4>
+<p>Soit un historique de 2 imports, et <code class="docutils literal notranslate"><span class="pre">df</span></code> (après <code class="docutils literal notranslate"><span class="pre">reset_index</span></code>) contenant 4 lignes. Pour
+chaque ligne, <code class="docutils literal notranslate"><span class="pre">caption_values[row.name]</span></code> donne le lot d’import de sa <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> :</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 11.1%" />
+<col style="width: 16.7%" />
+<col style="width: 22.2%" />
+<col style="width: 27.8%" />
+<col style="width: 22.2%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">row.name</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">caption_values[row.name]</span></code></p></th>
+<th class="head"><p>Lot d’import</p></th>
+<th class="head"><p>Couleur appliquée</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>0.0</p></td>
+<td><p>Import 1 (plus ancien)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#eec4c4</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>1.0</p></td>
+<td><p>Import 2 (dernier import)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#c4d0ee</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>NaN</p></td>
+<td><p>aucun (<code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> absente de l’historique)</p></td>
+<td><p>aucune (cellule non colorée)</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>4</p></td>
+<td><p>0.0</p></td>
+<td><p>Import 1 (plus ancien)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#eec4c4</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Pour la ligne d’index 1, <code class="docutils literal notranslate"><span class="pre">_row_color</span></code> lit <code class="docutils literal notranslate"><span class="pre">caption_values[1]</span> <span class="pre">=</span> <span class="pre">1.0</span></code>, en déduit la couleur
+du lot 1 via <code class="docutils literal notranslate"><span class="pre">_color(1)</span></code> et l’applique à toutes les cellules de cette ligne.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>En usage normal, ce cas (<code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> absente de l’historique) ne devrait pas se
+produire : chaque intégration (<code class="docutils literal notranslate"><span class="pre">1_Integration.py</span></code>) ajoute automatiquement une entrée à
+<code class="docutils literal notranslate"><span class="pre">history.json</span></code> listant les <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> insérées. Il ne survient qu’en cas
+d’incohérence entre la base et <code class="docutils literal notranslate"><span class="pre">history.json</span></code>. La ligne 3 de l’exemple ci-dessus illustre le comportement du code face à un scénario inattendu.</p>
+</div>
+</section>
+</section>
+<section id="groupe-d-import">
+<h3>Groupe d’import<a class="headerlink" href="#groupe-d-import" title="Link to this heading"></a></h3>
+<p>Les graphiques 1 à 3 ne colorent pas les points par lot d’import individuel
+comme le tableau <strong>Full view</strong>, mais par groupe, via une colonne <code class="docutils literal notranslate"><span class="pre">Import_group</span></code> calculée par
+<code class="docutils literal notranslate"><span class="pre">_group(batch_id)</span></code> à partir de <code class="docutils literal notranslate"><span class="pre">caption_values</span></code> et de l’indice du dernier lot
+(<code class="docutils literal notranslate"><span class="pre">last_batch_id</span> <span class="pre">=</span> <span class="pre">len(history)</span> <span class="pre">-</span> <span class="pre">1</span></code>) :</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">_group(batch_id)</span></code></p></th>
+<th class="head"><p>Condition</p></th>
+<th class="head"><p>Couleur (<code class="docutils literal notranslate"><span class="pre">COLORS</span></code>)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;Unknown&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">batch_id</span></code> est <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (<code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> absente de l’historique)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#898781</span></code> (gris)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;Latest</span> <span class="pre">import&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int(batch_id)</span> <span class="pre">==</span> <span class="pre">last_batch_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#e34948</span></code> (rouge)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;Other</span> <span class="pre">imports&quot;</span></code></p></td>
+<td><p>tout autre <code class="docutils literal notranslate"><span class="pre">batch_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#2a78d6</span></code> (bleu)</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id1">
+<h4>Exemple<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<p>Avec le même historique de 2 imports que ci-dessus (<code class="docutils literal notranslate"><span class="pre">last_batch_id</span> <span class="pre">=</span> <span class="pre">1</span></code>) :</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17.6%" />
+<col style="width: 23.5%" />
+<col style="width: 35.3%" />
+<col style="width: 23.5%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">caption_values</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">_group(...)</span></code></p></th>
+<th class="head"><p>Couleur</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>0.0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;Other</span> <span class="pre">imports&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#2a78d6</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1.0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;Latest</span> <span class="pre">import&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#e34948</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>NaN</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;Unknown&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#898781</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="graphique-1-masse-mesuree-vs-masse-theorique">
+<h3>Graphique 1 - Masse mesurée vs masse théorique<a class="headerlink" href="#graphique-1-masse-mesuree-vs-masse-theorique" title="Link to this heading"></a></h3>
+<p>Nuage de points (<code class="xref py py-func docutils literal notranslate"><span class="pre">plotly.express.scatter()</span></code>) de <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code> (masse neutre mesurée,
+calculée à partir de <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> et de l’adduit <code class="docutils literal notranslate"><span class="pre">Adduct</span></code>) en fonction de <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code> (masse monoisotopique théorique
+du lipide de référence calculée à partir de la formule chimique), coloré par <code class="docutils literal notranslate"><span class="pre">Import_group</span></code>
+(voir <cite>Groupe d’import</cite>). Le survol affiche <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>, l’écart
+<code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">(Da)</span></code> (<code class="docutils literal notranslate"><span class="pre">Neutral_mass</span> <span class="pre">-</span> <span class="pre">Monoisotopic_mass</span></code>) et l’erreur <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">/</span> <span class="pre">Monoisotopic_mass</span> <span class="pre">*</span> <span class="pre">1e6</span></code>). Une droite <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">x</span></code> (<code class="xref py py-class docutils literal notranslate"><span class="pre">plotly.graph_objects.Scatter</span></code>,
+trait pointillé) sert de référence visuelle pour l’écart entre les masses.</p>
+</section>
+<section id="graphique-2-erreur-de-masse-ppm-vs-masse-neutre">
+<h3>Graphique 2 - Erreur de masse (ppm) vs masse neutre<a class="headerlink" href="#graphique-2-erreur-de-masse-ppm-vs-masse-neutre" title="Link to this heading"></a></h3>
+<p>Nuage de points (<code class="xref py py-func docutils literal notranslate"><span class="pre">plotly.express.scatter()</span></code>) de l’erreur relative <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code> (même
+calcul que pour le graphique 1) en fonction de <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, coloré par <code class="docutils literal notranslate"><span class="pre">Import_group</span></code>. Le
+survol affiche <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code> et <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code>.</p>
+</section>
+<section id="graphique-3-erreur-de-masse-da-vs-masse-neutre">
+<h3>Graphique 3 - Erreur de masse (Da) vs masse neutre<a class="headerlink" href="#graphique-3-erreur-de-masse-da-vs-masse-neutre" title="Link to this heading"></a></h3>
+<p>Même principe que le graphique 2, mais en ordonnée l’écart absolu <code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">(Da)</span></code> (au lieu de
+l’erreur relative <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code>), toujours en fonction de <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code> et coloré par
+<code class="docutils literal notranslate"><span class="pre">Import_group</span></code>. Le survol affiche <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code> et <code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">(Da)</span></code>.</p>
+<p>Ce graphique est suivi d’un tableau <strong>Mass error table</strong> listant <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Formula</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">(Da)</span></code> et <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code>, trié par valeur
+absolue de <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code> décroissante, pour faire ressortir en premier les annotations dont la
+masse mesurée s’écarte le plus de la masse théorique.</p>
+</section>
+<section id="graphique-4-diagramme-de-van-krevelen">
+<h3>Graphique 4 - Diagramme de Van Krevelen<a class="headerlink" href="#graphique-4-diagramme-de-van-krevelen" title="Link to this heading"></a></h3>
+<p>Nuage de points H/C en fonction de O/C, coloré par <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>. Les ratios atomiques
+sont calculés à partir de la colonne <code class="docutils literal notranslate"><span class="pre">Formula</span></code> : <code class="docutils literal notranslate"><span class="pre">_formula(formula)</span></code> parse la formule
+chimique (regex <code class="docutils literal notranslate"><span class="pre">([A-Z][a-z]?)(\d*)</span></code>) en un dictionnaire élément → nombre d’atomes, dont on
+extrait les comptes de C, H et O (0 si absent). Seules les lignes avec au moins un atome de
+carbone (<code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>) sont conservées, afin d’éviter une division par zéro sur <code class="docutils literal notranslate"><span class="pre">H/C</span></code> et <code class="docutils literal notranslate"><span class="pre">O/C</span></code>.</p>
+<section id="exemple-parsing-de-formule">
+<h4>Exemple (parsing de formule)<a class="headerlink" href="#exemple-parsing-de-formule" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 30.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 15.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">Formula</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">_formula(formula)</span></code></p></th>
+<th class="head"><p>C</p></th>
+<th class="head"><p>H</p></th>
+<th class="head"><p>O</p></th>
+<th class="head"><p>H/C, O/C</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">C42H82NO8P</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{&quot;C&quot;:</span> <span class="pre">42,</span> <span class="pre">&quot;H&quot;:</span> <span class="pre">82,</span> <span class="pre">&quot;N&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;O&quot;:</span> <span class="pre">8,</span> <span class="pre">&quot;P&quot;:</span> <span class="pre">1}</span></code></p></td>
+<td><p>42</p></td>
+<td><p>82</p></td>
+<td><p>8</p></td>
+<td><p>1.952, 0.190</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="history">
+<h2>History<a class="headerlink" href="#history" title="Link to this heading"></a></h2>
+<p>Affiche, via <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.DataFrame()</span></code> construit à partir de <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code>,
+la liste des imports passés : nom de fichier, date (<code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.to_datetime()</span></code>), niveau MS, mode
+d’ionisation, nombre de lignes insérées et nom de l’intégrateur. Si
+l’historique est vide, un message <code class="docutils literal notranslate"><span class="pre">st.info(&quot;No</span> <span class="pre">imports</span> <span class="pre">recorded</span> <span class="pre">yet.&quot;)</span></code> est affiché à la place.</p>
+</section>
+<section id="fonctions-internes">
+<h2>Fonctions internes<a class="headerlink" href="#fonctions-internes" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Fonction</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_load_data(_engine:</span> <span class="pre">Engine)</span> <span class="pre">-&gt;</span> <span class="pre">pd.DataFrame</span></code></p></td>
+<td><p>Charge la vue jointe complète via <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code> et n’en
+conserve que certaines colonnes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_formula(formula:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">dict</span></code></p></td>
+<td><p>Parse une formule chimique en un dictionnaire symbole d’élément → nombre d’atomes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_batch_map(history:</span> <span class="pre">list[dict])</span> <span class="pre">-&gt;</span> <span class="pre">dict[int,</span> <span class="pre">int]</span></code></p></td>
+<td><p>Associe chaque <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> à l’indice du lot d’import auquel il appartient
+(utilisé pour la colorisation de <strong>Full view</strong>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_group(batch_id:</span> <span class="pre">float)</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code></p></td>
+<td><p>Classe le lot d’import d’une ligne dans l’une des 3 catégories <code class="docutils literal notranslate"><span class="pre">&quot;Latest</span> <span class="pre">import&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;Other</span> <span class="pre">imports&quot;</span></code> ou <code class="docutils literal notranslate"><span class="pre">&quot;Unknown&quot;</span></code>, utilisées pour colorer les graphiques 1 à 3 (voir
+<a class="reference internal" href="#groupe-d-import">Groupe d’import</a>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_row_color(row:</span> <span class="pre">pd.Series)</span> <span class="pre">-&gt;</span> <span class="pre">list[str]</span></code></p></td>
+<td><p>Callback de style (<code class="docutils literal notranslate"><span class="pre">df.style.apply(...,</span> <span class="pre">axis=1)</span></code>) qui renvoie la couleur de fond CSS
+à appliquer à chaque cellule d’une ligne de <strong>Full view</strong>, selon son lot d’import.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_color(index:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code></p></td>
+<td><p>Génère une couleur pastel (hex) pour un indice de lot, en espaçant les teintes par le
+nombre d’or conjugué (<em>golden angle</em>) plutôt que via une palette figée (voir
+<a class="reference internal" href="#colorisation-par-lot-d-import">Colorisation par lot d’import</a>).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dependances-internes">
+<h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></p></li>
+<li><p><a class="reference internal" href="api.html#module-config" title="config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a> (<code class="docutils literal notranslate"><span class="pre">get_engine</span></code>, <code class="docutils literal notranslate"><span class="pre">PROJECT_ROOT</span></code> importés directement ; <code class="docutils literal notranslate"><span class="pre">HISTORY_PATH</span></code> est
+utilisé indirectement, à l’intérieur de <code class="docutils literal notranslate"><span class="pre">load_history</span></code>)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="1_Integration.html" class="btn btn-neutral float-left" title="Data_Integration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="3_Export.html" class="btn btn-neutral float-right" title="Export" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Lilia CHALES.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

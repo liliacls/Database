@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources &mdash; BacLipidAPP 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Management" href="5_Management.html" />
+    <link rel="prev" title="Export" href="3_Export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BacLipidAPP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_Integration.html">Data_Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_BacLipidDB.html">BacLipidDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_Export.html">Export</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">Vue d’ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#guide-des-colonnes-ms1">Guide des colonnes MS1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modele-ms1">Modèle MS1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#guide-des-colonnes-ms2">Guide des colonnes MS2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modele-ms2">Modèle MS2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adduits">Adduits</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#table-des-adduits">Table des adduits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ajout-d-un-adduit-personnalise">Ajout d’un adduit personnalisé</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#suppression-d-un-adduit-personnalise">Suppression d’un adduit personnalisé</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fonctions-internes">Fonctions internes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependances-internes">Dépendances internes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="5_Management.html">Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Modèle de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Référence API (générée automatiquement)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BacLipidAPP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Resources</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/4_Resources.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="resources">
+<h1>Resources<a class="headerlink" href="#resources" title="Link to this heading"></a></h1>
+<p>Fichier source : <code class="docutils literal notranslate"><span class="pre">app/pages/4_Resources.py</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cette page contient la documentation du module Streamlit (<code class="docutils literal notranslate"><span class="pre">4_Resources.py</span></code>).
+La majorité du code n’est pas écrit sous forme de fonction, il n’est donc pas possible d’utiliser <code class="docutils literal notranslate"><span class="pre">automodule</span></code>
+pour générer cette page automatiquement. La documentation ci-dessous est rédigée manuellement
+à partir du code source.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2>Vue d’ensemble<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Ce module Streamlit (<strong>MODULE 4</strong>) sert de guide pour préparer les fichiers
+d’intégration destinés au <a class="reference internal" href="1_Integration.html"><span class="doc">Data_Integration</span></a> (<strong>MODULE 1</strong>). Il présente,
+pour les niveaux <strong>MS1</strong> et <strong>MS2</strong>, la liste des colonnes attendues avec
+leur type et leur caractère obligatoire/optionnel, propose un fichier modèle
+téléchargeable pour chaque niveau. Il liste également les adduits acceptés dans la
+colonne <code class="docutils literal notranslate"><span class="pre">Adduct</span></code> et permet d’en ajouter ou d’en supprimer.</p>
+</section>
+<section id="guide-des-colonnes-ms1">
+<h2>Guide des colonnes MS1<a class="headerlink" href="#guide-des-colonnes-ms1" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">st.dataframe</span></code> affiche un tableau statique (<code class="docutils literal notranslate"><span class="pre">guide_ms1</span></code>) décrivant les
+colonnes attendues dans un fichier d’intégration <strong>MS1</strong> : <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">Formula</span></code>, <code class="docutils literal notranslate"><span class="pre">FA_composition</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_Name</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Lipid_category</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_subclass</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code> et <code class="docutils literal notranslate"><span class="pre">CCS</span></code>,
+avec pour chacune son type et si elle est obligatoire (✅) ou optionnelle (❌).
+Seules <code class="docutils literal notranslate"><span class="pre">FA_composition</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code> et <code class="docutils literal notranslate"><span class="pre">CCS</span></code> sont optionnelles (à laisser
+vides si non disponibles).</p>
+</section>
+<section id="modele-ms1">
+<h2>Modèle MS1<a class="headerlink" href="#modele-ms1" title="Link to this heading"></a></h2>
+<p>Un <code class="docutils literal notranslate"><span class="pre">st.download_button</span></code> génère et propose au téléchargement
+<code class="docutils literal notranslate"><span class="pre">BacLipidDB_MS1_template.csv</span></code> : un DataFrame d’une seule ligne (<code class="docutils literal notranslate"><span class="pre">template_ms1</span></code>)
+illustrant les 7 colonnes obligatoires et les 2 colonnes optionnelles
+(<code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code>) laissées vides, converti en CSV en mémoire via
+<code class="docutils literal notranslate"><span class="pre">io.StringIO</span></code>.</p>
+</section>
+<section id="guide-des-colonnes-ms2">
+<h2>Guide des colonnes MS2<a class="headerlink" href="#guide-des-colonnes-ms2" title="Link to this heading"></a></h2>
+<p>Un fichier d’intégration <strong>MS2</strong> est organisé en blocs empilés verticalement,
+un bloc par scan, séparés par une ligne vide. Chaque bloc commence par une
+ligne <code class="docutils literal notranslate"><span class="pre">Scan</span> <span class="pre">#&lt;id&gt;</span></code>, suivie d’une ligne <code class="docutils literal notranslate"><span class="pre">Label,Value</span></code> par champ (ordre
+libre), puis de l’en-tête <code class="docutils literal notranslate"><span class="pre">m/z,Intensity</span></code> et des lignes de fragments
+(<code class="docutils literal notranslate"><span class="pre">st.code</span></code> affiche ce format en exemple).</p>
+<p><code class="docutils literal notranslate"><span class="pre">st.dataframe</span></code> affiche ensuite un tableau statique (<code class="docutils literal notranslate"><span class="pre">guide_ms2</span></code>) décrivant
+les colonnes/champs attendus : <code class="docutils literal notranslate"><span class="pre">Scan</span> <span class="pre">#&lt;id&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Adduct</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Formula</span></code>, <code class="docutils literal notranslate"><span class="pre">FA_composition</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_Name</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_category</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_subclass</span></code>, <code class="docutils literal notranslate"><span class="pre">Num_peaks</span></code>, <code class="docutils literal notranslate"><span class="pre">m/z</span></code>, <code class="docutils literal notranslate"><span class="pre">Intensity</span></code>,
+<code class="docutils literal notranslate"><span class="pre">RT</span></code> et <code class="docutils literal notranslate"><span class="pre">CCS</span></code>. Seules <code class="docutils literal notranslate"><span class="pre">FA_composition</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code> et <code class="docutils literal notranslate"><span class="pre">CCS</span></code> sont
+optionnelles (à supprimer entièrement du bloc si non disponibles, contrairement
+au MS1 où elles sont laissées vides). <code class="docutils literal notranslate"><span class="pre">Num_peaks</span></code> doit correspondre au
+nombre de lignes <code class="docutils literal notranslate"><span class="pre">m/z</span></code>/<code class="docutils literal notranslate"><span class="pre">Intensity</span></code> du bloc.</p>
+</section>
+<section id="modele-ms2">
+<h2>Modèle MS2<a class="headerlink" href="#modele-ms2" title="Link to this heading"></a></h2>
+<p>Un <code class="docutils literal notranslate"><span class="pre">st.download_button</span></code> génère et propose au téléchargement
+<code class="docutils literal notranslate"><span class="pre">BacLipidDB_MS2_template.csv</span></code> : deux scans d’exemple (<code class="docutils literal notranslate"><span class="pre">template_ms2</span></code>,
+liste de lignes écrites via <code class="docutils literal notranslate"><span class="pre">csv.writer</span></code> dans un <code class="docutils literal notranslate"><span class="pre">io.StringIO</span></code>) séparés
+par une ligne vide. Le premier scan inclut les champs optionnels <code class="docutils literal notranslate"><span class="pre">RT</span></code> et
+<code class="docutils literal notranslate"><span class="pre">CCS</span></code> ; le second montre que ces lignes peuvent être omises entièrement
+quand ces valeurs ne sont pas disponibles.</p>
+</section>
+<section id="adduits">
+<h2>Adduits<a class="headerlink" href="#adduits" title="Link to this heading"></a></h2>
+<section id="table-des-adduits">
+<h3>Table des adduits<a class="headerlink" href="#table-des-adduits" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">st.dataframe</span></code> affiche la table des adduits acceptés dans la colonne
+<code class="docutils literal notranslate"><span class="pre">Adduct</span></code> (intégration MS1 et MS2), construite à partir de
+<code class="xref py py-data docutils literal notranslate"><span class="pre">utils.neutral_mass.ADDUCT_SHIFTS</span></code> et <code class="xref py py-data docutils literal notranslate"><span class="pre">utils.neutral_mass.ADDUCT_SIGNS</span></code> :
+nom de l’adduit, décalage de masse en Da (<code class="docutils literal notranslate"><span class="pre">Mass</span> <span class="pre">shift</span></code>), opération à
+appliquer au m/z pour obtenir la masse neutre (<code class="docutils literal notranslate"><span class="pre">m/z</span> <span class="pre">-</span> <span class="pre">shift</span></code> si
+<code class="docutils literal notranslate"><span class="pre">ADDUCT_SIGNS[name]</span> <span class="pre">==</span> <span class="pre">-1</span></code>, <code class="docutils literal notranslate"><span class="pre">m/z</span> <span class="pre">+</span> <span class="pre">shift</span></code> sinon) et indicateur <code class="docutils literal notranslate"><span class="pre">Custom</span></code>
+(✅ si l’adduit provient de <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.list_custom_adducts()</span></code>,
+❌ s’il s’agit d’un adduit natif).</p>
+</section>
+<section id="ajout-d-un-adduit-personnalise">
+<h3>Ajout d’un adduit personnalisé<a class="headerlink" href="#ajout-d-un-adduit-personnalise" title="Link to this heading"></a></h3>
+<p>Un formulaire (<code class="docutils literal notranslate"><span class="pre">st.form</span></code>) permet de saisir un nom d’adduit
+(<code class="docutils literal notranslate"><span class="pre">st.text_input</span></code>, ex. <code class="docutils literal notranslate"><span class="pre">[M+Cl]-</span></code>), un décalage de masse en Da
+(<code class="docutils literal notranslate"><span class="pre">st.number_input</span></code>) et le type de formation (<code class="docutils literal notranslate"><span class="pre">st.radio</span></code>) : « Addition »
+(ex. <code class="docutils literal notranslate"><span class="pre">[M+H]+</span></code>, <code class="docutils literal notranslate"><span class="pre">[M+Na]+</span></code>) ou « Loss » (ex. <code class="docutils literal notranslate"><span class="pre">[M-H]-</span></code>). Le signe transmis
+à <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.add_custom_adduct()</span></code> vaut <code class="docutils literal notranslate"><span class="pre">-1</span></code> pour une addition
+et <code class="docutils literal notranslate"><span class="pre">1</span></code> pour une perte, conformément à la convention de
+<a class="reference internal" href="api.html#utils.neutral_mass.neutral_mass" title="utils.neutral_mass.neutral_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.neutral_mass()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">mz</span> <span class="pre">+</span> <span class="pre">sign</span> <span class="pre">*</span> <span class="pre">shift</span></code>). En cas de
+succès, un message <code class="docutils literal notranslate"><span class="pre">st.success</span></code> est affiché et la page est rechargée
+(<code class="docutils literal notranslate"><span class="pre">st.rerun()</span></code>) ; en cas d’erreur (nom vide/déjà utilisé, décalage non
+strictement positif…), un message <code class="docutils literal notranslate"><span class="pre">st.error</span></code> affiche l’exception levée
+par <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.add_custom_adduct()</span></code>.</p>
+<p>Les adduits personnalisés sont persistés dans <code class="docutils literal notranslate"><span class="pre">adducts.json</span></code> (<code class="docutils literal notranslate"><span class="pre">config.ADDUCTS_PATH</span></code>)
+et restent donc disponibles d’une session à l’autre.</p>
+</section>
+<section id="suppression-d-un-adduit-personnalise">
+<h3>Suppression d’un adduit personnalisé<a class="headerlink" href="#suppression-d-un-adduit-personnalise" title="Link to this heading"></a></h3>
+<p>Si au moins un adduit personnalisé existe, un <code class="docutils literal notranslate"><span class="pre">st.selectbox</span></code> (liste des
+adduits renvoyés par <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.list_custom_adducts()</span></code>) et un
+bouton <strong>Remove</strong> permettent de le retirer via
+<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.remove_custom_adduct()</span></code>, puis de recharger la page
+(<code class="docutils literal notranslate"><span class="pre">st.rerun()</span></code>). Les adduits natifs (<code class="docutils literal notranslate"><span class="pre">BUILTIN_ADDUCT_SHIFTS</span></code>) ne peuvent
+pas être supprimés.</p>
+</section>
+</section>
+<section id="fonctions-internes">
+<h2>Fonctions internes<a class="headerlink" href="#fonctions-internes" title="Link to this heading"></a></h2>
+<p>Ce module ne définit aucune fonction interne : l’ensemble du code s’exécute
+au niveau du script (délégation directe aux fonctions de
+<a class="reference internal" href="api.html#module-utils.neutral_mass" title="utils.neutral_mass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.neutral_mass</span></code></a>).</p>
+</section>
+<section id="dependances-internes">
+<h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="api.html#module-utils.neutral_mass" title="utils.neutral_mass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.neutral_mass</span></code></a> (<code class="docutils literal notranslate"><span class="pre">ADDUCT_SHIFTS</span></code>, <code class="docutils literal notranslate"><span class="pre">ADDUCT_SIGNS</span></code>,
+<code class="docutils literal notranslate"><span class="pre">add_custom_adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">list_custom_adducts</span></code>, <code class="docutils literal notranslate"><span class="pre">remove_custom_adduct</span></code>)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="3_Export.html" class="btn btn-neutral float-left" title="Export" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="5_Management.html" class="btn btn-neutral float-right" title="Management" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Lilia CHALES.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modèle de données &mdash; BacLipidAPP 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Référence API (générée automatiquement)" href="api.html" />
+    <link rel="prev" title="Management" href="5_Management.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BacLipidAPP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_Integration.html">Data_Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_BacLipidDB.html">BacLipidDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_Export.html">Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_Resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_Management.html">Management</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modèle de données</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">Vue d’ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#relations">Relations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-detection">Table <code class="docutils literal notranslate"><span class="pre">Detection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-fragment">Table <code class="docutils literal notranslate"><span class="pre">Fragment</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-lipid">Table <code class="docutils literal notranslate"><span class="pre">Lipid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-annotation">Table <code class="docutils literal notranslate"><span class="pre">Annotation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conventions">Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#voir-aussi">Voir aussi</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Référence API (générée automatiquement)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BacLipidAPP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Modèle de données</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="modele-de-donnees">
+<h1>Modèle de données<a class="headerlink" href="#modele-de-donnees" title="Link to this heading"></a></h1>
+<p>Fichier source : <code class="docutils literal notranslate"><span class="pre">models/model.py</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ce module définit les modèles SQLAlchemy (ORM) de <strong>BacLipidDB</strong>. Contrairement aux
+pages Streamlit, il est structuré en classes documentées : voir <a class="reference internal" href="api.html#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.model.Detection</span></code></a>,
+<a class="reference internal" href="api.html#models.model.Fragment" title="models.model.Fragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.model.Fragment</span></code></a>, <a class="reference internal" href="api.html#models.model.Lipid" title="models.model.Lipid"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.model.Lipid</span></code></a> et <a class="reference internal" href="api.html#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.model.Annotation</span></code></a>
+pour la référence générée automatiquement (<code class="docutils literal notranslate"><span class="pre">autoclass</span></code>). Cette page complète cette
+référence par une vue d’ensemble du schéma et des relations entre les tables.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2>Vue d’ensemble<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Le module définit les 4 tables de la base de données via <code class="docutils literal notranslate"><span class="pre">DeclarativeBase</span></code> :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Detection</span></code>  : signal détecté par le spectromètre de masse.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fragment</span></code>   : ions fragments associés à une détection (MS2 uniquement).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Lipid</span></code>      : lipide de référence (nom, classe, catégorie, formule).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Annotation</span></code> : association entre une détection et un lipide candidat, avec un
+niveau de confiance sur l’identification.</p></li>
+</ul>
+</section>
+<section id="relations">
+<h2>Relations<a class="headerlink" href="#relations" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 15.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Relation</p></th>
+<th class="head"><p>Cardinalité</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Detection</span></code> → <code class="docutils literal notranslate"><span class="pre">Fragment</span></code></p></td>
+<td><p>1 → N</p></td>
+<td><p>Un signal peut produire plusieurs fragments (MS2 uniquement).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Detection</span></code> → <code class="docutils literal notranslate"><span class="pre">Annotation</span></code></p></td>
+<td><p>1 → 1</p></td>
+<td><p>Un signal correspond à une seule annotation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Lipid</span></code> → <code class="docutils literal notranslate"><span class="pre">Annotation</span></code></p></td>
+<td><p>1 → 1</p></td>
+<td><p>Un lipide est associé à une seule annotation.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="table-detection">
+<h2>Table <code class="docutils literal notranslate"><span class="pre">Detection</span></code><a class="headerlink" href="#table-detection" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Colonne</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Clé primaire.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>m/z de l’ion précurseur (Da).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MS_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;MS1&quot;</span></code> (précurseur seul) ou <code class="docutils literal notranslate"><span class="pre">&quot;MS2&quot;</span></code> (avec spectre de fragmentation).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Ionisation_mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;Positive&quot;</span></code> ou <code class="docutils literal notranslate"><span class="pre">&quot;Negative&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Adduct</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Adduit du précurseur.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Nombre de pics de fragments (MS2 uniquement).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Masse neutre dérivée de <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> et du mode d’ionisation (Da).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Temps de rétention (minutes).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CCS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Section efficace de collision (Ų).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="table-fragment">
+<h2>Table <code class="docutils literal notranslate"><span class="pre">Fragment</span></code><a class="headerlink" href="#table-fragment" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Colonne</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Fragment_ID</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Clé primaire.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Detection_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Clé étrangère vers <code class="docutils literal notranslate"><span class="pre">Detection.Detection_ID</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MZ</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>m/z de l’ion fragment (Da).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Intensity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Intensité du pic de fragment.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="table-lipid">
+<h2>Table <code class="docutils literal notranslate"><span class="pre">Lipid</span></code><a class="headerlink" href="#table-lipid" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Colonne</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Clé primaire.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Nom du lipide.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Lipid_category</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Catégorie LIPID MAPS.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Classe LIPID MAPS.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Lipid_subclass</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Sous-classe LIPID MAPS.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Formula</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Formule chimique.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Molecular_weight</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Masse moléculaire moyenne (Da).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Masse monoisotopique (Da).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="table-annotation">
+<h2>Table <code class="docutils literal notranslate"><span class="pre">Annotation</span></code><a class="headerlink" href="#table-annotation" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Colonne</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Annotation_ID</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Clé primaire.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Lipid_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Clé étrangère (unique) vers <code class="docutils literal notranslate"><span class="pre">Lipid.Lipid_ID</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Detection_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Clé étrangère (unique) vers <code class="docutils literal notranslate"><span class="pre">Detection.Detection_ID</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="conventions">
+<h2>Conventions<a class="headerlink" href="#conventions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Les clés primaires sont nommées avec le suffixe <code class="docutils literal notranslate"><span class="pre">_ID</span></code>.</p></li>
+<li><p>Les clés étrangères sont nommées avec le suffixe <code class="docutils literal notranslate"><span class="pre">_id</span></code>.</p></li>
+<li><p>Chaque classe définit un <code class="docutils literal notranslate"><span class="pre">__repr__</span></code> pour afficher un objet de façon lisible lors du débogage.</p></li>
+</ul>
+</section>
+<section id="voir-aussi">
+<h2>Voir aussi<a class="headerlink" href="#voir-aussi" title="Link to this heading"></a></h2>
+<p>Documentation SQLAlchemy :</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/21/orm/declarative_styles.html">DeclarativeBase</a></p></li>
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/21/orm/mapping_styles.html#orm-mapping-styles">Mapped</a></p></li>
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/21/orm/mapping_api.html#sqlalchemy.orm.Mapper.columns">mapped_column</a></p></li>
+<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html">relationship, ForeignKey</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="5_Management.html" class="btn btn-neutral float-left" title="Management" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Référence API (générée automatiquement)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Lilia CHALES.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

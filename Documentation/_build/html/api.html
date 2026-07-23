@@ -1,0 +1,715 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Référence API (générée automatiquement) &mdash; BacLipidAPP 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Modèle de données" href="model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BacLipidAPP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_Integration.html">Data_Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_BacLipidDB.html">BacLipidDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_Export.html">Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_Resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_Management.html">Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Modèle de données</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Référence API (générée automatiquement)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-config">config</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#config.get_engine"><code class="docutils literal notranslate"><span class="pre">get_engine()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-models.model">models.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#models.model.Base"><code class="docutils literal notranslate"><span class="pre">Base</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Base.registry"><code class="docutils literal notranslate"><span class="pre">Base.registry</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.model.Detection"><code class="docutils literal notranslate"><span class="pre">Detection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.Detection_ID"><code class="docutils literal notranslate"><span class="pre">Detection.Detection_ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.Precursor_MZ"><code class="docutils literal notranslate"><span class="pre">Detection.Precursor_MZ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.MS_level"><code class="docutils literal notranslate"><span class="pre">Detection.MS_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.Ionisation_mode"><code class="docutils literal notranslate"><span class="pre">Detection.Ionisation_mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.Adduct"><code class="docutils literal notranslate"><span class="pre">Detection.Adduct</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.Num_Peaks"><code class="docutils literal notranslate"><span class="pre">Detection.Num_Peaks</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.Neutral_mass"><code class="docutils literal notranslate"><span class="pre">Detection.Neutral_mass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.RT"><code class="docutils literal notranslate"><span class="pre">Detection.RT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.CCS"><code class="docutils literal notranslate"><span class="pre">Detection.CCS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.fragments"><code class="docutils literal notranslate"><span class="pre">Detection.fragments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Detection.annotation"><code class="docutils literal notranslate"><span class="pre">Detection.annotation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.model.Fragment"><code class="docutils literal notranslate"><span class="pre">Fragment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Fragment.Fragment_ID"><code class="docutils literal notranslate"><span class="pre">Fragment.Fragment_ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Fragment.Detection_id"><code class="docutils literal notranslate"><span class="pre">Fragment.Detection_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Fragment.MZ"><code class="docutils literal notranslate"><span class="pre">Fragment.MZ</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Fragment.Intensity"><code class="docutils literal notranslate"><span class="pre">Fragment.Intensity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Fragment.detection"><code class="docutils literal notranslate"><span class="pre">Fragment.detection</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.model.Lipid"><code class="docutils literal notranslate"><span class="pre">Lipid</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Lipid_ID"><code class="docutils literal notranslate"><span class="pre">Lipid.Lipid_ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Lipid_name"><code class="docutils literal notranslate"><span class="pre">Lipid.Lipid_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Lipid_category"><code class="docutils literal notranslate"><span class="pre">Lipid.Lipid_category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Lipid_class"><code class="docutils literal notranslate"><span class="pre">Lipid.Lipid_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Lipid_subclass"><code class="docutils literal notranslate"><span class="pre">Lipid.Lipid_subclass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Formula"><code class="docutils literal notranslate"><span class="pre">Lipid.Formula</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.FA_composition"><code class="docutils literal notranslate"><span class="pre">Lipid.FA_composition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Molecular_weight"><code class="docutils literal notranslate"><span class="pre">Lipid.Molecular_weight</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.Monoisotopic_mass"><code class="docutils literal notranslate"><span class="pre">Lipid.Monoisotopic_mass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Lipid.annotation"><code class="docutils literal notranslate"><span class="pre">Lipid.annotation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#models.model.Annotation"><code class="docutils literal notranslate"><span class="pre">Annotation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Annotation.Annotation_ID"><code class="docutils literal notranslate"><span class="pre">Annotation.Annotation_ID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Annotation.Lipid_id"><code class="docutils literal notranslate"><span class="pre">Annotation.Lipid_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Annotation.Detection_id"><code class="docutils literal notranslate"><span class="pre">Annotation.Detection_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Annotation.lipid"><code class="docutils literal notranslate"><span class="pre">Annotation.lipid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models.model.Annotation.detection"><code class="docutils literal notranslate"><span class="pre">Annotation.detection</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.loading_MS1">utils.loading_MS1</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.loading_MS1.DB_MS1"><code class="docutils literal notranslate"><span class="pre">DB_MS1()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.molecular_weight">utils.molecular_weight</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.molecular_weight.molecular_weight"><code class="docutils literal notranslate"><span class="pre">molecular_weight()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.monoisotopic">utils.monoisotopic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.monoisotopic.monoisotopic_mass"><code class="docutils literal notranslate"><span class="pre">monoisotopic_mass()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.msp_export">utils.msp_export</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.msp_export.generate_msp"><code class="docutils literal notranslate"><span class="pre">generate_msp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.neutral_mass">utils.neutral_mass</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.json_adducts"><code class="docutils literal notranslate"><span class="pre">json_adducts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.list_adducts"><code class="docutils literal notranslate"><span class="pre">list_adducts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.add_adduct"><code class="docutils literal notranslate"><span class="pre">add_adduct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.remove_adduct"><code class="docutils literal notranslate"><span class="pre">remove_adduct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.adduct"><code class="docutils literal notranslate"><span class="pre">adduct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.neutral_mass"><code class="docutils literal notranslate"><span class="pre">neutral_mass()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scripts-formula">scripts.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scripts.init_db">scripts.init_db</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#init-db-py">init_db.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scripts.init_db.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scripts-loading-ms2">scripts.loading_MS2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scripts.reset_db">scripts.reset_db</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reset-db-py">reset_db.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scripts.reset_db.reset_db"><code class="docutils literal notranslate"><span class="pre">reset_db()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BacLipidAPP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Référence API (générée automatiquement)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reference-api-generee-automatiquement">
+<h1>Référence API (générée automatiquement)<a class="headerlink" href="#reference-api-generee-automatiquement" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cette page est générée automatiquement à partir des docstrings du code source
+(<code class="docutils literal notranslate"><span class="pre">sphinx.ext.autodoc</span></code>). Contrairement aux pages Streamlit (<a class="reference internal" href="Home.html"><span class="doc">Home</span></a>,
+<a class="reference internal" href="1_Integration.html"><span class="doc">Data_Integration</span></a>, <a class="reference internal" href="2_BacLipidDB.html"><span class="doc">BacLipidDB</span></a>, <a class="reference internal" href="3_Export.html"><span class="doc">Export</span></a>), les modules
+ci-dessous sont écrits sous forme de fonctions/classes documentées, ce qui
+permet une extraction automatique.</p>
+</div>
+<section id="module-config">
+<span id="config"></span><h2>config<a class="headerlink" href="#module-config" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="config.get_engine">
+<span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">get_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/config.html#get_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config.get_engine" title="Link to this definition"></a></dt>
+<dd><p>Create and cache the SQLAlchemy engine for the SQLite database connection.</p>
+</dd></dl>
+
+</section>
+<section id="module-models.model">
+<span id="models-model"></span><h2>models.model<a class="headerlink" href="#module-models.model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="models.model.Base">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Base" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeclarativeBase</span></code></p>
+<p>Declarative base class for all BacLipidDB ORM models.</p>
+<p>All mapped classes (<a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a>, <a class="reference internal" href="#models.model.Fragment" title="models.model.Fragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fragment</span></code></a>, <a class="reference internal" href="#models.model.Lipid" title="models.model.Lipid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lipid</span></code></a>,
+<a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>) inherit from this class so SQLAlchemy can collect
+their metadata and generate the corresponding database tables.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Base.registry">
+<span class="sig-name descname"><span class="pre">registry</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">_RegistryType</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;sqlalchemy.orm.decl_api.registry</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#models.model.Base.registry" title="Link to this definition"></a></dt>
+<dd><p>Refers to the <code class="xref py py-class docutils literal notranslate"><span class="pre">_orm.registry</span></code> in use where new
+<code class="xref py py-class docutils literal notranslate"><span class="pre">_orm.Mapper</span></code> objects will be associated.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.model.Detection">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Detection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Detection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Detection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>A single MS1 or MS2 detection (ion observed in a run).</p>
+<p>Stores the precursor m/z, ionisation mode, adduct, retention time and
+CCS. Linked to zero or more <a class="reference internal" href="#models.model.Fragment" title="models.model.Fragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fragment</span></code></a> rows when <code class="docutils literal notranslate"><span class="pre">MS_level</span></code> is
+“MS2”, and to one <a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.Detection_ID">
+<span class="sig-name descname"><span class="pre">Detection_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.Detection_ID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.Precursor_MZ">
+<span class="sig-name descname"><span class="pre">Precursor_MZ</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.Precursor_MZ" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.MS_level">
+<span class="sig-name descname"><span class="pre">MS_level</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.MS_level" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.Ionisation_mode">
+<span class="sig-name descname"><span class="pre">Ionisation_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.Ionisation_mode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.Adduct">
+<span class="sig-name descname"><span class="pre">Adduct</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.Adduct" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.Num_Peaks">
+<span class="sig-name descname"><span class="pre">Num_Peaks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.Num_Peaks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.Neutral_mass">
+<span class="sig-name descname"><span class="pre">Neutral_mass</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.Neutral_mass" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.RT">
+<span class="sig-name descname"><span class="pre">RT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.RT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.CCS">
+<span class="sig-name descname"><span class="pre">CCS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.CCS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.fragments">
+<span class="sig-name descname"><span class="pre">fragments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.model.Fragment" title="models.model.Fragment"><span class="pre">Fragment</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.fragments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Detection.annotation">
+<span class="sig-name descname"><span class="pre">annotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><span class="pre">Annotation</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.annotation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.model.Fragment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Fragment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Fragment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>A fragment ion peak (m/z, intensity) belonging to an MS2 spectrum.</p>
+<p>Each row is attached to the <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a> it was measured in.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Fragment.Fragment_ID">
+<span class="sig-name descname"><span class="pre">Fragment_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Fragment.Fragment_ID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Fragment.Detection_id">
+<span class="sig-name descname"><span class="pre">Detection_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Fragment.Detection_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Fragment.MZ">
+<span class="sig-name descname"><span class="pre">MZ</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Fragment.MZ" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Fragment.Intensity">
+<span class="sig-name descname"><span class="pre">Intensity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Fragment.Intensity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Fragment.detection">
+<span class="sig-name descname"><span class="pre">detection</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><span class="pre">Detection</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Fragment.detection" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.model.Lipid">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Lipid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Lipid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Lipid" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>A lipid entity identified by name, formula and LIPID MAPS classification.</p>
+<p>Independent of any given detection; linked to the <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a> it
+was identified in through a single <a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Lipid_ID">
+<span class="sig-name descname"><span class="pre">Lipid_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Lipid_ID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Lipid_name">
+<span class="sig-name descname"><span class="pre">Lipid_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Lipid_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Lipid_category">
+<span class="sig-name descname"><span class="pre">Lipid_category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Lipid_category" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Lipid_class">
+<span class="sig-name descname"><span class="pre">Lipid_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Lipid_class" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Lipid_subclass">
+<span class="sig-name descname"><span class="pre">Lipid_subclass</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Lipid_subclass" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Formula">
+<span class="sig-name descname"><span class="pre">Formula</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Formula" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.FA_composition">
+<span class="sig-name descname"><span class="pre">FA_composition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.FA_composition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Molecular_weight">
+<span class="sig-name descname"><span class="pre">Molecular_weight</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Molecular_weight" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.Monoisotopic_mass">
+<span class="sig-name descname"><span class="pre">Monoisotopic_mass</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Monoisotopic_mass" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Lipid.annotation">
+<span class="sig-name descname"><span class="pre">annotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><span class="pre">Annotation</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.annotation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="models.model.Annotation">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Annotation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<p>Join table linking one <a class="reference internal" href="#models.model.Lipid" title="models.model.Lipid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lipid</span></code></a> to one <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a>.</p>
+<p>Represents the identification of a detected ion as a given lipid.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Annotation.Annotation_ID">
+<span class="sig-name descname"><span class="pre">Annotation_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Annotation.Annotation_ID" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Annotation.Lipid_id">
+<span class="sig-name descname"><span class="pre">Lipid_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Annotation.Lipid_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Annotation.Detection_id">
+<span class="sig-name descname"><span class="pre">Detection_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Annotation.Detection_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Annotation.lipid">
+<span class="sig-name descname"><span class="pre">lipid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.model.Lipid" title="models.model.Lipid"><span class="pre">Lipid</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Annotation.lipid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="models.model.Annotation.detection">
+<span class="sig-name descname"><span class="pre">detection</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><span class="pre">Detection</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Annotation.detection" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.loading_MS1">
+<span id="utils-loading-ms1"></span><h2>utils.loading_MS1<a class="headerlink" href="#module-utils.loading_MS1" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.loading_MS1.DB_MS1">
+<span class="sig-prename descclassname"><span class="pre">utils.loading_MS1.</span></span><span class="sig-name descname"><span class="pre">DB_MS1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_row_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/loading_MS1.html#DB_MS1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.loading_MS1.DB_MS1" title="Link to this definition"></a></dt>
+<dd><p>Insert MS1 annotation data into the database.
+For each row of the DataFrame, creates and inserts a record into the three tables: Detection, Lipid and Annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
+and optionally RT and CCS.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – name of the file being integrated.</p></li>
+<li><p><strong>integrator</strong> (<em>str</em>) – name of the person performing the integration.</p></li>
+<li><p><strong>file_row_name</strong> (<em>str</em>) – name of the file that provided the annotations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – on error no row is committed (automatic ROLLBACK) and the error is logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.molecular_weight">
+<span id="utils-molecular-weight"></span><h2>utils.molecular_weight<a class="headerlink" href="#module-utils.molecular_weight" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.molecular_weight.molecular_weight">
+<span class="sig-prename descclassname"><span class="pre">utils.molecular_weight.</span></span><span class="sig-name descname"><span class="pre">molecular_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/molecular_weight.html#molecular_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.molecular_weight.molecular_weight" title="Link to this definition"></a></dt>
+<dd><p>Compute the average molecular weight of the lipid from its chemical formula.
+Uses molmass.Formula.mass for the calculation, then rounds to 6 decimal places.
+Returns None without raising an exception if the formula is None, empty, or invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>formula</strong> (<em>str</em>) – chemical formula</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>average molecular weight rounded to 6 decimal places, or None if invalid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.monoisotopic">
+<span id="utils-monoisotopic"></span><h2>utils.monoisotopic<a class="headerlink" href="#module-utils.monoisotopic" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.monoisotopic.monoisotopic_mass">
+<span class="sig-prename descclassname"><span class="pre">utils.monoisotopic.</span></span><span class="sig-name descname"><span class="pre">monoisotopic_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/monoisotopic.html#monoisotopic_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.monoisotopic.monoisotopic_mass" title="Link to this definition"></a></dt>
+<dd><p>Compute the monoisotopic mass of the lipid from its chemical formula.
+Uses molmass.Formula.monoisotopic_mass for the calculation.
+Returns None without raising an exception if the formula is null, empty, or invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>formula</strong> (<em>str</em><em> or </em><em>None</em>) – chemical formula</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>monoisotopic mass rounded to 6 decimal places, or None if invalid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.msp_export">
+<span id="utils-msp-export"></span><h2>utils.msp_export<a class="headerlink" href="#module-utils.msp_export" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.msp_export.generate_msp">
+<span class="sig-prename descclassname"><span class="pre">utils.msp_export.</span></span><span class="sig-name descname"><span class="pre">generate_msp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mz_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ionisation_modes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/utils/msp_export.html#generate_msp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.msp_export.generate_msp" title="Link to this definition"></a></dt>
+<dd><p>Returns a string in .msp format for MS2 detections matching the filters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>engine</strong> – engine: SQLAlchemy engine connected to the database.</p></li>
+<li><p><strong>categories</strong> – selected lipid category list (empty = all).</p></li>
+<li><p><strong>classes</strong> – selected lipid class list (empty = all).</p></li>
+<li><p><strong>sub_classes</strong> – selected lipid subclass list (empty = all).</p></li>
+<li><p><strong>mz_range</strong> – tuple (mz_min, mz_max) for filtering on Precursor_MZ.</p></li>
+<li><p><strong>ionisation_modes</strong> – selected ionisation mode list, “Positive”/”Negative”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>.msp file ready to be downloaded.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.neutral_mass">
+<span id="utils-neutral-mass"></span><h2>utils.neutral_mass<a class="headerlink" href="#module-utils.neutral_mass" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.neutral_mass.json_adducts">
+<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">json_adducts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#json_adducts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.json_adducts" title="Link to this definition"></a></dt>
+<dd><p>Load the custom adducts persisted in the JSON file at ADDUCTS_PATH.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>mapping of adduct name to {“shift”: float, “sign”: int}, or an empty
+dict if the file does not exist or is empty.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">json_adducts</span><span class="p">()</span>
+<span class="go">{&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.neutral_mass.list_adducts">
+<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">list_adducts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#list_adducts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.list_adducts" title="Link to this definition"></a></dt>
+<dd><p>Return the currently persisted custom adducts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>mapping of adduct name to {“shift”: float, “sign”: int}.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">list_adducts</span><span class="p">()</span>
+<span class="go">{&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.neutral_mass.add_adduct">
+<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">add_adduct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#add_adduct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.add_adduct" title="Link to this definition"></a></dt>
+<dd><p>Validate and add a new custom adduct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – adduct name. Comparison against existing adducts is
+case-insensitive, matching the lookup done by adduct().</p></li>
+<li><p><strong>shift</strong> (<em>float</em>) – mass shift in Daltons, must be strictly positive.</p></li>
+<li><p><strong>sign</strong> (<em>int</em>) – -1 if the adduct is formed by addition to the neutral molecule
+(shift is subtracted to recover the neutral mass), +1 if formed by loss
+(shift is added back).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if name is empty or already used (case-insensitively),
+sign is not -1/1, or shift is not a strictly positive number.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># [M+Na]+ is formed by addition of sodium, so sign=-1 (the shift is</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># subtracted back to recover the neutral mass from the precursor m/z).</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_adduct</span><span class="p">(</span><span class="s2">&quot;[M+Na]+&quot;</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mf">22.989221</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_adducts</span><span class="p">()</span>
+<span class="go">{&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.neutral_mass.remove_adduct">
+<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">remove_adduct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#remove_adduct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.remove_adduct" title="Link to this definition"></a></dt>
+<dd><p>Remove a previously added custom adduct. Built-in adducts cannot be removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of the custom adduct to remove.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if name is not a persisted custom adduct.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">remove_adduct</span><span class="p">(</span><span class="s2">&quot;[M+Na]+&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_adducts</span><span class="p">()</span>
+<span class="go">{}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.neutral_mass.adduct">
+<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">adduct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_adduct</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#adduct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.adduct" title="Link to this definition"></a></dt>
+<dd><p>Validate and normalize a raw adduct value into one of the standard adduct strings. The adduct is required for the neutral mass calculation
+and the completion of the “Adduct” column in the output table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>raw_adduct</strong> – raw value to resolve</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if raw_adduct is missing or not a recognized adduct.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>standard adduct string</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Case and surrounding spaces are ignored, only the standard form is returned.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adduct</span><span class="p">(</span><span class="s2">&quot;  [m+h]+ &quot;</span><span class="p">)</span>
+<span class="go">&#39;[M+H]+&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.neutral_mass.neutral_mass">
+<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">neutral_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Precursor_MZ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adduct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#neutral_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.neutral_mass" title="Link to this definition"></a></dt>
+<dd><p>Calculate the neutral mass from the precursor m/z ratio and the precursor adduct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Precursor_MZ</strong> (<em>float</em>) – m/z ratio of the precursor.</p></li>
+<li><p><strong>adduct</strong> (<em>str</em>) – precursor adduct</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>neutral mass in Daltons, rounded to 6 decimal places.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="scripts-formula">
+<h2>scripts.formula<a class="headerlink" href="#scripts-formula" title="Link to this heading"></a></h2>
+</section>
+<section id="module-scripts.init_db">
+<span id="scripts-init-db"></span><h2>scripts.init_db<a class="headerlink" href="#module-scripts.init_db" title="Link to this heading"></a></h2>
+<section id="init-db-py">
+<h3>init_db.py<a class="headerlink" href="#init-db-py" title="Link to this heading"></a></h3>
+<p>Create the database and all tables if they do not exist yet
+Initialization script for the database “BacLipidDB.db”
+Run this script only once to create the SQLite tables defined in models/model.py</p>
+<dl class="simple">
+<dt>Usage :</dt><dd><p>python scripts/init_db.py</p>
+</dd>
+</dl>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.init_db.main">
+<span class="sig-prename descclassname"><span class="pre">scripts.init_db.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/init_db.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.init_db.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="scripts-loading-ms2">
+<h2>scripts.loading_MS2<a class="headerlink" href="#scripts-loading-ms2" title="Link to this heading"></a></h2>
+</section>
+<section id="module-scripts.reset_db">
+<span id="scripts-reset-db"></span><h2>scripts.reset_db<a class="headerlink" href="#module-scripts.reset_db" title="Link to this heading"></a></h2>
+<section id="reset-db-py">
+<h3>reset_db.py<a class="headerlink" href="#reset-db-py" title="Link to this heading"></a></h3>
+<p>Delete all records from BacLipidDB without dropping the tables.</p>
+<dl class="simple">
+<dt>The deletion order respects foreign key constraints:</dt><dd><ol class="arabic simple">
+<li><p>Annotation  (references to Lipid and Detection)</p></li>
+<li><p>Fragment    (reference to Detection)</p></li>
+<li><p>Detection</p></li>
+<li><p>Lipid</p></li>
+</ol>
+</dd>
+<dt>Usage :</dt><dd><p>python scripts/reset_db.py</p>
+</dd>
+</dl>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.reset_db.reset_db">
+<span class="sig-prename descclassname"><span class="pre">scripts.reset_db.</span></span><span class="sig-name descname"><span class="pre">reset_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/reset_db.html#reset_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.reset_db.reset_db" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model.html" class="btn btn-neutral float-left" title="Modèle de données" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Lilia CHALES.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
