@@ -10,14 +10,13 @@ Usage :
 """
 
 import sys
-from sqlalchemy import create_engine
 from models.model import Base
-from config import DB_PATH
+from config import get_engine
 
 
 def main():
 
-    engine = create_engine(DB_PATH, echo=True)
+    engine = get_engine()
     try:
         with engine.connect():
             print("Connection successful")

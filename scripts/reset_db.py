@@ -14,16 +14,15 @@ Usage :
 """
 
 import json
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from models.model import Annotation, Fragment, Detection, Lipid
-from config import DB_PATH
+from config import get_engine
 from config import HISTORY_PATH
 
 
 def reset_db():
 
-    engine = create_engine(DB_PATH, echo=False)
+    engine = get_engine()
 
     with Session(engine) as session:
         session.query(Annotation).delete()
