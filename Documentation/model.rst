@@ -63,7 +63,7 @@ Table ``Detection``
      - ``str``
      - ``"Positive"`` ou ``"Negative"``.
    * - ``Adduct``
-     - ``str | None``
+     - ``str``
      - Adduit du précurseur.
    * - ``Num_Peaks``
      - ``int | None``
@@ -129,6 +129,9 @@ Table ``Lipid``
    * - ``Formula``
      - ``str``
      - Formule chimique.
+   * - ``FA_composition``
+     - ``str | None``
+     - Composition en acides gras.
    * - ``Molecular_weight``
      - ``float``
      - Masse moléculaire moyenne (Da).

@@ -20,7 +20,7 @@ def DB_MS1(
     Insert MS1 annotation data into the database.
     For each row of the DataFrame, creates and inserts a record into the three tables: Detection, Lipid and Annotation.
 
-    :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
+    :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
                and optionally RT and CCS.
     :type df: pandas.DataFrame
     :param filename: name of the file being integrated.

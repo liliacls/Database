@@ -93,9 +93,12 @@ Workflow
    utilisés pour les calculer.
 
 2. **File upload**
-   Chargement d'un fichier ``.xlsx``, ``.csv`` ou ``.tsv`` via
-   ``st.file_uploader`` (clé versionnée par ``UPLOADER_VERSION`` pour pouvoir
-   être réinitialisé par le bouton **Reset**). Le rechargement du fichier (parsing) n'est
+   Chargement d'un fichier via ``st.file_uploader`` (clé versionnée par
+   ``UPLOADER_VERSION`` pour pouvoir être réinitialisé par le bouton
+   **Reset**), dont les types acceptés dépendent du niveau MS choisi à
+   l'étape 1 : ``.xlsx``, ``.csv`` ou ``.tsv`` pour ``MS1``, ``.csv`` ou
+   ``.tsv`` uniquement pour ``MS2`` (``ms2_parsing`` ne sait lire que du
+   texte délimité, pas le format binaire ``.xlsx``). Le rechargement du fichier (parsing) n'est
    déclenché que si son identifiant  (``uploaded_file.file_id``) ou le
    niveau MS (``df_ms_level``) diffère de la dernière valeur connue.
 

@@ -186,7 +186,7 @@ st.header(":blue[STEP 2] - File upload", divider="blue", text_alignment="left")
 
 uploaded_file = st.file_uploader(
     "Choose an annotation file",
-    type=["csv", "tsv", "xlsx"],
+    type=["csv", "tsv"] if ms_level == "MS2" else ["csv", "tsv", "xlsx"],
     key=f"file_uploader_{st.session_state.get(UPLOADER_VERSION, 0)}",
 )
 

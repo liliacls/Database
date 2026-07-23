@@ -179,7 +179,7 @@ def DB_MS2(
     For each scan, creates and inserts a record in the Lipid, Detection
     (+ its Fragments) and Annotation tables.
 
-    :param scans: list of dictionaries (see :func:`parse_ms2_file`), where each scan must
+    :param scans: list of dictionaries (see :func:`ms2_parsing`), where each scan must
         also carry the derived fields "molecular_weight", "monoisotopic_mass" and
         "neutral_mass" (computed by the caller).
     :type scans: list[dict]

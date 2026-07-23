@@ -64,7 +64,7 @@ Pages de l'application web Streamlit accessibles depuis le navigateur.
 | `1_Integration.py` | Importe un fichier d'annotations et l'intègre dans la base de données |
 | `2_BacLipidDB.py` | Visualise le contenu des tables ou une vue complète de la base de données |
 | `3_Export.py` | Filtre les données et les exporte en CSV (MS1) ou en MSP (MS2) compatible avec le logiciel MZmine |
-| `4_Resources.py` | Fournit les fichiers modèles pour l'intégration, un guide des colonnes attendues, une description des modules et la gestion des adduits custom |
+| `4_Resources.py` | Fournit les fichiers modèles pour l'intégration, un guide des colonnes attendues et la gestion des adduits custom |
 | `5_Management.py` | Édite ou supprime des enregistrements déjà intégrés, et permet de retirer une intégration entière depuis l'historique |
 
 ---
@@ -83,7 +83,7 @@ Fonctions de calcul, d'insertion et de maintenance utilisées par les différent
 
 | Fichier | Rôle |
 |---|---|
-| `neutral_mass.py` | Calcule la masse neutre à partir du rapport m/z, du mode d'ionisation et de l'adduit (built-in ou custom, défini dans `adducts.json`) |
+| `neutral_mass.py` | Calcule la masse neutre à partir du rapport m/z et de l'adduit (built-in ou custom, défini dans `adducts.json`) |
 | `molecular_weight.py` | Calcule le poids moléculaire moyen à partir de la formule brute via la librairie `molmass` |
 | `monoisotopic.py` | Calcule la masse monoisotopique à partir de la formule brute via la librairie `molmass` |
 | `msp_export.py` | Génère le contenu d'un fichier `.msp` à partir des annotations MS2 filtrées |
@@ -115,7 +115,7 @@ cd Database
 ```
 
 ### Option 1 - Avec conda (recommandé)
-`environment.yml` fixe la version de Python (3.12) et toutes les dépendances ; c'est la méthode qui reproduit le plus fidèlement l'environnement de développement.
+`environment.yml` fixe la version de Python (3.12) et toutes les dépendances.
 ```bash
 conda env create -f environment.yml
 conda activate lipid_database
