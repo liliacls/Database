@@ -18,6 +18,8 @@ ADDUCTS_PATH = PROJECT_ROOT / "adducts.json"
 # Directory where database snapshots are stored (one per import)
 BACKUP_DIR = PROJECT_ROOT / "backups"
 
+# Number of most recent snapshots to keep in /backups
+BACKUP_COUNT = 20
 
 @st.cache_resource
 def get_engine():
