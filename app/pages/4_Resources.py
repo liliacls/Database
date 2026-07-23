@@ -170,6 +170,10 @@ st.code(
     language="text",
 )
 
+st.caption(
+    "⚠️ Field labels are case-sensitive : use the exact capitalization shown below."
+)
+
 guide_ms2 = pd.DataFrame(
     [
         {
