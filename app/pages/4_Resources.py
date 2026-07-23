@@ -32,6 +32,10 @@ st.write("")
 st.subheader("MS1 integration - column guide")
 st.write("")
 
+st.caption(
+    "⚠️ Field labels are case-sensitive : use the exact capitalization shown below."
+)
+
 guide_ms1 = pd.DataFrame(
     [
         {

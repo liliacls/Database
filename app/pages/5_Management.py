@@ -21,6 +21,7 @@ EDITABLE_LIPID_FIELDS = ["Lipid_name", "Lipid_category", "Lipid_class", "Lipid_s
 EDITABLE_DETECTION_FIELDS = ["Num_Peaks", "RT", "CCS"]
 
 EDITOR_KEY = "editor"
+PENDING_PLAN = "pending_plan"
 HISTORY_KEY = "history_delete"
 HISTORY_DEL = "pending_history_delete"
 HISTORY_KEY_VERSION = "history_delete_version"
@@ -178,12 +179,12 @@ def _confirm_apply(plan: dict) -> None:
     c1, c2 = st.columns(2)
     if c1.button("Confirm", type="primary", width="stretch"):
         _apply(plan)
-        st.session_state.pop("pending_plan", None)
+        st.session_state.pop(PENDING_PLAN, None)
         st.session_state.pop(EDITOR_KEY, None)
         st.success("Changes applied.")
         st.rerun()
     if c2.button("Cancel", width="stretch"):
-        st.session_state.pop("pending_plan", None)
+        st.session_state.pop(PENDING_PLAN, None)
         st.rerun()
 
 
@@ -231,11 +232,11 @@ else:
         elif not plan["updates"] and not plan["deletes"]:
             st.info("No changes detected.")
         else:
-            st.session_state["pending_plan"] = plan
+            st.session_state[PENDING_PLAN] = plan
             st.rerun()
 
-if "pending_plan" in st.session_state:
-    _confirm_apply(st.session_state["pending_plan"])
+if PENDING_PLAN in st.session_state:
+    _confirm_apply(st.session_state[PENDING_PLAN])
 
 # ── Section 2 : delete an entire import ──────────────────────────────────────
 
@@ -291,7 +292,7 @@ def _history_del(entry: dict, index: int) -> None:
         st.session_state[HISTORY_DELETED_MSG] = entry.get("filename", "-")
         st.rerun()
     if c2.button("Cancel", width="stretch"):
-        st.session_state.pop("pending_history_delete", None)
+        st.session_state.pop(HISTORY_DEL, None)
         st.rerun()
 
 
