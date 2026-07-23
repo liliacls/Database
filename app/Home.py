@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from pathlib import Path
 
 from models.model import Detection
-from config import get_engine
+from config import get_engine, DB_FILE
 
 st.set_page_config(layout="wide")
 
@@ -38,7 +38,7 @@ def statistics():
                 .scalar()
                 or 0
             )
-        DBsize = Path(__file__).parent.parent.joinpath("BacLipidDB.db").stat().st_size
+        DBsize = DB_FILE.stat().st_size
         size_mb = DBsize / (1024 * 1024)
         db_size = f"{size_mb:.1f} Mo" if size_mb >= 1 else f"{DBsize / 1024:.1f} Ko"
         return {"ms1": ms1, "ms2": ms2, "db_size": db_size}
