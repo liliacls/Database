@@ -154,4 +154,21 @@ Ces fichiers/dossiers ne sont pas versionnés (voir `.gitignore`) et sont créé
 
 ---
 
+# **Documentation**
 
+La documentation technique (guide des modules Streamlit + référence API générée depuis les docstrings) est construite avec Sphinx, dans le dossier `Documentation/`. `sphinx` et `sphinx-rtd-theme` font partie des dépendances du projet (`requirements.txt` / `environment.yml`).
+
+### Mettre à jour le contenu
+- Pages Streamlit (`Home.rst`, `1_Integration.rst`, `2_BacLipidDB.rst`, `3_Export.rst`, `4_Resources.rst`, `5_Management.rst`) : à éditer manuellement dans `Documentation/` si le comportement d'une page change.
+- Référence API (`api.rst`) : générée automatiquement depuis les docstrings du code (`sphinx.ext.autodoc`). Pour l'enrichir, il suffit de mettre à jour les docstrings (format reST : `:param:`, `:return:`, `:rtype:`) dans `config.py`, `models/model.py`, `utils/*.py` et `scripts/*.py`.
+
+### Regénérer la doc HTML
+Depuis le dossier `Documentation/` :
+```bash
+cd Documentation
+make html          # build incrémental
+make clean html    # rebuild complet
+```
+Le résultat est généré dans `Documentation/_build/html/` ; ouvrir `index.html` dans un navigateur pour la consulter.
+
+---
