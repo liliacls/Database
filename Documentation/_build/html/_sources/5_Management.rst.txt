@@ -30,7 +30,7 @@ Edit & delete records
 Chargement des données
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-``_load_database()`` s'appuie sur :func:`utils.data_access.load_annotations_df` (la même
+``_load_database()`` s'appuie sur :func:`utils.data_access.load_database` (la même
 requête jointe ``Annotation`` + ``Lipid`` + ``Detection`` que les pages **2_BacLipidDB** et
 **3_Export**), dont elle ne conserve que les colonnes nécessaires à l'affichage et au report des
 modifications en base : ``Annotation_ID``, ``Detection_ID``, ``Lipid_ID``, ``Lipid_name``,
@@ -85,10 +85,10 @@ Confirmation et application
 ``_confirm_apply(plan)`` (``@st.dialog``) résume le nombre de lignes à mettre à jour et à
 supprimer, avertit que les suppressions sont irréversibles depuis l'application (``Fragment``,
 ``Annotation``, ``Detection`` et ``Lipid`` liés) et liste les lignes concernées. Les boutons
-**Confirm** / **Cancel** appellent respectivement ``_apply_plan(plan)`` ou annulent, dans les deux
+**Confirm** / **Cancel** appellent respectivement ``_apply(plan)`` ou annulent, dans les deux
 cas suivis d'un ``st.rerun()``.
 
-``_apply_plan(plan)`` prend d'abord une sauvegarde (``backup_database(label="manual_edit")``),
+``_apply(plan)`` prend d'abord une sauvegarde (``backup_database(label="manual_edit")``),
 puis dans une session SQLAlchemy :
 
 - pour chaque suppression, retire dans l'ordre les lignes liées de ``Fragment``, ``Annotation``,
@@ -97,7 +97,7 @@ puis dans une session SQLAlchemy :
 - pour chaque mise à jour, applique ``lipid_fields`` sur ``Lipid`` et ``detection_fields`` sur
   ``Detection`` (une requête ``update`` par table concernée, uniquement si le dictionnaire n'est
   pas vide) ;
-- commit puis invalidation du cache (``load_annotations_df.clear()``), pour que les pages
+- commit puis invalidation du cache (``load_database.clear()``), pour que les pages
   utilisant cette vue reflètent l'état à jour de la base.
 
 Delete an entire import
@@ -114,7 +114,7 @@ Le bouton **Delete this import** stocke l'index sélectionné dans
 ``st.session_state["pending_history_delete"]`` et déclenche un ``st.rerun()`` pour ouvrir la
 confirmation.
 
-``_confirm_history_delete(entry, index)`` (``@st.dialog``) avertit du nombre d'enregistrements qui
+``_history_del(entry, index)`` (``@st.dialog``) avertit du nombre d'enregistrements qui
 seront supprimés et rappelle qu'une sauvegarde est prise automatiquement. Les boutons
 **Confirm deletion** / **Cancel** appellent respectivement ``_delete_import(entry, index)`` ou
 annulent.
@@ -124,7 +124,7 @@ annulent.
 SQLAlchemy : récupère les ``Lipid_ID`` liés aux ``detection_ids`` de l'entrée (via ``Annotation``),
 supprime les lignes de ``Fragment``, ``Annotation`` et ``Detection`` correspondant à ces
 ``detection_ids``, puis celles de ``Lipid`` correspondant aux ``Lipid_ID`` récupérés, commit,
-invalide le cache (``load_annotations_df.clear()``), puis retire l'entrée de l'historique
+invalide le cache (``load_database.clear()``), puis retire l'entrée de l'historique
 (:func:`utils.history.remove_history`).
 
 Fonctions internes
@@ -142,7 +142,7 @@ Fonctions internes
    * - ``_database_modif(original, edited) -> dict``
      - Compare le tableau édité à l'original et construit le plan de modification
        ``{updates, deletes, errors}``.
-   * - ``_apply_plan(plan: dict) -> None``
+   * - ``_apply(plan: dict) -> None``
      - Sauvegarde la base puis applique le plan (suppressions en cascade et mises à jour
        ciblées) dans une session SQLAlchemy.
    * - ``_confirm_apply(plan: dict) -> None``
@@ -150,13 +150,13 @@ Fonctions internes
    * - ``_delete_import(entry: dict, index: int) -> None``
      - Supprime tous les enregistrements d'un lot d'import (Fragment/Annotation/Detection/Lipid)
        puis retire l'entrée de l'historique.
-   * - ``_confirm_history_delete(entry: dict, index: int) -> None``
+   * - ``_history_del(entry: dict, index: int) -> None``
      - Boîte de dialogue de confirmation pour la suppression d'un import entier.
 
 Dépendances internes
 ----------------------
 
-- :func:`utils.data_access.load_annotations_df`
+- :func:`utils.data_access.load_database`
 - :func:`utils.db_backup.backup_database`
 - :func:`utils.history.load_history`
 - :func:`utils.history.remove_history`

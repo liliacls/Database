@@ -18,8 +18,7 @@ Le module définit les 4 tables de la base de données via ``DeclarativeBase`` :
 - ``Detection``  : signal détecté par le spectromètre de masse.
 - ``Fragment``   : ions fragments associés à une détection (MS2 uniquement).
 - ``Lipid``      : lipide de référence (nom, classe, catégorie, formule).
-- ``Annotation`` : association entre une détection et un lipide candidat, avec un
-  niveau de confiance sur l'identification.
+- ``Annotation`` : association entre une détection et un lipide candidat.
 
 Relations
 ---------
@@ -64,7 +63,7 @@ Table ``Detection``
      - ``str``
      - ``"Positive"`` ou ``"Negative"``.
    * - ``Adduct``
-     - ``str | None``
+     - ``str``
      - Adduit du précurseur.
    * - ``Num_Peaks``
      - ``int | None``
@@ -130,6 +129,9 @@ Table ``Lipid``
    * - ``Formula``
      - ``str``
      - Formule chimique.
+   * - ``FA_composition``
+     - ``str | None``
+     - Composition en acides gras.
    * - ``Molecular_weight``
      - ``float``
      - Masse moléculaire moyenne (Da).

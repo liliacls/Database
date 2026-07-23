@@ -106,8 +106,7 @@ référence par une vue d’ensemble du schéma et des relations entre les table
 <li><p><code class="docutils literal notranslate"><span class="pre">Detection</span></code>  : signal détecté par le spectromètre de masse.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Fragment</span></code>   : ions fragments associés à une détection (MS2 uniquement).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Lipid</span></code>      : lipide de référence (nom, classe, catégorie, formule).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Annotation</span></code> : association entre une détection et un lipide candidat, avec un
-niveau de confiance sur l’identification.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Annotation</span></code> : association entre une détection et un lipide candidat.</p></li>
 </ul>
 </section>
 <section id="relations">
@@ -172,7 +171,7 @@ niveau de confiance sur l’identification.</p></li>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;Positive&quot;</span></code> ou <code class="docutils literal notranslate"><span class="pre">&quot;Negative&quot;</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Adduct</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
 <td><p>Adduit du précurseur.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code></p></td>
@@ -267,11 +266,15 @@ niveau de confiance sur l’identification.</p></li>
 <td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
 <td><p>Formule chimique.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Molecular_weight</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FA_composition</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Composition en acides gras.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Molecular_weight</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 <td><p>Masse moléculaire moyenne (Da).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 <td><p>Masse monoisotopique (Da).</p></td>
 </tr>

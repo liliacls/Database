@@ -126,8 +126,8 @@ vides si non disponibles).</p>
 <h2>Modèle MS1<a class="headerlink" href="#modele-ms1" title="Link to this heading"></a></h2>
 <p>Un <code class="docutils literal notranslate"><span class="pre">st.download_button</span></code> génère et propose au téléchargement
 <code class="docutils literal notranslate"><span class="pre">BacLipidDB_MS1_template.csv</span></code> : un DataFrame d’une seule ligne (<code class="docutils literal notranslate"><span class="pre">template_ms1</span></code>)
-illustrant les 7 colonnes obligatoires et les 2 colonnes optionnelles
-(<code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code>) laissées vides, converti en CSV en mémoire via
+illustrant les 7 colonnes obligatoires et les 3 colonnes optionnelles
+(<code class="docutils literal notranslate"><span class="pre">FA_composition</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code>) laissées vides, converti en CSV en mémoire via
 <code class="docutils literal notranslate"><span class="pre">io.StringIO</span></code>.</p>
 </section>
 <section id="guide-des-colonnes-ms2">
@@ -165,7 +165,7 @@ quand ces valeurs ne sont pas disponibles.</p>
 nom de l’adduit, décalage de masse en Da (<code class="docutils literal notranslate"><span class="pre">Mass</span> <span class="pre">shift</span></code>), opération à
 appliquer au m/z pour obtenir la masse neutre (<code class="docutils literal notranslate"><span class="pre">m/z</span> <span class="pre">-</span> <span class="pre">shift</span></code> si
 <code class="docutils literal notranslate"><span class="pre">ADDUCT_SIGNS[name]</span> <span class="pre">==</span> <span class="pre">-1</span></code>, <code class="docutils literal notranslate"><span class="pre">m/z</span> <span class="pre">+</span> <span class="pre">shift</span></code> sinon) et indicateur <code class="docutils literal notranslate"><span class="pre">Custom</span></code>
-(✅ si l’adduit provient de <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.list_custom_adducts()</span></code>,
+(✅ si l’adduit provient de <a class="reference internal" href="api.html#utils.neutral_mass.list_adducts" title="utils.neutral_mass.list_adducts"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.list_adducts()</span></code></a>,
 ❌ s’il s’agit d’un adduit natif).</p>
 </section>
 <section id="ajout-d-un-adduit-personnalise">
@@ -174,22 +174,22 @@ appliquer au m/z pour obtenir la masse neutre (<code class="docutils literal not
 (<code class="docutils literal notranslate"><span class="pre">st.text_input</span></code>, ex. <code class="docutils literal notranslate"><span class="pre">[M+Cl]-</span></code>), un décalage de masse en Da
 (<code class="docutils literal notranslate"><span class="pre">st.number_input</span></code>) et le type de formation (<code class="docutils literal notranslate"><span class="pre">st.radio</span></code>) : « Addition »
 (ex. <code class="docutils literal notranslate"><span class="pre">[M+H]+</span></code>, <code class="docutils literal notranslate"><span class="pre">[M+Na]+</span></code>) ou « Loss » (ex. <code class="docutils literal notranslate"><span class="pre">[M-H]-</span></code>). Le signe transmis
-à <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.add_custom_adduct()</span></code> vaut <code class="docutils literal notranslate"><span class="pre">-1</span></code> pour une addition
+à <a class="reference internal" href="api.html#utils.neutral_mass.add_adduct" title="utils.neutral_mass.add_adduct"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.add_adduct()</span></code></a> vaut <code class="docutils literal notranslate"><span class="pre">-1</span></code> pour une addition
 et <code class="docutils literal notranslate"><span class="pre">1</span></code> pour une perte, conformément à la convention de
 <a class="reference internal" href="api.html#utils.neutral_mass.neutral_mass" title="utils.neutral_mass.neutral_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.neutral_mass()</span></code></a> (<code class="docutils literal notranslate"><span class="pre">mz</span> <span class="pre">+</span> <span class="pre">sign</span> <span class="pre">*</span> <span class="pre">shift</span></code>). En cas de
 succès, un message <code class="docutils literal notranslate"><span class="pre">st.success</span></code> est affiché et la page est rechargée
 (<code class="docutils literal notranslate"><span class="pre">st.rerun()</span></code>) ; en cas d’erreur (nom vide/déjà utilisé, décalage non
 strictement positif…), un message <code class="docutils literal notranslate"><span class="pre">st.error</span></code> affiche l’exception levée
-par <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.add_custom_adduct()</span></code>.</p>
+par <a class="reference internal" href="api.html#utils.neutral_mass.add_adduct" title="utils.neutral_mass.add_adduct"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.add_adduct()</span></code></a>.</p>
 <p>Les adduits personnalisés sont persistés dans <code class="docutils literal notranslate"><span class="pre">adducts.json</span></code> (<code class="docutils literal notranslate"><span class="pre">config.ADDUCTS_PATH</span></code>)
 et restent donc disponibles d’une session à l’autre.</p>
 </section>
 <section id="suppression-d-un-adduit-personnalise">
 <h3>Suppression d’un adduit personnalisé<a class="headerlink" href="#suppression-d-un-adduit-personnalise" title="Link to this heading"></a></h3>
 <p>Si au moins un adduit personnalisé existe, un <code class="docutils literal notranslate"><span class="pre">st.selectbox</span></code> (liste des
-adduits renvoyés par <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.list_custom_adducts()</span></code>) et un
+adduits renvoyés par <a class="reference internal" href="api.html#utils.neutral_mass.list_adducts" title="utils.neutral_mass.list_adducts"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.list_adducts()</span></code></a>) et un
 bouton <strong>Remove</strong> permettent de le retirer via
-<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.remove_custom_adduct()</span></code>, puis de recharger la page
+<a class="reference internal" href="api.html#utils.neutral_mass.remove_adduct" title="utils.neutral_mass.remove_adduct"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.remove_adduct()</span></code></a>, puis de recharger la page
 (<code class="docutils literal notranslate"><span class="pre">st.rerun()</span></code>). Les adduits natifs (<code class="docutils literal notranslate"><span class="pre">BUILTIN_ADDUCT_SHIFTS</span></code>) ne peuvent
 pas être supprimés.</p>
 </section>
@@ -204,7 +204,7 @@ au niveau du script (délégation directe aux fonctions de
 <h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="api.html#module-utils.neutral_mass" title="utils.neutral_mass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.neutral_mass</span></code></a> (<code class="docutils literal notranslate"><span class="pre">ADDUCT_SHIFTS</span></code>, <code class="docutils literal notranslate"><span class="pre">ADDUCT_SIGNS</span></code>,
-<code class="docutils literal notranslate"><span class="pre">add_custom_adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">list_custom_adducts</span></code>, <code class="docutils literal notranslate"><span class="pre">remove_custom_adduct</span></code>)</p></li>
+<code class="docutils literal notranslate"><span class="pre">add_adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">list_adducts</span></code>, <code class="docutils literal notranslate"><span class="pre">remove_adduct</span></code>)</p></li>
 </ul>
 </section>
 </section>

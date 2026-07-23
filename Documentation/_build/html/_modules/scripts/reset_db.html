@@ -45,6 +45,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../1_Integration.html">Data_Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../2_BacLipidDB.html">BacLipidDB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../3_Export.html">Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../4_Resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../5_Management.html">Management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../model.html">Modèle de données</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Référence API (générée automatiquement)</a></li>
 </ul>
@@ -90,10 +92,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">models.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">Fragment</span><span class="p">,</span> <span class="n">Detection</span><span class="p">,</span> <span class="n">Lipid</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DB_PATH</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_engine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">HISTORY_PATH</span>
 
 
@@ -101,7 +102,7 @@
 <a class="viewcode-back" href="../../api.html#scripts.reset_db.reset_db">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">reset_db</span><span class="p">():</span>
 
-    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">DB_PATH</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">()</span>
 
     <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
         <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Annotation</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>

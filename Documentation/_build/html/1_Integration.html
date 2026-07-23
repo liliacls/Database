@@ -179,9 +179,12 @@ afin de garantir la cohérence entre les colonnes calculées et les réglages
 utilisés pour les calculer.</p>
 </li>
 <li><p><strong>File upload</strong>
-Chargement d’un fichier <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code> ou <code class="docutils literal notranslate"><span class="pre">.tsv</span></code> via
-<code class="docutils literal notranslate"><span class="pre">st.file_uploader</span></code> (clé versionnée par <code class="docutils literal notranslate"><span class="pre">UPLOADER_VERSION</span></code> pour pouvoir
-être réinitialisé par le bouton <strong>Reset</strong>). Le rechargement du fichier (parsing) n’est
+Chargement d’un fichier via <code class="docutils literal notranslate"><span class="pre">st.file_uploader</span></code> (clé versionnée par
+<code class="docutils literal notranslate"><span class="pre">UPLOADER_VERSION</span></code> pour pouvoir être réinitialisé par le bouton
+<strong>Reset</strong>), dont les types acceptés dépendent du niveau MS choisi à
+l’étape 1 : <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code> ou <code class="docutils literal notranslate"><span class="pre">.tsv</span></code> pour <code class="docutils literal notranslate"><span class="pre">MS1</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code> ou
+<code class="docutils literal notranslate"><span class="pre">.tsv</span></code> uniquement pour <code class="docutils literal notranslate"><span class="pre">MS2</span></code> (<code class="docutils literal notranslate"><span class="pre">ms2_parsing</span></code> ne sait lire que du
+texte délimité, pas le format binaire <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>). Le rechargement du fichier (parsing) n’est
 déclenché que si son identifiant  (<code class="docutils literal notranslate"><span class="pre">uploaded_file.file_id</span></code>) ou le
 niveau MS (<code class="docutils literal notranslate"><span class="pre">df_ms_level</span></code>) diffère de la dernière valeur connue.</p>
 <ul class="simple">

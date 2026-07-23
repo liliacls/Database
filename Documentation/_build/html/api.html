@@ -130,13 +130,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.neutral_mass"><code class="docutils literal notranslate"><span class="pre">neutral_mass()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#scripts-formula">scripts.formula</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-scripts.init_db">scripts.init_db</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#init-db-py">init_db.py</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scripts.init_db.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#scripts-loading-ms2">scripts.loading_MS2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-scripts.reset_db">scripts.reset_db</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#reset-db-py">reset_db.py</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scripts.reset_db.reset_db"><code class="docutils literal notranslate"><span class="pre">reset_db()</span></code></a></li>
@@ -409,7 +407,7 @@ For each row of the DataFrame, creates and inserts a record into the three table
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, MS_level, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
 and optionally RT and CCS.</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – name of the file being integrated.</p></li>
 <li><p><strong>integrator</strong> (<em>str</em>) – name of the person performing the integration.</p></li>
@@ -417,7 +415,11 @@ and optionally RT and CCS.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Exception</strong> – on error no row is committed (automatic ROLLBACK) and the error is logged.</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Exception</strong> – on insertion error no row is committed (automatic ROLLBACK) and the error is logged.</p></li>
+<li><p><strong>PostIntegrationError</strong> – if the rows were committed successfully but the post-commit
+backup or history logging failed - the data is already in the database.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -633,9 +635,6 @@ and the completion of the “Adduct” column in the output table.</p>
 </dd></dl>
 
 </section>
-<section id="scripts-formula">
-<h2>scripts.formula<a class="headerlink" href="#scripts-formula" title="Link to this heading"></a></h2>
-</section>
 <section id="module-scripts.init_db">
 <span id="scripts-init-db"></span><h2>scripts.init_db<a class="headerlink" href="#module-scripts.init_db" title="Link to this heading"></a></h2>
 <section id="init-db-py">
@@ -653,9 +652,6 @@ Run this script only once to create the SQLite tables defined in models/model.py
 <span class="sig-prename descclassname"><span class="pre">scripts.init_db.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/init_db.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.init_db.main" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="scripts-loading-ms2">
-<h2>scripts.loading_MS2<a class="headerlink" href="#scripts-loading-ms2" title="Link to this heading"></a></h2>
 </section>
 <section id="module-scripts.reset_db">
 <span id="scripts-reset-db"></span><h2>scripts.reset_db<a class="headerlink" href="#module-scripts.reset_db" title="Link to this heading"></a></h2>

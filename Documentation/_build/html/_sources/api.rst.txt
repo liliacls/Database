@@ -65,26 +65,10 @@ utils.neutral_mass
    :undoc-members:
    :show-inheritance:
 
-scripts.formula
------------------
-
-.. automodule:: scripts.formula
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 scripts.init_db
 -----------------
 
 .. automodule:: scripts.init_db
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-scripts.loading_MS2
----------------------
-
-.. automodule:: scripts.loading_MS2
    :members:
    :undoc-members:
    :show-inheritance:

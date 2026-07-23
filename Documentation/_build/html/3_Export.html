@@ -124,7 +124,7 @@ et partagée avec les pages 2_BacLipidDB et 5_Management), renomme certaines col
 possibles sont extraites des colonnes présente dans la base de données chargée. Une option
 <code class="docutils literal notranslate"><span class="pre">(None)</span></code> est ajoutée si la colonne contient des valeurs manquantes.</p></li>
 <li><p><strong>MS level</strong> et <strong>Ionisation mode</strong> (<code class="docutils literal notranslate"><span class="pre">st.multiselect</span></code>) : mêmes principes mais sans option
-<a href="#id1"><span class="problematic" id="id2">``</span></a>(None)``car toutes les lignes ont une valeur pour ces colonnes.</p></li>
+<code class="docutils literal notranslate"><span class="pre">(None)</span></code> car toutes les lignes ont une valeur pour ces colonnes.</p></li>
 <li><p><strong>Precursor m/z range</strong> : deux <code class="docutils literal notranslate"><span class="pre">st.number_input</span></code> (<code class="docutils literal notranslate"><span class="pre">Min</span> <span class="pre">m/z</span></code> / <code class="docutils literal notranslate"><span class="pre">Max</span> <span class="pre">m/z</span></code>,
 format <code class="docutils literal notranslate"><span class="pre">%.6f</span></code>), initialisés au min/max de la colonne <code class="docutils literal notranslate"><span class="pre">mz</span></code>. Les deux valeurs sont triées (<code class="docutils literal notranslate"><span class="pre">min</span></code>/<code class="docutils literal notranslate"><span class="pre">max</span></code>) pour former <code class="docutils literal notranslate"><span class="pre">mz_range</span></code>.</p></li>
 </ul>

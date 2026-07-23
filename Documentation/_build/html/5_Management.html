@@ -119,7 +119,7 @@ dialogue de confirmation (<code class="docutils literal notranslate"><span class
 <h2>Edit &amp; delete records<a class="headerlink" href="#edit-delete-records" title="Link to this heading"></a></h2>
 <section id="chargement-des-donnees">
 <h3>Chargement des données<a class="headerlink" href="#chargement-des-donnees" title="Link to this heading"></a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">_load_database()</span></code> s’appuie sur <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_annotations_df()</span></code> (la même
+<p><code class="docutils literal notranslate"><span class="pre">_load_database()</span></code> s’appuie sur <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code> (la même
 requête jointe <code class="docutils literal notranslate"><span class="pre">Annotation</span></code> + <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> + <code class="docutils literal notranslate"><span class="pre">Detection</span></code> que les pages <strong>2_BacLipidDB</strong> et
 <strong>3_Export</strong>), dont elle ne conserve que les colonnes nécessaires à l’affichage et au report des
 modifications en base : <code class="docutils literal notranslate"><span class="pre">Annotation_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>,
@@ -171,9 +171,9 @@ pour ouvrir la confirmation.</p>
 <p><code class="docutils literal notranslate"><span class="pre">_confirm_apply(plan)</span></code> (<code class="docutils literal notranslate"><span class="pre">&#64;st.dialog</span></code>) résume le nombre de lignes à mettre à jour et à
 supprimer, avertit que les suppressions sont irréversibles depuis l’application (<code class="docutils literal notranslate"><span class="pre">Fragment</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Annotation</span></code>, <code class="docutils literal notranslate"><span class="pre">Detection</span></code> et <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> liés) et liste les lignes concernées. Les boutons
-<strong>Confirm</strong> / <strong>Cancel</strong> appellent respectivement <code class="docutils literal notranslate"><span class="pre">_apply_plan(plan)</span></code> ou annulent, dans les deux
+<strong>Confirm</strong> / <strong>Cancel</strong> appellent respectivement <code class="docutils literal notranslate"><span class="pre">_apply(plan)</span></code> ou annulent, dans les deux
 cas suivis d’un <code class="docutils literal notranslate"><span class="pre">st.rerun()</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">_apply_plan(plan)</span></code> prend d’abord une sauvegarde (<code class="docutils literal notranslate"><span class="pre">backup_database(label=&quot;manual_edit&quot;)</span></code>),
+<p><code class="docutils literal notranslate"><span class="pre">_apply(plan)</span></code> prend d’abord une sauvegarde (<code class="docutils literal notranslate"><span class="pre">backup_database(label=&quot;manual_edit&quot;)</span></code>),
 puis dans une session SQLAlchemy :</p>
 <ul class="simple">
 <li><p>pour chaque suppression, retire dans l’ordre les lignes liées de <code class="docutils literal notranslate"><span class="pre">Fragment</span></code>, <code class="docutils literal notranslate"><span class="pre">Annotation</span></code>,
@@ -182,7 +182,7 @@ sont faites manuellement, dans cet ordre pour respecter les dépendances de clé
 <li><p>pour chaque mise à jour, applique <code class="docutils literal notranslate"><span class="pre">lipid_fields</span></code> sur <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> et <code class="docutils literal notranslate"><span class="pre">detection_fields</span></code> sur
 <code class="docutils literal notranslate"><span class="pre">Detection</span></code> (une requête <code class="docutils literal notranslate"><span class="pre">update</span></code> par table concernée, uniquement si le dictionnaire n’est
 pas vide) ;</p></li>
-<li><p>commit puis invalidation du cache (<code class="docutils literal notranslate"><span class="pre">load_annotations_df.clear()</span></code>), pour que les pages
+<li><p>commit puis invalidation du cache (<code class="docutils literal notranslate"><span class="pre">load_database.clear()</span></code>), pour que les pages
 utilisant cette vue reflètent l’état à jour de la base.</p></li>
 </ul>
 </section>
@@ -198,7 +198,7 @@ lot ont déjà été supprimées individuellement via <strong>Edit &amp; delete 
 <p>Le bouton <strong>Delete this import</strong> stocke l’index sélectionné dans
 <code class="docutils literal notranslate"><span class="pre">st.session_state[&quot;pending_history_delete&quot;]</span></code> et déclenche un <code class="docutils literal notranslate"><span class="pre">st.rerun()</span></code> pour ouvrir la
 confirmation.</p>
-<p><code class="docutils literal notranslate"><span class="pre">_confirm_history_delete(entry,</span> <span class="pre">index)</span></code> (<code class="docutils literal notranslate"><span class="pre">&#64;st.dialog</span></code>) avertit du nombre d’enregistrements qui
+<p><code class="docutils literal notranslate"><span class="pre">_history_del(entry,</span> <span class="pre">index)</span></code> (<code class="docutils literal notranslate"><span class="pre">&#64;st.dialog</span></code>) avertit du nombre d’enregistrements qui
 seront supprimés et rappelle qu’une sauvegarde est prise automatiquement. Les boutons
 <strong>Confirm deletion</strong> / <strong>Cancel</strong> appellent respectivement <code class="docutils literal notranslate"><span class="pre">_delete_import(entry,</span> <span class="pre">index)</span></code> ou
 annulent.</p>
@@ -207,7 +207,7 @@ annulent.</p>
 SQLAlchemy : récupère les <code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code> liés aux <code class="docutils literal notranslate"><span class="pre">detection_ids</span></code> de l’entrée (via <code class="docutils literal notranslate"><span class="pre">Annotation</span></code>),
 supprime les lignes de <code class="docutils literal notranslate"><span class="pre">Fragment</span></code>, <code class="docutils literal notranslate"><span class="pre">Annotation</span></code> et <code class="docutils literal notranslate"><span class="pre">Detection</span></code> correspondant à ces
 <code class="docutils literal notranslate"><span class="pre">detection_ids</span></code>, puis celles de <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> correspondant aux <code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code> récupérés, commit,
-invalide le cache (<code class="docutils literal notranslate"><span class="pre">load_annotations_df.clear()</span></code>), puis retire l’entrée de l’historique
+invalide le cache (<code class="docutils literal notranslate"><span class="pre">load_database.clear()</span></code>), puis retire l’entrée de l’historique
 (<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.remove_history()</span></code>).</p>
 </section>
 <section id="fonctions-internes">
@@ -231,7 +231,7 @@ colonnes nécessaires à l’affichage et au report des modifications.</p></td>
 <td><p>Compare le tableau édité à l’original et construit le plan de modification
 <code class="docutils literal notranslate"><span class="pre">{updates,</span> <span class="pre">deletes,</span> <span class="pre">errors}</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_apply_plan(plan:</span> <span class="pre">dict)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_apply(plan:</span> <span class="pre">dict)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code></p></td>
 <td><p>Sauvegarde la base puis applique le plan (suppressions en cascade et mises à jour
 ciblées) dans une session SQLAlchemy.</p></td>
 </tr>
@@ -242,7 +242,7 @@ ciblées) dans une session SQLAlchemy.</p></td>
 <td><p>Supprime tous les enregistrements d’un lot d’import (Fragment/Annotation/Detection/Lipid)
 puis retire l’entrée de l’historique.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_confirm_history_delete(entry:</span> <span class="pre">dict,</span> <span class="pre">index:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_history_del(entry:</span> <span class="pre">dict,</span> <span class="pre">index:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code></p></td>
 <td><p>Boîte de dialogue de confirmation pour la suppression d’un import entier.</p></td>
 </tr>
 </tbody>
@@ -251,7 +251,7 @@ puis retire l’entrée de l’historique.</p></td>
 <section id="dependances-internes">
 <h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_annotations_df()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></p></li>
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.db_backup.backup_database()</span></code></p></li>
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></p></li>
 <li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.remove_history()</span></code></p></li>

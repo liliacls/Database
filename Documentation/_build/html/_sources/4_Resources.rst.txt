@@ -35,8 +35,8 @@ Modèle MS1
 
 Un ``st.download_button`` génère et propose au téléchargement
 ``BacLipidDB_MS1_template.csv`` : un DataFrame d'une seule ligne (``template_ms1``)
-illustrant les 7 colonnes obligatoires et les 2 colonnes optionnelles
-(``RT``, ``CCS``) laissées vides, converti en CSV en mémoire via
+illustrant les 7 colonnes obligatoires et les 3 colonnes optionnelles
+(``FA_composition``, ``RT``, ``CCS``) laissées vides, converti en CSV en mémoire via
 ``io.StringIO``.
 
 Guide des colonnes MS2
@@ -79,7 +79,7 @@ Table des adduits
 nom de l'adduit, décalage de masse en Da (``Mass shift``), opération à
 appliquer au m/z pour obtenir la masse neutre (``m/z - shift`` si
 ``ADDUCT_SIGNS[name] == -1``, ``m/z + shift`` sinon) et indicateur ``Custom``
-(✅ si l'adduit provient de :func:`utils.neutral_mass.list_custom_adducts`,
+(✅ si l'adduit provient de :func:`utils.neutral_mass.list_adducts`,
 ❌ s'il s'agit d'un adduit natif).
 
 Ajout d'un adduit personnalisé
@@ -89,13 +89,13 @@ Un formulaire (``st.form``) permet de saisir un nom d'adduit
 (``st.text_input``, ex. ``[M+Cl]-``), un décalage de masse en Da
 (``st.number_input``) et le type de formation (``st.radio``) : « Addition »
 (ex. ``[M+H]+``, ``[M+Na]+``) ou « Loss » (ex. ``[M-H]-``). Le signe transmis
-à :func:`utils.neutral_mass.add_custom_adduct` vaut ``-1`` pour une addition
+à :func:`utils.neutral_mass.add_adduct` vaut ``-1`` pour une addition
 et ``1`` pour une perte, conformément à la convention de
 :func:`utils.neutral_mass.neutral_mass` (``mz + sign * shift``). En cas de
 succès, un message ``st.success`` est affiché et la page est rechargée
 (``st.rerun()``) ; en cas d'erreur (nom vide/déjà utilisé, décalage non
 strictement positif...), un message ``st.error`` affiche l'exception levée
-par :func:`utils.neutral_mass.add_custom_adduct`.
+par :func:`utils.neutral_mass.add_adduct`.
 
 Les adduits personnalisés sont persistés dans ``adducts.json`` (``config.ADDUCTS_PATH``)
 et restent donc disponibles d'une session à l'autre.
@@ -104,9 +104,9 @@ Suppression d'un adduit personnalisé
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Si au moins un adduit personnalisé existe, un ``st.selectbox`` (liste des
-adduits renvoyés par :func:`utils.neutral_mass.list_custom_adducts`) et un
+adduits renvoyés par :func:`utils.neutral_mass.list_adducts`) et un
 bouton **Remove** permettent de le retirer via
-:func:`utils.neutral_mass.remove_custom_adduct`, puis de recharger la page
+:func:`utils.neutral_mass.remove_adduct`, puis de recharger la page
 (``st.rerun()``). Les adduits natifs (``BUILTIN_ADDUCT_SHIFTS``) ne peuvent
 pas être supprimés.
 
@@ -121,4 +121,4 @@ Dépendances internes
 ----------------------
 
 - :mod:`utils.neutral_mass` (``ADDUCT_SHIFTS``, ``ADDUCT_SIGNS``,
-  ``add_custom_adduct``, ``list_custom_adducts``, ``remove_custom_adduct``)
+  ``add_adduct``, ``list_adducts``, ``remove_adduct``)

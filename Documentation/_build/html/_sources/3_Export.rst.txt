@@ -39,7 +39,7 @@ Les filtres sont répartis sur deux lignes de 3 colonnes (``st.columns``) :
   possibles sont extraites des colonnes présente dans la base de données chargée. Une option
   ``(None)`` est ajoutée si la colonne contient des valeurs manquantes.
 - **MS level** et **Ionisation mode** (``st.multiselect``) : mêmes principes mais sans option
-  ``(None)``car toutes les lignes ont une valeur pour ces colonnes.
+  ``(None)`` car toutes les lignes ont une valeur pour ces colonnes.
 - **Precursor m/z range** : deux ``st.number_input`` (``Min m/z`` / ``Max m/z``,
   format ``%.6f``), initialisés au min/max de la colonne ``mz``. Les deux valeurs sont triées (``min``/``max``) pour former ``mz_range``.
 
