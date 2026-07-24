@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation utilisateur - BacLipidAPP</title>
+<style>
+  :root {
+    --primary: #1F77B4;
+    --primary-dark: #145a8c;
+    --bg: #f5f9fc;
+    --bg-card: #ffffff;
+    --bg-secondary: #e0f2fd;
+    --text: #1A1A2E;
+    --text-muted: #55607a;
+    --border: #d9e6f2;
+    --shadow: 0 1px 3px rgba(20, 50, 80, 0.08), 0 1px 2px rgba(20, 50, 80, 0.06);
+    --success: #1a7f37;
+    --success-bg: #e7f6ec;
+    --warning: #a15c00;
+    --warning-bg: #fdf1de;
+    --error: #c0392b;
+    --error-bg: #fbeae8;
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --primary: #60B8FF;
+      --primary-dark: #8fd0ff;
+      --bg: #0D1B2A;
+      --bg-card: #142c42;
+      --bg-secondary: #1A2D45;
+      --text: #E8EDF5;
+      --text-muted: #a9b8cc;
+      --border: #2a3f57;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.3);
+      --success: #4fbf6c;
+      --success-bg: #133024;
+      --warning: #e0a53d;
+      --warning-bg: #2e2410;
+      --error: #ec6a5c;
+      --error-bg: #331714;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Segoe UI", Calibri, system-ui, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ---------- Hero header ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #ffffff;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+  }
+  .hero h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.9rem;
+    letter-spacing: 0.2px;
+    color: #ffffff;
+  }
+  .hero p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+    font-weight: bold;
+  }
+  .hero .version {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 0.2rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.18);
+    font-size: 0.rem;
+    letter-spacing: 0.3px;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 2.5rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+    align-items: start;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--shadow);
+  }
+  .sidebar .toc-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 0.6rem;
+    font-weight: 600;
+  }
+  .sidebar nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sidebar nav a {
+    display: block;
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .sidebar nav a:hover {
+    background: var(--bg-secondary);
+    color: var(--primary);
+  }
+  .sidebar nav .sub {
+    padding-left: 1.1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  main.content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .section-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 2.4rem;
+    box-shadow: var(--shadow);
+  }
+
+  h2 {
+    color: var(--primary);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.4rem;
+    margin-top: 2.6rem;
+    scroll-margin-top: 1.5rem;
+  }
+  .section-card > h2:first-child {
+    margin-top: 0;
+  }
+  h3 {
+    color: var(--primary);
+    margin-top: 2rem;
+    scroll-margin-top: 1.5rem;
+  }
+  h1 { color: var(--primary); }
+
+  p { color: var(--text); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.4rem 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    font-size: 0.95rem;
+  }
+  th, td {
+    border-bottom: 1px solid var(--border);
+    padding: 0.65rem 0.9rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--bg-secondary);
+    color: var(--primary);
+    font-weight: 600;
+  }
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+  tbody tr:hover {
+    background: var(--bg-secondary);
+  }
+
+  code {
+    background: var(--bg-secondary);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  }
+
+  /* Inline status chips (quoting literal app messages inside a sentence) */
+  span.warning, span.success-msg, span.error-msg {
+    display: inline-block;
+    padding: 0.05rem 0.45rem;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 0.92em;
+  }
+  span.success-msg { color: var(--success); background: var(--success-bg); }
+  span.warning     { color: var(--warning); background: var(--warning-bg); }
+  span.error-msg   { color: var(--error);   background: var(--error-bg); }
+
+  /* Block-level callouts (standalone remarks) */
+  p.warning, p.success-msg, p.error-msg {
+    padding: 0.85rem 1.1rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+    font-weight: 500;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+  p.warning::before, p.success-msg::before, p.error-msg::before {
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  p.warning {
+    color: var(--warning);
+    background: var(--warning-bg);
+    border-color: var(--warning);
+  }
+  p.warning::before { content: "⚠"; }
+  p.success-msg {
+    color: var(--success);
+    background: var(--success-bg);
+    border-color: var(--success);
+  }
+  p.success-msg::before { content: "✔"; }
+  p.error-msg {
+    color: var(--error);
+    background: var(--error-bg);
+    border-color: var(--error);
+  }
+  p.error-msg::before { content: "✖"; }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.2px;
+    margin: 0.1rem 0.2rem 0.1rem 0;
+  }
+  .badge-ms1 { background: #a31fb4; }
+  .badge-ms2 { background: #d9822b; }
+
+  @media (max-width: 860px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .sidebar {
+      position: static;
+    }
+    .section-card {
+      padding: 1.5rem 1.3rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Documentation utilisateur</h1>
+  <p>BacLipidAPP : interface Streamlit pour la base de données BacLipidDB</p>
+  <span class="version">Version 1.0.0</span>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="toc-title">Sommaire</p>
+    <nav>
+      <ul>
+        <li><a href="#accueil">Accueil (Home)</a></li>
+        <li>
+          <a href="#module-1"><strong>Module 1</strong> : Integration</a>
+          <a href="#module-2"><strong>Module 2</strong> : BacLipidDB</a>
+          <a href="#module-3"><strong>Module 3</strong> : Export</a>
+          <a href="#module-4"><strong>Module 4</strong> : Resources</a>
+          <a href="#module-5"><strong>Module 5</strong> : Management</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+<section class="section-card">
+
+<h2 id="accueil">Accueil (Home)</h2>
+
+<p>
+  L'application web locale Streamlit <strong>BacLipidAPP</strong> est développée
+  afin d'interagir de différentes manières avec la base de données relationnelle
+  SQLite <strong>BacLipidDB</strong>.
+</p>
+
+<p>
+  Le lancement de l'application permet à l'utilisateur d'arriver sur la page
+  d'accueil (Home). Cette dernière affiche les cinq modules disponibles. Pour
+  accéder à un module, il est possible de cliquer sur son nom dans la barre de
+  navigation latérale à gauche de l'écran, ou directement sur son encadré
+  depuis la page d'accueil.
+</p>
+
+<p>
+  Les statistiques affichées en dessous présentent le nombre de spectres MS1
+  et MS2 présents dans la base, ainsi que la taille de <strong>BacLipidDB</strong>.
+</p>
+
+</section>
+
+<section class="section-card">
+
+<h2 id="module-1">Module 1 : Intégration</h2>
+
+<p>
+  La page "Integration" est un module permettant l'insertion de données dans
+  <strong>BacLipidDB</strong>. L'intégration se déroule en cinq étapes. La
+  première étape consiste à la sélection de paramètres qui seront réutilisés
+  plus tard.
+</p>
+
+<h3 id="step-1">1ère étape : Paramétrages (Step 1 - Settings)</h3>
+
+<p>
+  La première étape demande à l'utilisateur de choisir le type de spectres
+  qu'il souhaite insérer, ensuite le mode d'acquisition, son identité et
+  enfin le nom du fichier (raw) d'origine des annotations.
+</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Annotation level</td>
+      <td>MS1 / MS2</td>
+      <td>MS1 pour les annotations comportant uniquement l'ion précurseur, MS2 pour les annotations avec spectres de fragments.</td>
+    </tr>
+    <tr>
+      <td>Ionization mode</td>
+      <td>Positive / Negative</td>
+      <td>Mode d'ionisation utilisé lors de l'acquisition. Sert uniquement à remplir la colonne <code>Ionisation_mode</code> en base.</td>
+    </tr>
+    <tr>
+      <td>Your name</td>
+      <td>Texte libre</td>
+      <td>Nom de la personne qui intègre ce lot de données, enregistré dans l'historique d'import. À écrire sous la forme "Prénom NOM" (première lettre du prénom en majuscule, un espace, nom de famille entièrement en majuscules).</td>
+    </tr>
+    <tr>
+      <td>File row name</td>
+      <td>Texte libre</td>
+      <td>Nom du fichier brut (raw) de l'expérience à l'origine des annotations. Séparer les champs par des "_".</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="warning">
+  Il est impératif de compléter correctement ces champs afin de maintenir des
+  données cohérentes et traçables dans le temps.
+</p>
+
+<h3 id="step-2">2ème étape : Chargement du fichier (Step 2 - File upload)</h3>
+
+<p>
+  La seconde étape est le chargement du fichier. Il faut faire bien attention
+  au format selon si vous avez sélectionné MS1 ou MS2 lors de l'étape 1. Pour
+  un fichier de données MS1 le format attendu est .csv, .tsv ou .xlsx. Pour un
+  fichier de données MS2 le format attendu est .csv ou .tsv. Si un fichier
+  .xlsx est chargé, ce dernier sera rejeté et il faudra le convertir dans l'un
+  des deux formats souhaités.
+</p>
+<p>
+  Le fichier doit répondre en tout point aux modèles du <strong>module 4</strong>. Il est bien
+  évidemment possible à l'utilisateur de créer lui-même son fichier s'il ne
+  souhaite pas télécharger les modèles (template), cependant l'introduction
+  d'erreur peut nuire à l'intégration des données ensuite. Les points
+  importants à prendre en compte sont le nommage des colonnes, l'écriture des
+  données et les champs obligatoires <strong>(cf. Module 4)</strong>.
+</p>
+<p>
+  Le fichier chargé doit être nommé sous la forme
+  <code>Annotation_MS1/MS2_organisme_appareil</code>. La date du jour n'est
+  pas à inclure dans le nom du fichier, car elle est déjà gérée par
+  l'historique d'import. Par exemple : <code>Annotation_MS1_A.baumannii_MALDI_FTICR.xlsx</code>,
+  <code>Annotation_MS2_A.baumannii_LC_MS.csv</code>.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>.csv</th>
+      <th>.tsv</th>
+      <th>.xlsx</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Niveau annotation</strong></td>
+      <td><span class="badge badge-ms1">MS1</span><span class="badge badge-ms2">MS2</span></td>
+      <td><span class="badge badge-ms1">MS1</span><span class="badge badge-ms2">MS2</span></td>
+      <td><span class="badge badge-ms1">MS1</span></td>
+    </tr>
+    <tr>
+      <td><strong>Description</strong></td>
+      <td>Fichier texte simple, valeurs séparées par des virgules. Lisible et modifiable avec un tableur ou un simple éditeur de texte.</td>
+      <td>Fichier texte simple, valeurs séparées par des tabulations. À privilégier si vos données contiennent elles-mêmes des virgules.</td>
+      <td>Fichier Excel natif (format binaire).</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Pour un fichier <strong>MS1</strong>, une fois le fichier déposé,
+  l'application vérifie simplement qu'il peut être lu correctement. Si la
+  lecture réussit, un message de confirmation s'affiche :
+  <span class="success-msg">"File loaded : nom_du_fichier - X rows
+  detected."</span>. Si la lecture échoue, un message d'erreur
+  <span class="error-msg">"Error loading file : ..."</span> s'affiche à
+  la place et il faut corriger le fichier avant de le recharger.
+</p>
+
+<p>
+  Pour un fichier <strong>MS2</strong>, ce message (<span class="error-msg">"Error loading file : ..."</span>)
+  inclut toujours le détail précis du scan concerné et de la cause de
+  l'erreur. Selon le problème rencontré dans le fichier, le texte affiché est
+  l'un des suivants :
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Cause</th>
+      <th>Message affiché</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Aucun scan trouvé dans le fichier</td>
+      <td><em>"Error loading file : No scan found in the file."</em></td>
+    </tr>
+    <tr>
+      <td>Champ obligatoire manquant dans un scan</td>
+      <td><em>"Error loading file : Missing field(s) for scan 'Scan #2183': Adduct."</em></td>
+    </tr>
+    <tr>
+      <td>Valeur non numérique (Precursor_MZ, Num_peaks, RT ou CCS)</td>
+      <td><em>"Error loading file : Invalid Precursor_MZ for scan 'Scan #2183': 'abc'."</em></td>
+    </tr>
+    <tr>
+      <td>Aucun fragment trouvé pour un scan</td>
+      <td><em>"Error loading file : No fragments found for 'Scan #2183'."</em></td>
+    </tr>
+    <tr>
+      <td>Le nombre de fragments ne correspond pas à Num_peaks</td>
+      <td><em>"Error loading file : 'Num_peaks'=6 does not match the number of fragments found (5) for 'Scan #2183'."</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Dans tous les cas, il faut corriger le scan concerné directement dans le
+  fichier source, puis recharger le fichier.
+</p>
+
+<h3 id="step-3">3ème étape : Vérification des colonnes obligatoires (Step 3 - Required columns verification)</h3>
+
+<p>
+  Le fichier MS1 est vérifié en 3 étapes successives. Dès qu'une vérification
+  échoue, un message d'erreur s'affiche et vous devez corriger votre fichier
+  puis le recharger avant que la vérification suivante ne s'exécute. Si le
+  fichier est conforme, il s'affiche avec le message
+  <span class="success-msg">"All required columns found"</span>.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Message affiché</th>
+      <th>Cause</th>
+      <th>Comment corriger</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><em>"The file is missing the following required columns : ..."</em></td>
+      <td>Une ou plusieurs colonnes obligatoires absentes du fichier</td>
+      <td>Ajouter la/les colonne(s) manquante(s) (voir le guide des colonnes, module Resources)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><em>"The file contains empty cells in required columns : ..."</em></td>
+      <td><code>Lipid_Name</code>, <code>Formula</code>, <code>Precursor_MZ</code> ou <code>Adduct</code> contient une cellule vide</td>
+      <td>Remplir les cellules vides de ces colonnes</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><em>"The column Precursor_MZ must contain only numeric values..."</em></td>
+      <td>Une valeur non numérique dans <code>Precursor_MZ</code> (texte, cellule mal formatée...)</td>
+      <td>Corriger la/les ligne(s) indiquée(s) pour n'avoir que des nombres</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Pour un fichier <strong>MS2</strong>, le fichier ayant déjà été entièrement
+  vérifié à l'étape précédente, cette étape ne fait qu'afficher un
+  récapitulatif : le message <span class="success-msg">"N scan(s) parsed
+  successfully"</span> ainsi qu'un tableau déroulant ("Preview scan data")
+  reprenant le contenu de chaque scan, pour une dernière relecture avant de
+  passer à l'étape suivante.
+</p>
+
+<h3 id="step-4">4ème étape : Complétion automatique et validation (Step 4 - Preview and automatic completion)</h3>
+
+<p>
+  Certains champs prévus par le modèle <strong>(cf. Module 4)</strong> n'ont pas
+  besoin d'être renseignés dans le fichier source car ils peuvent être calculés
+  automatiquement à partir des colonnes <code>Formula</code>,
+  <code>Precursor_MZ</code> et <code>Adduct</code>, ainsi que des paramètres
+  choisis à l'étape 1. Un clic sur le bouton
+  <strong>"Run automatic completion"</strong> lance ce calcul.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Colonne calculée</th>
+      <th>Calculée à partir de</th>
+      <th>Détails</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Molecular_weight</code></td>
+      <td><code>Formula</code></td>
+      <td>La masse moléculaire moyenne est calculée à partir de la formule chimique </td>
+    </tr>
+    <tr>
+      <td><code>Monoisotopic_mass</code></td>
+      <td><code>Formula</code></td>
+      <td>La masse monoisotopique est calculée à partir de la formule chimique</td>
+    </tr>
+    <tr>
+      <td><code>Adduct</code></td>
+      <td><code>Adduct</code></td>
+      <td>La valeur brute de l'adduit est validée et normalisée vers sa forme standard (ex. <code>[M+H]+</code>, insensible à la casse et aux espaces). <code>Lipid_Name</code> n'intervient pas dans ce calcul : il sert uniquement à identifier la ligne/le scan concerné si l'adduit est invalide.</td>
+    </tr>
+    <tr>
+      <td><code>Neutral_mass</code></td>
+      <td><code>Precursor_MZ</code> et <code>Adduct</code></td>
+      <td>La masse neutre est la masse du précurseur auquel on a rajoute ou supprimer la masse de l'adduit afin d'obtenir sa masse monoisotopique neutre</td>
+    </tr>
+    <tr>
+      <td><code>MS_level</code>, <code>Ionisation_mode</code></td>
+      <td>Paramètres choisis à l'étape 1</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code>Num_Peaks</code></td>
+      <td>Fixé à 0 pour un fichier MS1 ; nombre de fragments du scan pour un fichier MS2</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Si une formule est incorrecte ou qu'un adduit ne peut pas être reconnu, un
+  message d'erreur <span class="error-msg">"Cannot compute molecular weight
+  for the following formula(s) : ..."</span> ou
+  <span class="error-msg">"Could not resolve the precursor adduct for the
+  following row(s)/scan(s) : ..."</span> s'affiche. Il faut alors corriger le
+  fichier source (colonne <code>Formula</code> ou <code>Adduct</code>) puis le
+  recharger depuis l'étape 2.
+</p>
+
+<p>
+  Une fois le calcul terminé, un tableau éditable s'affiche pour une dernière
+  relecture avant intégration. Les colonnes calculées automatiquement (voir
+  tableau ci-dessus, ainsi que <code>Precursor_MZ</code> et <code>Formula</code>)
+  ne sont pas modifiables, afin de garantir leur cohérence avec les valeurs
+  dont elles sont dérivées : elles n'affichent pas l'icône crayon ✎ à côté de
+  leur nom, contrairement aux colonnes éditables. Pour un fichier
+  <strong>MS1</strong>, les autres colonnes restent modifiables et il est
+  possible d'ajouter ou de supprimer des lignes. Pour un fichier
+  <strong>MS2</strong>, le nombre de lignes est fixe (une ligne par scan).
+</p>
+
+<p>
+  Le bouton <strong>"Validate data"</strong> vérifie que les colonnes
+  obligatoires (<code>Lipid_Name</code>, <code>Formula</code>,
+  <code>Precursor_MZ</code>, <code>Adduct</code>) ne contiennent aucune cellule
+  vide. Si c'est le cas, un message d'avertissement
+  <span class="error-msg">"The table contains empty cells in required columns :
+  ..."</span> s'affiche et il faut compléter le tableau avant de valider à
+  nouveau. Une fois la validation réussie, un résumé apparaît. Il présente le nombre total
+  de lipides ainsi que le nombre de catégories, classes et sous-classes
+  présentes, accompagnés de trois graphiques répartissant les lipides par
+  catégorie, classe et sous-classe.
+</p>
+
+<p>
+Pour des modifications non ponctuelles il est préférable de privilégier une modification du fichier
+afin d'éviter d'introduire des erreurs potentielles.
+</p>
+
+<h3 id="step-5">5ème étape : Insertion des données dans BacLipidDB (Step 5 - Database integration)</h3>
+
+<p>
+  Cette dernière étape n'est accessible qu'une fois les données validées à
+  l'étape 4. Un message d'information rappelle le nombre de lipides prêts à
+  être intégrés : <em>"Ready to integrate X lipids into the database."</em>
+  Un clic sur le bouton <strong>"Integrate data"</strong> déclenche
+  l'insertion des données dans la base <strong>BacLipidDB</strong> (tables
+  <code>Detection</code>, <code>Lipid</code>, <code>Annotation</code>, et
+  <code>Fragment</code> pour les fichiers MS2).
+</p>
+
+<p>
+  Une fois l'intégration terminée avec succès, un message de confirmation
+  <span class="success-msg">"Integration already completed. Use the Reset
+  button in the sidebar to start a new integration."</span> s'affiche,
+  accompagné d'une animation de ballons. Pour intégrer un nouveau fichier, il
+  faut utiliser le bouton <strong>"Reset 🔄"</strong> de la barre latérale, qui
+  réinitialise l'ensemble du workflow.
+</p>
+
+<p>
+  Il peut arriver que les données soient correctement enregistrées en base
+  mais qu'une étape suivant l'intégration (sauvegarde automatique de la base
+  ou mise à jour de l'historique) échoue. Dans ce cas, un message
+  d'avertissement s'affiche à la place du message de succès :
+  <span class="error-msg">Data was integrated successfully, but a
+  post-integration step failed : ..."</span>. Il ne faut alors <strong>pas
+  recommencer l'intégration</strong> (les données sont déjà présentes dans la
+  base) : il suffit d'utiliser le bouton <strong>"Reset 🔄"</strong> pour
+  démarrer une nouvelle intégration.
+</p>
+
+<p>
+  Si l'intégration échoue complètement (par exemple en cas de problème avec
+  la base de données elle-même), un message d'erreur
+  <span class="error-msg">"Error during database integration : ..."</span>
+  s'affiche à la place, et aucune donnée n'est enregistrée.
+</p>
+
+</section>
+<section class="section-card">
+
+<h2 id="module-2">Module 2 : BacLipidDB</h2>
+
+<p>
+  La page "BacLipidDB" est un module permettant la visualisation du contenu de la
+  base <strong>BacLipidDB</strong>. Un sélecteur en haut de page permet de choisir
+  quelle vue afficher.
+</p>
+
+<h3 id="module-2-select">Sélection d'une table</h3>
+
+<p>
+  Le sélecteur <strong>"Select a table"</strong> propose cinq options :
+</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><code>Detection</code></td>
+      <td>Contenu brut de la table <code>Detection</code> (un scan/une acquisition par ligne).</td>
+    </tr>
+    <tr>
+      <td><code>Fragment</code></td>
+      <td>Contenu brut de la table <code>Fragment</code> (fragments MS2).</td>
+    </tr>
+    <tr>
+      <td><code>Lipid</code></td>
+      <td>Contenu brut de la table <code>Lipid</code> (lipides de référence).</td>
+    </tr>
+    <tr>
+      <td><code>Full view</code></td>
+      <td>Vue jointe combinant <code>Detection</code>, <code>Lipid</code> et <code>Annotation</code>, colorée par lot d'import, accompagnée de quatre graphiques.</td>
+    </tr>
+    <tr>
+      <td><code>History</code></td>
+      <td>Historique des imports passés dans la base.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Un encadré <strong>"ℹ️ How to use this page"</strong>, repliable, résume ces cinq
+  options directement sur la page.
+</p>
+
+<h3 id="module-2-raw">Tables brutes : Detection, Fragment, Lipid</h3>
+
+<p>
+  Pour ces trois tables, le contenu est affiché tel qu'il est enregistré en base,
+  sans jointure. Le titre du tableau rappelle le nombre de lignes, par exemple
+  <em>"Table : Lipid - 128 rows"</em>. Les colonnes numériques suivantes sont
+  affichées avec un nombre de décimales fixe : <code>Precursor_MZ</code>,
+  <code>Neutral_mass</code>, <code>MZ</code>, <code>Monoisotopic_mass</code> et
+  <code>Intensity</code> (6 décimales), <code>RT</code> et <code>CCS</code>
+  (4 décimales), <code>Molecular_weight</code> (0 décimale).
+</p>
+
+<p>
+  Si la table sélectionnée ne contient aucune ligne, le message
+  <span class="success-msg">"This table contains no data yet."</span> s'affiche à
+  la place du tableau.
+</p>
+
+<h3 id="module-2-fullview">Full view</h3>
+
+<p>
+  La vue <strong>"Full view"</strong> combine chaque <code>Annotation</code> avec
+  son <code>Lipid</code> et sa <code>Detection</code> associés, afin de présenter
+  en une seule ligne l'ensemble des informations utiles à la lecture d'un résultat :
+  <code>Lipid_name</code>, <code>Formula</code>, <code>FA_composition</code>,
+  <code>Lipid_class</code>, <code>Lipid_subclass</code>, <code>Lipid_category</code>,
+  <code>Precursor_MZ</code>, <code>Adduct</code>, <code>Neutral_mass</code>,
+  <code>Molecular_weight</code>, <code>Monoisotopic_mass</code>, <code>MS_level</code>,
+  <code>Ionisation_mode</code>, <code>Num_Peaks</code>, <code>RT</code>,
+  <code>CCS</code>, ainsi que <code>Detection_ID</code> comme identifiant.
+</p>
+
+<p>
+  Chaque ligne est colorée selon le lot d'import (fichier) auquel elle appartient :
+  une couleur pastel distincte est attribuée à chaque import, dans l'ordre où ils
+  ont été intégrés dans <strong>Module 1</strong>. Sous le tableau un encadré repliable
+  <strong>"color caption"</strong> rappelle pour chaque
+  import sa couleur, le nom du fichier, sa date d'intégration, son nombre de lignes
+  et le nom de la personne qui l'a intégré.
+</p>
+
+<p class="warning">
+  Une ligne peut apparaître sans couleur de fond si Detection_ID ne
+  correspond à aucun import enregistré dans l'historique. Ce cas ne devrait pas se
+  produire en usage normal. Si cette erreur apparait il est important de le signaler 
+  à la personne en charge de la maintenance de l'application.
+</p>
+
+<h3 id="module-2-graphs">Graphiques (Full view)</h3>
+
+<p>
+  Quatre graphiques sont affichés sous le tableau "Full view". Les points ne sont pas
+  colorés lot par lot comme le tableau, mais regroupés en trois catégories :
+  <strong>Latest import</strong> (le dernier import en date, en rouge),
+  <strong>Other imports</strong> (les imports précédents, en bleu) et
+  <strong>Unknown</strong> (lignes sans import connu, en gris).
+</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Measured neutral mass vs. theoretical monoisotopic mass</strong></td>
+      <td>
+        Nuage de points comparant la masse neutre mesurée (<code>Neutral_mass</code>,
+        calculée à partir de <code>Precursor_MZ</code> et de l'adduit) à la masse
+        monoisotopique théorique du lipide de référence (<code>Monoisotopic_mass</code>).
+        Une droite pointillée <em>y = x</em> sert de repère visuel : plus un point s'en
+        écarte, plus l'annotation correspondante s'éloigne de la théorie. Le survol
+        d'un point affiche le nom du lipide, sa classe, l'écart en Da et l'erreur en ppm.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Mass error (ppm) vs. precursor neutral mass</strong></td>
+      <td>Même comparaison, mais exprimée en erreur relative (ppm) en fonction de la masse neutre.</td>
+    </tr>
+    <tr>
+      <td><strong>Mass error (Da) vs. precursor neutral mass</strong></td>
+      <td>
+        Même comparaison, exprimée cette fois en écart absolu (Da). Ce graphique est
+        suivi d'un tableau <strong>"Mass error table"</strong> listant chaque
+        annotation avec son nom, sa formule, sa masse neutre, sa masse monoisotopique,
+        l'écart (Da) et l'erreur (ppm), trié par erreur décroissante en valeur
+        absolue, afin de faire ressortir en premier les annotations les plus
+        suspectes.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Van Krevelen diagram (H/C vs O/C)</strong></td>
+      <td>
+        Diagramme classique en chimie des lipides, représentant le ratio hydrogène/carbone
+        en fonction du ratio oxygène/carbone de chaque formule, coloré par classe de
+        lipide (<code>Lipid_class</code>). Les lignes dont la formule ne contient
+        aucun atome de carbone ne sont pas affichées.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Si aucune ligne ne dispose des données nécessaires à un graphique (masse neutre,
+  masse monoisotopique ou formule chimique manquantes), un message d'information
+  s'affiche à la place de ce graphique.
+</p>
+
+<h3 id="module-2-history">History</h3>
+
+<p>
+  La vue <strong>"History"</strong> liste tous les imports déjà réalisés via le
+  <strong>Module 1</strong> : nom du fichier, date d'intégration, niveau MS, mode
+  d'ionisation, nombre de lignes insérées et nom de la personne qui a soumis
+  l'import. Si aucun import n'a encore été effectué, le message
+  <span class="success-msg">"No imports recorded yet."</span> s'affiche à la place
+  du tableau.
+</p>
+
+<p class="warning">
+  En cas d'erreur lors du chargement d'une table (par exemple un problème d'accès
+  à la base de données), le message <span class="error-msg">"Error loading table :
+  ..."</span> s'affiche à la place du contenu attendu.
+</p>
+</section>
+<section class="section-card">
+
+
+
+</section>
+
+
+
+
+  </main>
+</div>
+
+</body>
+</html>
