@@ -178,21 +178,13 @@ xdg-open Documentation/_build/html/index.html   # Linux
 open Documentation/_build/html/index.html       # macOS
 start Documentation/_build/html/index.html      # Windows
 ```
-Ou la servir en local (utile si le navigateur bloque les fichiers `file://`) :
-```bash
-python -m http.server -d Documentation/_build/html 8000
-```
-puis ouvrir [http://localhost:8000](http://localhost:8000).
 
-### Lancer la doc depuis git (après un clone)
+### Générer la doc en PDF
+Nécessite une distribution LaTeX installée sur la machine (`latexmk`, `pdflatex`). Depuis le dossier `Documentation/` :
 ```bash
-git clone https://github.com/liliacls/Database.git
-cd Database
-conda env create -f environment.yml   # ou pip install -r requirements.txt
-conda activate lipid_database
 cd Documentation
-make html
-xdg-open _build/html/index.html       # ou : python -m http.server -d _build/html 8000
+make latexpdf
 ```
+Le PDF est généré dans `Documentation/_build/latex/` (un seul fichier regroupant `index.rst` et toutes les pages liées via les toctrees).
 
 ---
