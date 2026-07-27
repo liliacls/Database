@@ -70,7 +70,7 @@ Table ``Detection``
      - Nombre de pics de fragments (MS2 uniquement).
    * - ``Neutral_mass``
      - ``float``
-     - Masse neutre dérivée de ``Precursor_MZ`` et du mode d'ionisation (Da).
+     - Masse neutre dérivée de ``Precursor_MZ`` et de l'``Adduct`` (Da).
    * - ``RT``
      - ``float | None``
      - Temps de rétention (minutes).
@@ -165,13 +165,3 @@ Conventions
 - Les clés primaires sont nommées avec le suffixe ``_ID``.
 - Les clés étrangères sont nommées avec le suffixe ``_id``.
 - Chaque classe définit un ``__repr__`` pour afficher un objet de façon lisible lors du débogage.
-
-Voir aussi
-----------
-
-Documentation SQLAlchemy :
-
-- `DeclarativeBase <https://docs.sqlalchemy.org/en/21/orm/declarative_styles.html>`_
-- `Mapped <https://docs.sqlalchemy.org/en/21/orm/mapping_styles.html#orm-mapping-styles>`_
-- `mapped_column <https://docs.sqlalchemy.org/en/21/orm/mapping_api.html#sqlalchemy.orm.Mapper.columns>`_
-- `relationship, ForeignKey <https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html>`_

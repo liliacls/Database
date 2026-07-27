@@ -6,7 +6,7 @@ Référence API (générée automatiquement)
    (``sphinx.ext.autodoc``). Contrairement aux pages Streamlit (:doc:`Home`,
    :doc:`1_Integration`, :doc:`2_BacLipidDB`, :doc:`3_Export`), les modules
    ci-dessous sont écrits sous forme de fonctions/classes documentées, ce qui
-   permet une extraction automatique.
+   permet une génération automatique.
 
 config
 ------
@@ -25,10 +25,50 @@ models.model
    :show-inheritance:
    :exclude-members: metadata
 
+utils.data_access
+------------------
+
+.. automodule:: utils.data_access
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+utils.db_backup
+-----------------
+
+.. automodule:: utils.db_backup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+utils.exceptions
+------------------
+
+.. automodule:: utils.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+utils.history
+---------------
+
+.. automodule:: utils.history
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 utils.loading_MS1
 -------------------
 
 .. automodule:: utils.loading_MS1
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+utils.loading_MS2
+-------------------
+
+.. automodule:: utils.loading_MS2
    :members:
    :undoc-members:
    :show-inheritance:
