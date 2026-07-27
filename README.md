@@ -1,6 +1,9 @@
-# BacLipidDB Project
+# BacLipidAPP Project
 
-BacLipidDB est une base de données relationnelle spécialisée dans l'annotation de lipides bactériens issus de spectrométrie de masse. Elle permet de stocker, intégrer, explorer et exporter des données lipidiques via une interface Streamlit.
+L'application web locale Streamlit **BacLipidAPP** est développée afin d'interagir de différentes manières avec la base de données relationnelle SQLite **BacLipidDB**.
+L'objectif est de centraliser les annotations lipidomiques réalisées dans l'équipe 1 "Analyse et modélisation" de l'Institu CARMeN (Chimie organique, Bioorganique, Réactivité et Analyse) et de l'équipde BRICS (Biofilms, Résistance, Interactions Cellules-Surfaces) du Laboratoire PBS (Polymères, Biopolymères, Surfaces). 
+**BacLipidAPP** est composée de 5 modules qui permettent d'ajouter, de visualiser, de modifier et de supprimer les données dans 
+**BacLipidDB**.
 
 ---
 
@@ -10,11 +13,11 @@ BacLipidDB/
 ├── 📁 .streamlit/
 │       └── config.toml
 ├── 📄 config.py
+├── 📄 Documentation.html
 ├── 📄 environment.yml
-├── 📄 requirements.txt
-├── 📄 adducts.json
-├── 📄 history.json
+├── 📄 LICENSE
 ├── 📄 README.md
+├── 📄 requirements.txt
 ├── 📁 app/
 │       ├── 📄 Home.py
 │       └── 📁 pages/
@@ -26,6 +29,19 @@ BacLipidDB/
 ├── 📁 assets/
 │       ├── 📄 APP.svg
 │       └── 📄 DB.svg
+├── 📁 Documentation/
+│       ├── 📄 conf.py
+│       ├── 📄 index.rst
+│       ├── 📄 Home.rst
+│       ├── 📄 1_Integration.rst
+│       ├── 📄 2_BacLipidDB.rst
+│       ├── 📄 3_Export.rst
+│       ├── 📄 4_Resources.rst
+│       ├── 📄 5_Management.rst
+│       ├── 📄 model.rst
+│       ├── 📄 api.rst
+│       ├── 📄 Makefile
+│       └── 📄 make.bat
 ├── 📁 models/
 │       ├── __init__.py
 │       └── 📄 model.py
@@ -61,11 +77,11 @@ Pages de l'application web Streamlit accessibles depuis le navigateur.
 | Fichier | Rôle |
 |---|---|
 | `Home.py` | Page d'accueil, présente les cinq modules de l'application |
-| `1_Integration.py` | Importe un fichier d'annotations et l'intègre dans la base de données |
-| `2_BacLipidDB.py` | Visualise le contenu des tables ou une vue complète de la base de données |
-| `3_Export.py` | Filtre les données et les exporte en CSV (MS1) ou en MSP (MS2) compatible avec le logiciel MZmine |
-| `4_Resources.py` | Fournit les fichiers modèles pour l'intégration, un guide des colonnes attendues et la gestion des adduits custom |
-| `5_Management.py` | Édite ou supprime des enregistrements déjà intégrés, et permet de retirer une intégration entière depuis l'historique |
+| `1_Integration.py` | Permet d'importer un fichier d'annotations et de l'intégrer dans la base de données **BacLipidDB** |
+| `2_BacLipidDB.py` | Permet de visualiser le contenu des tables ou une vue complète de la base de données |
+| `3_Export.py` | Permet de filtrer les données et de les exporter en CSV (MS1) ou en MSP (MS2) compatible avec le logiciel MZmine |
+| `4_Resources.py` | Fournit les fichiers modèles pour l'intégration, un guide des colonnes attendues et la gestion des adduits |
+| `5_Management.py` | Permet d'éditer ou de supprimer des enregistrements déjà intégrés |
 
 ---
 
@@ -83,16 +99,16 @@ Fonctions de calcul, d'insertion et de maintenance utilisées par les différent
 
 | Fichier | Rôle |
 |---|---|
-| `neutral_mass.py` | Calcule la masse neutre à partir du rapport m/z et de l'adduit (built-in ou custom, défini dans `adducts.json`) |
-| `molecular_weight.py` | Calcule le poids moléculaire moyen à partir de la formule brute via la librairie `molmass` |
-| `monoisotopic.py` | Calcule la masse monoisotopique à partir de la formule brute via la librairie `molmass` |
-| `msp_export.py` | Génère le contenu d'un fichier `.msp` à partir des annotations MS2 filtrées |
-| `loading_MS1.py` | Insère les données d'un DataFrame MS1 dans les tables `Detection`, `Lipid` et `Annotation` |
-| `loading_MS2.py` | Lit un fichier `.msp` MS2 et insère les détections, fragments et annotations dans la base |
-| `data_access.py` | Charge la vue jointe complète (`Annotation` + `Lipid` + `Detection`) utilisée par les pages de visualisation |
-| `db_backup.py` | Crée une copie horodatée de `BacLipidDB.db` dans `backups/` avant chaque intégration ou modification |
-| `history.py` | Lit/écrit `history.json`, l'historique des imports (ajout, consultation, suppression d'une entrée) |
-| `exceptions.py` | Exceptions personnalisées, notamment `PostIntegrationError` (commit réussi mais backup/historique en échec) |
+| `neutral_mass.py` | Calcule la masse neutre à partir du rapport *m/z* et de l'adduit (défini dans `adducts.json`) (utilisé par les pages 1 `1_Integration.py` et 4 `4_Resources.py`) |
+| `molecular_weight.py` | Calcule la masse moléculaire moyenne à partir de la formule brute via la librairie python `molmass` (utilisé par les pages 1 `1_Integration.py` et 5 `5_Management.py`) |
+| `monoisotopic.py` | Calcule la masse monoisotopique exacte à partir de la formule brute via la librairie python `molmass` (utilisé par les pages 1 `1_Integration.py` et 5 `5_Management.py`) |
+| `msp_export.py` | Génère le contenu d'un fichier `.msp` à partir des annotations MS2 filtrées (utilisé par la page 3 `3_Export.py`) |
+| `loading_MS1.py` | Insère les données d'un DataFrame MS1 dans les tables `Detection`, `Lipid` et `Annotation` (utilisé par la page 1 `1_Integration.py`) |
+| `loading_MS2.py` | Lit un fichier `.msp` MS2 et insère les détections, fragments et annotations dans la base (utilisé par la page 1 `1_Integration.py`) |
+| `data_access.py` | Charge la vue jointe complète (`Annotation` + `Lipid` + `Detection`) utilisée par les pages 2 `2_BacLipidDB.py`, 3 `3_Export.py` et 5 `5_Management.py` |
+| `db_backup.py` | Crée une copie horodatée de `BacLipidDB.db` dans `backups/` avant chaque intégration ou modification (utilisé par la page 5 `5_Management.py`) |
+| `history.py` | Lit/écrit `history.json`, l'historique des imports (ajout, consultation, suppression d'une entrée) (utilisé par les pages 1 `1_Integration.py`, 2 `2_BacLipidDB.py` et 5 `5_Management.py`) |
+| `exceptions.py` | Exceptions personnalisées `PostIntegrationError` (commit réussi mais backup/historique en échec) (utilisé par la page 1 `1_Integration.py`) |
 
 ---
 
@@ -101,7 +117,7 @@ Scripts à lancer en ligne de commande pour initialiser ou réinitialiser la bas
 
 | Fichier | Rôle |
 |---|---|
-| `init_db.py` | Initialise la base de données et crée toutes les tables (à lancer une seule fois) |
+| `init_db.py` | Initialise la base de données en créeant toutes les tables et leurs relations à partir de `models/model.py` (à lancer une seule fois) |
 | `reset_db.py` | Supprime tous les enregistrements sans supprimer les tables, et vide `history.json` |
 
 ---
@@ -135,8 +151,21 @@ pip install -r requirements.txt
 
 ---
 
+### Initialiser la base de données
+À faire une seule fois, après avoir cloné le projet et activé l'environnement (conda ou venv). Ce script crée le fichier `BacLipidDB.db` et toutes les tables définies dans `models/model.py` :
+```bash
+python scripts/init_db.py
+```
+Si la base existe déjà, ce script ne fait rien. Pour vider une base existante sans supprimer les tables, voir `scripts/reset_db.py` :
+```bash
+python scripts/reset_db.py
+```
+
+---
+
 # **Lancer l'application**
 
+Une fois l'environnement activé et la base initialisée, lancer l'application Streamlit depuis la racine du projet :
 ```bash
 streamlit run app/Home.py
 ```
@@ -158,16 +187,32 @@ Ces fichiers/dossiers ne sont pas versionnés (voir `.gitignore`) et sont créé
 
 La documentation technique (guide des modules Streamlit + référence API générée depuis les docstrings) est construite avec Sphinx, dans le dossier `Documentation/`. `sphinx` et `sphinx-rtd-theme` font partie des dépendances du projet (`requirements.txt` / `environment.yml`).
 
+### Documentation utilisateur
+
+Un guide utilisateur au format HTML (`Documentation.html`, à la racine du projet) présente chaque module de l'application (Home, Intégration, BacLipidDB, Export, Resources, Management) pas à pas, sans notion de code.
+
+- Après un `git clone` du projet (voir [Récupérer le projet](#récupérer-le-projet)), ouvrir directement le fichier dans un navigateur :
+```bash
+xdg-open Documentation.html   # Linux
+open Documentation.html       # macOS
+start Documentation.html      # Windows
+```
+- Pour ne récupérer que ce fichier sans cloner tout le dépôt : sur la page du fichier sur GitHub, cliquer sur le bouton **Download raw file** (icône ⬇️), ou en ligne de commande :
+```bash
+curl -o Documentation.html https://raw.githubusercontent.com/liliacls/Database/main/Documentation.html
+```
+
 ### Mettre à jour le contenu
 - Pages Streamlit (`Home.rst`, `1_Integration.rst`, `2_BacLipidDB.rst`, `3_Export.rst`, `4_Resources.rst`, `5_Management.rst`) : à éditer manuellement dans `Documentation/` si le comportement d'une page change.
+- Modèle de données (`model.rst`) : à éditer manuellement dans `Documentation/` si le schéma de `models/model.py` (tables, colonnes, relations) change.
 - Référence API (`api.rst`) : générée automatiquement depuis les docstrings du code (`sphinx.ext.autodoc`). Pour l'enrichir, il suffit de mettre à jour les docstrings (format reST : `:param:`, `:return:`, `:rtype:`) dans `config.py`, `models/model.py`, `utils/*.py` et `scripts/*.py`.
 
 ### Regénérer la doc HTML
 Depuis le dossier `Documentation/` :
 ```bash
 cd Documentation
-make html          # build incrémental
-make clean html    # rebuild complet
+make html          # ne régénère que les pages dont la source (.rst / docstring) a changé
+make clean html    # complet : supprime _build/ puis régénère toutes les pages
 ```
 Le résultat est généré dans `Documentation/_build/html/` ; ouvrir `index.html` dans un navigateur pour la consulter.
 
@@ -186,5 +231,11 @@ cd Documentation
 make latexpdf
 ```
 Le PDF est généré dans `Documentation/_build/latex/` (un seul fichier regroupant `index.rst` et toutes les pages liées via les toctrees).
+
+---
+
+# **License**
+
+Ce projet est distribué sous licence [MIT](LICENSE).
 
 ---
