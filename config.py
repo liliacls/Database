@@ -2,28 +2,39 @@ from pathlib import Path
 import streamlit as st
 from sqlalchemy import create_engine, event
 
-# Define the project root directory
+# Définit le répertoire racine du projet
 PROJECT_ROOT = Path(__file__).parent
 
-# Database path
+# Chemin de la base de données
 DB_FILE = PROJECT_ROOT / "BacLipidDB.db"
 DB_PATH = f"sqlite:///{DB_FILE}"
 
-# History file path
+# Chemin du fichier d'historique
 HISTORY_PATH = PROJECT_ROOT / "history.json"
 
-# Custom adducts file path
+# Chemin du fichier des adduits personnalisés
 ADDUCTS_PATH = PROJECT_ROOT / "adducts.json"
 
-# Directory where database snapshots are stored (one per import)
+# Répertoire où sont stockés les sauvegardes de la base de données
 BACKUP_DIR = PROJECT_ROOT / "backups"
 
-# Number of most recent snapshots to keep in /backups
+# Nombre de sauvegardes à conserver dans le dossier /backups
 BACKUP_COUNT = 20
 
 @st.cache_resource
 def get_engine():
-    """Create and cache the SQLAlchemy engine for the SQLite database connection."""
+    """
+    Crée et met en cache le moteur SQLAlchemy pour la connexion à la base de données SQLite.
+
+    Grâce à ``st.cache_resource``, le moteur n'est instancié qu'une seule fois par
+    session Streamlit puis réutilisé, évitant de rouvrir une connexion à chaque rerun.
+    La fonction `enable_foreign_key` est attaché à ``connect`` pour activer la pragma SQLite
+    ``foreign_keys`` (désactivée par défaut) afin que les contraintes de clé étrangère
+    soient bien appliquées sur chaque nouvelle connexion.
+
+    :return: moteur SQLAlchemy connecté à la base de données du projet (voir :data:`DB_PATH`).
+    :rtype: sqlalchemy.engine.Engine
+    """
     engine = create_engine(DB_PATH, echo=False)
 
     @event.listens_for(engine, "connect")
