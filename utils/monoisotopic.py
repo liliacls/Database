@@ -2,13 +2,13 @@ from molmass import Formula
 
 def monoisotopic_mass(formula: str | None) -> float | None:
     """
-    Compute the monoisotopic mass of the lipid from its chemical formula.
-    Uses molmass.Formula.monoisotopic_mass for the calculation.
-    Returns None without raising an exception if the formula is null, empty, or invalid.
+    Calcule la masse monoisotopique du lipide à partir de sa formule chimique.
+    Utilise molmass.Formula.monoisotopic_mass pour le calcul.
+    Retourne None sans lever d'exception si la formule est nulle, vide ou invalide.
 
-    :param formula: chemical formula
+    :param formula: formule chimique
     :type formula: str or None
-    :return: monoisotopic mass rounded to 6 decimal places, or None if invalid.
+    :return: masse monoisotopique arrondie à 8 décimales, ou None si invalide.
     :rtype: float or None
     """
     if formula is None:
@@ -19,6 +19,6 @@ def monoisotopic_mass(formula: str | None) -> float | None:
         if not s:
             return None
         f = Formula(s)
-        return round(float(f.monoisotopic_mass), 6)
+        return round(float(f.monoisotopic_mass), 8)
     except (ValueError, TypeError):
         return None

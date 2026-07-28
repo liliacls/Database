@@ -2,13 +2,13 @@ from molmass import Formula
 
 def molecular_weight(formula: str) -> float | None:
     """
-    Compute the average molecular weight of the lipid from its chemical formula.
-    Uses molmass.Formula.mass for the calculation, then rounds to 6 decimal places.
-    Returns None without raising an exception if the formula is None, empty, or invalid.
+    Calcule la masse moléculaire moyenne du lipide à partir de sa formule chimique.
+    Utilise molmass.Formula.mass pour le calcul, puis arrondit à 6 décimales.
+    Retourne None sans lever d'exception si la formule est None, vide ou invalide.
 
-    :param formula: chemical formula
+    :param formula: formule chimique
     :type formula: str
-    :return: average molecular weight rounded to 6 decimal places, or None if invalid.
+    :return: masse moléculaire moyenne arrondie à 6 décimales, ou None si invalide.
     :rtype: float or None
     """
     if formula is None:
