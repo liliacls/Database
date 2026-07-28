@@ -6,24 +6,25 @@ from config import DB_FILE, BACKUP_DIR, BACKUP_COUNT
 
 def backup_database(label: str) -> Path:
     """
-    Create a timestamped snapshot of the SQLite database.
-    Creates BACKUP_DIR if it does not exist yet, clean label
-    (non alphanumeric/"_"/"-" characters replaced with "_") before
-    using it in the snapshot filename. Also deletes the oldest
-    snapshots beyond BACKUP_COUNT so BACKUP_DIR does not grow without
-    bound. If the snapshot itself fails, the partial file is removed.
+    Crée une sauvegarde horodaté de la base de données SQLite.
+    Crée BACKUP_DIR s'il n'existe pas encore, nettoie le label
+    (caractères non alphanumériques/"_" remplacés par "_") avant
+    de l'utiliser dans le nom de fichier de la sauvegarde. Supprime aussi
+    les enregistrements les plus anciens au-delà de BACKUP_COUNT (20) afin que
+    BACKUP_DIR ne grossisse pas indéfiniment. Si la création de la sauvegarde échoue,
+    le fichier partiel est supprimé.
 
-    :param label: identifier appended to the snapshot filename.
+    :param label: identifiant ajouté au nom de fichier de la sauvegarde.
     :type label: str
-    :return: path to the created backup file.
+    :return: chemin vers le fichier de sauvegarde créé.
     :rtype: Path
-    :raises sqlite3.Error: if the source database cannot be read or
-        the snapshot cannot be written.
+    :raises sqlite3.Error: si la base de données source ne peut pas être lue ou
+        si l'instantané ne peut pas être écrit.
     """
     BACKUP_DIR.mkdir(exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    label = re.sub(r"[^A-Za-z0-9_-]+", "_", label).strip("_")
+    label = re.sub(r"[^A-Za-z0-9_]+", "_", label).strip("_")
     suffix = f"_{label}" if label else ""
     backup_path = BACKUP_DIR / f"BacLipidDB_{timestamp}{suffix}.db"
 
@@ -45,7 +46,10 @@ def backup_database(label: str) -> Path:
     return backup_path
 
 def _delete_backups() -> None:
-    """Delete the oldest BacLipidDB_*.db snapshots in BACKUP_DIR beyond BACKUP_COUNT."""
+    """
+    Supprime les sauvegardes BacLipidDB_*.db les plus anciens dans
+    BACKUP_DIR au-delà de BACKUP_COUNT.
+    """
     backups = sorted(
         BACKUP_DIR.glob("BacLipidDB_*.db"),
         key=lambda p: p.stat().st_mtime,
