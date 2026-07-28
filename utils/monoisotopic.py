@@ -8,7 +8,7 @@ def monoisotopic_mass(formula: str | None) -> float | None:
 
     :param formula: formule chimique
     :type formula: str or None
-    :return: masse monoisotopique arrondie à 8 décimales, ou None si invalide.
+    :return: masse monoisotopique arrondie à 6 décimales, ou None si invalide.
     :rtype: float or None
     """
     if formula is None:
@@ -19,6 +19,6 @@ def monoisotopic_mass(formula: str | None) -> float | None:
         if not s:
             return None
         f = Formula(s)
-        return round(float(f.monoisotopic_mass), 8)
+        return round(float(f.monoisotopic_mass), 6)
     except (ValueError, TypeError):
         return None
