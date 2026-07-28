@@ -15,18 +15,19 @@ def generate_msp(
     mz_range: tuple[float, float],
     ionisation_modes: list[str],
 ) -> str:
-    """ Cached wrapper around utils.msp_export.generate_msp (see there for parameter details)."""
+    """ Wrapper mis en cache autour de utils.msp_export.generate_msp (voir celui-ci pour le détail des paramètres)."""
     return _generate_msp(_engine, categories, classes, sub_classes, mz_range, ionisation_modes)
 
 def _load_data(_engine: Engine) -> pd.DataFrame:
     """
-    Load all annotations along with their associated Lipid and Detection data.Renames load_database's columns (Lipid_name, Formula, Precursor_MZ, Neutral_mass)
-    to (name, formula, mz, neutral_mass) before selecting the columns to keep.
+    Charge et met en cache les tables Annotation, Lipid, Detection via la fonction dans `data_access.py`.
+    Renomme les colonnes de load_database (Lipid_name, Formula, Precursor_MZ, Neutral_mass)
+    en (name, formula, mz, neutral_mass) avant de sélectionner les colonnes à conserver.
 
-    :param _engine: SQLAlchemy engine connected to the database
+    :param _engine: moteur SQLAlchemy connecté à la base de données
     :type _engine: sqlalchemy.engine.Engine
-    :return: DataFrame with columns name, formula, Lipid_category, Lipid_class, Lipid_subclass, mz, neutral_mass, MS_level, Ionisation_mode, Adduct,
-    RT, CCS and Num_Peaks (RT/CCS are None if not provided).
+    :return: DataFrame avec les colonnes name, formula, Lipid_category, Lipid_class, Lipid_subclass, mz, neutral_mass, MS_level, Ionisation_mode, Adduct,
+    RT, CCS et Num_Peaks (RT/CCS valent None si non fournis).
     :rtype: pandas.DataFrame
     """
     df = load_database(_engine).rename(columns={
@@ -40,7 +41,7 @@ def _load_data(_engine: Engine) -> pd.DataFrame:
         "mz", "neutral_mass", "MS_level", "Ionisation_mode", "Adduct", "RT", "CCS", "Num_Peaks",
     ]]
 
-# ── Header ────────────────────────────────────────────────────────────────────
+# ── En-tête ───────────────────────────────────────────────────────────────────
 
 st.html("""
     <style>
@@ -85,7 +86,7 @@ if df_all.empty:
     st.info("The database contains no data yet.")
     st.stop()
 
-# ── Filters ───────────────────────────────────────────────────────────────────
+# ── Filtres ───────────────────────────────────────────────────────────────────
 
 st.subheader("Filters")
 st.write("")
@@ -162,7 +163,7 @@ mz_range = (min(mz_min_input, mz_max_input), max(mz_min_input, mz_max_input))
 
 st.divider()
 
-# ── Apply filters ─────────────────────────────────────────────────────────────
+# ── Application des filtres ───────────────────────────────────────────────────
 
 df_filtered = df_all.copy()
 
@@ -202,7 +203,7 @@ df_filtered = df_filtered[
     (df_filtered["mz"] >= mz_range[0]) & (df_filtered["mz"] <= mz_range[1])
 ]
 
-# ── Preview ───────────────────────────────────────────────────────────────────
+# ── Aperçu ────────────────────────────────────────────────────────────────────
 
 st.subheader(f"Preview - {len(df_filtered)} rows")
 
@@ -220,7 +221,7 @@ st.dataframe(
     },
 )
 
-# ── Download ──────────────────────────────────────────────────────────────────
+# ── Téléchargement ────────────────────────────────────────────────────────────
 
 st.divider()
 
