@@ -12,15 +12,20 @@ def generate_msp(
     ionisation_modes: list | None = None,
 ) -> str:
     """
-    Returns a string in .msp format for MS2 detections matching the filters.
+    Retourne une chaîne au format .msp pour les détections MS2 correspondant aux filtres.
 
-    :param engine: engine: SQLAlchemy engine connected to the database.
-    :param categories: selected lipid category list (empty = all).
-    :param classes: selected lipid class list (empty = all).
-    :param sub_classes: selected lipid subclass list (empty = all).
-    :param mz_range: tuple (mz_min, mz_max) for filtering on Precursor_MZ.
-    :param ionisation_modes: selected ionisation mode list, "Positive"/"Negative"
-    :return: .msp file ready to be downloaded.
+    :param engine: moteur SQLAlchemy connecté à la base de données.
+    :param categories: liste des catégories de lipides sélectionnées (vide = toutes).
+    :type categories: list
+    :param classes: liste des classes de lipides sélectionnées (vide = toutes).
+    :type classes: list
+    :param sub_classes: liste des sous-classes de lipides sélectionnées (vide = toutes).
+    :type sub_classes: list
+    :param mz_range: tuple (mz_min, mz_max) pour filtrer sur Precursor_MZ.
+    :type mz_range: tuple
+    :param ionisation_modes: liste des modes d'ionisation sélectionnés, "Positive"/"Negative" (None = tous).
+    :type ionisation_modes: list | None
+    :return: contenu du fichier .msp prêt à être téléchargé.
     :rtype: str
     """
 
@@ -63,7 +68,7 @@ def generate_msp(
             lines.append(f"RT: {d.RT}")
         if d.CCS is not None:
             lines.append(f"CCS: {d.CCS}")
-        lines.append(f"Num Peaks: {d.Num_Peaks}")
+        lines.append(f"Num Peaks: {len(d.fragments)}")
 
         for frag in d.fragments:
             lines.append(f"{frag.MZ} {int(frag.Intensity)}")
