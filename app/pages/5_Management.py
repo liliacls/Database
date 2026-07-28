@@ -18,7 +18,7 @@ COLOR = "#1F77B4"
 NON_EMPTY_COLUMNS = ["Lipid_name", "Formula", "Precursor_MZ"]
 
 EDITABLE_LIPID_FIELDS = ["Lipid_name", "Lipid_category", "Lipid_class", "Lipid_subclass"]
-EDITABLE_DETECTION_FIELDS = ["Num_Peaks", "RT", "CCS"]
+EDITABLE_DETECTION_FIELDS = ["RT", "CCS"]
 
 EDITOR_KEY = "editor"
 PENDING_PLAN = "pending_plan"
@@ -27,7 +27,7 @@ HISTORY_DEL = "pending_history_delete"
 HISTORY_KEY_VERSION = "history_delete_version"
 HISTORY_DELETED_MSG = "history_deleted_msg"
 
-# ── Header ────────────────────────────────────────────────────────────────────
+# ── En-tête ───────────────────────────────────────────────────────────────────
 
 st.html(f"""
     <style>
@@ -60,16 +60,15 @@ with st.expander("ℹ️ How to use this page"):
 
 engine = get_engine()
 
-# ── Section 1 : edit / delete individual records ─────────────────────────────
+# ── Section 1 : modifier / supprimer des enregistrements individuels ─────────
 
 st.header(":blue[Edit & delete records]", divider="blue", text_alignment="left")
 
-
 def _load_database() -> pd.DataFrame:
     """
-    Load the joined table  (Annotation + Lipid + Detection) view used for editing.
+    Charge et met en cache les tables Annotation, Lipid, Detection via la fonction dans `data_access.py`.
 
-    :return: one row per annotation, with the IDs needed to map edits back to the database.
+    :return: une ligne par annotation, avec les IDs nécessaires pour reporter les modifications sur la base de données.
     :rtype: pandas.DataFrame
     """
     return load_database(engine)[[
@@ -79,21 +78,20 @@ def _load_database() -> pd.DataFrame:
         "Monoisotopic_mass", "MS_level", "Num_Peaks", "RT", "CCS",
     ]]
 
-
 def _database_modif(original: pd.DataFrame, edited: pd.DataFrame) -> dict:
     """
-    Diff the edited table against the original one and compute an update/delete plan.
+    Compare la table éditée à la table d'origine et calcule un plan de mise à jour/suppression.
 
-    Rows ticked for deletion are skipped entirely. For the remaining rows, a changed
-    **Formula** recomputes Molecular_weight/Monoisotopic_mass - mirroring the automatic
-    completion step of the Integration page. **Precursor_MZ**, **Ionisation_mode** and
-    **Adduct** are not editable here since Neutral_mass would need recomputing.
+    Les lignes cochées pour suppression sont entièrement ignorées. Pour les lignes restantes,
+    une modification de **Formula** recalcule Molecular_weight/Monoisotopic_mass de la même manière que
+    l'étape de complétion automatique de la page d'intégration. Les champs **Precursor_MZ**, **Ionisation_mode**
+    et **Adduct** ne sont pas éditables pour le moment.
 
-    :param original: table as currently stored in the database.
+    :param original: table telle que stockée actuellement dans la base de données.
     :type original: pandas.DataFrame
-    :param edited: table as returned by the data editor.
+    :param edited: table telle que retournée par l'éditeur de données.
     :type edited: pandas.DataFrame
-    :return: dict with keys "updates", "deletes" and "errors".
+    :return: dict avec les clés "updates", "deletes" et "errors".
     :rtype: dict
     """
     updates, deletes, errors = [], [], []
@@ -140,11 +138,14 @@ def _database_modif(original: pd.DataFrame, edited: pd.DataFrame) -> dict:
 
     return {"updates": updates, "deletes": deletes, "errors": errors}
 
-
 def _apply(plan: dict) -> None:
-    """Apply a validated update/delete plan to the database.
+    """
+    Applique à la base de données les modifications décrites par un plan issu de _database_modif().
 
-    :param plan: plan as returned by _build_plan(), assumed free of errors.
+    Prend d'abord une sauvegarde de la base, puis supprime les lignes marquées et applique
+    les mises à jour, dans cet ordre, au sein d'une même session.
+
+    :param plan: plan de mise à jour/suppression avec les clés "updates" et "deletes".
     :type plan: dict
     """
     backup_database(label="manual_edit")
@@ -217,8 +218,9 @@ else:
             "Adduct":            st.column_config.TextColumn(disabled=True),
             "Neutral_mass":      st.column_config.NumberColumn(format="%.6f", disabled=True, help="Computed automatically from Precursor_MZ and Adduct."),
             "Molecular_weight":  st.column_config.NumberColumn(format="%.6f", disabled=True, help="Recomputed automatically from Formula."),
-            "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f", disabled=True, help="Recomputed automatically from Formula."),
+            "Monoisotopic_mass": st.column_config.NumberColumn(format="%.8f", disabled=True, help="Recomputed automatically from Formula."),
             "MS_level":          st.column_config.TextColumn(disabled=True),
+            "Num_Peaks":         st.column_config.NumberColumn(disabled=True),
             "RT":                st.column_config.NumberColumn(format="%.4f"),
             "CCS":               st.column_config.NumberColumn(format="%.4f"),
         },
@@ -238,18 +240,18 @@ else:
 if PENDING_PLAN in st.session_state:
     _confirm_apply(st.session_state[PENDING_PLAN])
 
-# ── Section 2 : delete an entire import ──────────────────────────────────────
+# ── Section 2 : supprimer un import entier ───────────────────────────────────
 
 st.divider()
 st.header(":blue[Delete an entire import]", divider="blue", text_alignment="left")
 
 def _delete_import(entry: dict, index: int) -> None:
     """
-    Delete every record inserted by one import batch, then drop it from the history.
+    Supprime tous les enregistrements insérés par un lot d'import, puis le retire de l'historique.
 
-    :param entry: history entry to delete, as returned by load_history().
+    :param entry: entrée de l'historique à supprimer, telle que retournée par load_history().
     :type entry: dict
-    :param index: index of the entry within the history file.
+    :param index: index de l'entrée dans le fichier d'historique.
     :type index: int
     """
     detection_ids = entry.get("detection_ids", [])
@@ -286,8 +288,8 @@ def _history_del(entry: dict, index: int) -> None:
     if c1.button("Confirm deletion", type="primary", width="stretch"):
         _delete_import(entry, index)
         st.session_state.pop(HISTORY_DEL, None)
-        # Changer la version de la clé force Streamlit à recréer le widget
-        # (un simple pop() ne suffit pas à vider le champ de recherche affiché).
+
+        # Change la version de la clé pour forcer Streamlit à recréer le widget
         st.session_state[HISTORY_KEY_VERSION] = st.session_state.get(HISTORY_KEY_VERSION, 0) + 1
         st.session_state[HISTORY_DELETED_MSG] = entry.get("filename", "-")
         st.rerun()
