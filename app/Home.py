@@ -1,9 +1,3 @@
-"""
-Home.py
--------
-Page d'accueil de BacLipidDB.
-"""
-
 import logging
 import streamlit as st
 from sqlalchemy import func
@@ -21,9 +15,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
 @st.cache_data(ttl=60)
 def statistics():
+    """
+    Calcule les statistiques résumées de la base de données, mises en cache pendant 60 secondes.
+    Compte les détections MS1 et MS2 dans la base de données et calcule la taille sur disque du fichier de base de données.
+
+    :return: Un dictionnaire avec les clés ``ms1`` (int, nombre de détections MS1),
+        ``ms2`` (int, nombre de détections MS2) et ``db_size`` (str,
+        taille lisible du fichier), ou ``None`` si les
+        statistiques n'ont pas pu être calculées.
+    :rtype: dict | None
+    """
     try:
         with Session(get_engine()) as s:
             ms1 = (
@@ -58,7 +61,7 @@ with col_center:
 st.markdown(
     """
 <p style="text-align: center;">
-<strong>BacLipidAPP</strong> is a web application for the integration, exploration and export of lipidomic data from <strong>BacLipidDB</strong>.
+<strong>BacLipidAPP</strong> is a local web application for the integration, exploration, modification and export of lipidomic data from <strong>BacLipidDB</strong>.
 </p>
 """,
     unsafe_allow_html=True,
@@ -104,7 +107,7 @@ with col5:
 st.write("")
 st.divider()
 
-# ── Statistics ──────────────────────────────────────────────────────────────────
+# ── Statistiques ────────────────────────────────────────────────────────────────
 st.subheader("Database overview")
 st.write("")
 
