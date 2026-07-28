@@ -11,7 +11,7 @@ from utils.neutral_mass import (
     remove_adduct,
 )
 
-# ── Header ────────────────────────────────────────────────────────────────────
+# ── En-tête ───────────────────────────────────────────────────────────────────
 
 st.html("""
     <style>
@@ -27,7 +27,7 @@ st.html("""
 """)
 st.write("")
 
-# ── Column guide ──────────────────────────────────────────────────────────────
+# ── Guide des colonnes ────────────────────────────────────────────────────────
 
 st.subheader("MS1 integration - column guide")
 st.write("")
@@ -106,7 +106,7 @@ st.dataframe(guide_ms1, hide_index=True, width="stretch")
 
 st.divider()
 
-# ── Templates ─────────────────────────────────────────────────────────────────
+# ── Modèles ───────────────────────────────────────────────────────────────────
 
 st.subheader("Templates")
 st.write("")
@@ -145,7 +145,7 @@ st.caption(
 
 st.divider()
 
-# ── MS2 column guide ────────────────────────────────────────────────────────────
+# ── Guide des colonnes MS2 ───────────────────────────────────────────────────────
 
 st.subheader("MS2 integration - column guide")
 st.write("")
@@ -327,7 +327,7 @@ st.caption(
 
 st.divider()
 
-# ── Adducts ─────────────────────────────────────────────────────────────────
+# ── Adduits ───────────────────────────────────────────────────────────────────
 
 st.subheader("Adducts")
 st.write("")
