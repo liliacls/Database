@@ -1,6 +1,5 @@
 import json
 import math
-
 from config import ADDUCTS_PATH
 
 PROTON_MASS = 1.007276
@@ -18,15 +17,16 @@ BUILTIN_ADDUCT_SIGNS = {
 ADDUCT_SHIFTS: dict[str, float] = {}
 ADDUCT_SIGNS: dict[str, int] = {}
 
-def json_adducts() -> dict:
-    """
-    Load the custom adducts persisted in the JSON file at ADDUCTS_PATH.
+# ── Persistance des adduits personnalisés ────────────────────────────────────────────────────────────────────
 
-    :return: mapping of adduct name to {"shift": float, "sign": int}, or an empty
-        dict if the file does not exist or is empty.
+def _json_adducts() -> dict:
+    """
+    Charge les adduits ajoutés depuis le fichier JSON situé via le chemin ADDUCTS_PATH.
+
+    :return: correspondance entre le nom de l'adduit et {"shift": float, "sign": int}, ou un dictionnaire vide si le fichier n'existe pas ou est vide.
     :rtype: dict
 
-    Example::
+    Exemple::
 
         >>> json_adducts()
         {'[M+Na]+': {'shift': 22.989221, 'sign': -1}}
@@ -37,65 +37,67 @@ def json_adducts() -> dict:
         content = f.read().strip()
         return json.loads(content) if content else {}
 
-def _save_adducts(custom: dict) -> None:
+def _rebuild() -> None:
     """
-    Overwrite ADDUCTS_PATH with the given custom adducts.
-
-    :param custom: mapping of adduct name to {"shift": float, "sign": int}.
-    :type custom: dict
+    Charge les dictionnaires ADDUCT_SHIFTS et ADDUCT_SIGNS et y rajoute les adduits personnalisées lus depuis le JSON via _json_adducts().
     """
-    with open(ADDUCTS_PATH, "w", encoding="utf-8") as f:
-        json.dump(custom, f, ensure_ascii=False, indent=2)
-
-def _refresh() -> None:
-    """Rebuild ADDUCT_SHIFTS and ADDUCT_SIGNS from the built-ins plus the persisted custom adducts."""
-    custom = json_adducts()
+    added = _json_adducts()
 
     ADDUCT_SHIFTS.clear()
     ADDUCT_SHIFTS.update(BUILTIN_ADDUCT_SHIFTS)
     ADDUCT_SIGNS.clear()
     ADDUCT_SIGNS.update(BUILTIN_ADDUCT_SIGNS)
 
-    for name, data in custom.items():
+    for name, data in added.items():
         ADDUCT_SHIFTS[name] = data["shift"]
         ADDUCT_SIGNS[name] = data["sign"]
 
-_refresh()
+def _save_adducts(added: dict) -> None:
+    """
+    Écrase le fichier JSON via ADDUCTS_PATH avec les adduits ajoutés donnés.
+
+    :param added: correspondance entre le nom de l'adduit et {"shift": float, "sign": int}.
+    :type added: dict
+    """
+    with open(ADDUCTS_PATH, "w", encoding="utf-8") as f:
+        json.dump(added, f, ensure_ascii=False, indent=2)
+
+_rebuild()
+
+# ── API de gestion des adduits ────────────────────────────────────────────────────────────────────
 
 def list_adducts() -> dict:
     """
-    Return the currently persisted custom adducts.
+    Retourne les adduits personnalisés présent dans le JSON.
 
-    :return: mapping of adduct name to {"shift": float, "sign": int}.
+    :return: correspondance entre le nom de l'adduit et {"shift": float, "sign": int}.
     :rtype: dict
 
-    Example::
+    Exemple::
 
         >>> list_adducts()
         {'[M+Na]+': {'shift': 22.989221, 'sign': -1}}
     """
-    return json_adducts()
+    return _json_adducts()
 
 def add_adduct(name: str, shift: float, sign: int) -> None:
     """
-    Validate and add a new custom adduct.
+    Valide et ajoute un nouvel adduit aux adduits ajoutés.
 
-    :param name: adduct name. Comparison against existing adducts is
-        case-insensitive, matching the lookup done by adduct().
+    :param name: nom de l'adduit. La comparaison avec les adduits existants ne distingue pas majuscules et minuscules.
     :type name: str
-    :param shift: mass shift in Daltons, must be strictly positive.
+    :param shift: décalage de masse en Daltons, doit être strictement positif.
     :type shift: float
-    :param sign: -1 if the adduct is formed by addition to the neutral molecule
-        (shift is subtracted to recover the neutral mass), +1 if formed by loss
-        (shift is added back).
+    :param sign: -1 si l'adduit est formé par addition à la molécule neutre
+        (le décalage est soustrait pour retrouver la masse neutre), +1 s'il est formé par perte
+        (le décalage est réajouté).
     :type sign: int
-    :raises ValueError: if name is empty or already used (case-insensitively),
-        sign is not -1/1, or shift is not a strictly positive number.
+    :raises ValueError: si name est vide ou déjà utilisé (indépendamment de la casse),
+        si sign n'est pas -1/1, ou si shift n'est pas un nombre strictement positif.
 
-    Example::
+    Exemple::
 
-        >>> # [M+Na]+ is formed by addition of sodium, so sign=-1 (the shift is
-        >>> # subtracted back to recover the neutral mass from the precursor m/z).
+        >>> # [M+Na]+ est formé par addition de sodium, donc sign=-1 (le décalage est soustrait pour retrouver la masse neutre à partir du m/z du précurseur).
         >>> add_adduct("[M+Na]+", shift=22.989221, sign=-1)
         >>> list_adducts()
         {'[M+Na]+': {'shift': 22.989221, 'sign': -1}}
@@ -112,46 +114,50 @@ def add_adduct(name: str, shift: float, sign: int) -> None:
     if math.isnan(shift) or shift <= 0:
         raise ValueError("Mass shift must be strictly positive.")
 
-    custom = json_adducts()
+    custom = _json_adducts()
     custom[name] = {"shift": shift, "sign": sign}
     _save_adducts(custom)
-    _refresh()
+    _rebuild()
 
 def remove_adduct(name: str) -> None:
     """
-    Remove a previously added custom adduct. Built-in adducts cannot be removed.
+    Supprime un adduit personnalisé ajouté précédemment. Les adduits intégrés ne peuvent pas être supprimés.
 
-    :param name: name of the custom adduct to remove.
+    :param name: nom de l'adduit personnalisé à supprimer.
     :type name: str
-    :raises ValueError: if name is not a persisted custom adduct.
+    :raises ValueError: si name n'est pas un adduit personnalisé.
 
-    Example::
+    Exemple::
 
         >>> remove_adduct("[M+Na]+")
         >>> list_adducts()
         {}
     """
-    custom = json_adducts()
+    custom = _json_adducts()
     if name not in custom:
         raise ValueError(f"'{name}' is not a custom adduct and cannot be removed.")
 
     del custom[name]
     _save_adducts(custom)
-    _refresh()
+    _rebuild()
+
+# --- Résolution et validation d'un adduit -----------------------------------
 
 def adduct(raw_adduct) -> str:
     """
-    Validate and normalize a raw adduct value into one of the standard adduct strings. The adduct is required for the neutral mass calculation 
-    and the completion of the "Adduct" column in the output table.
+    Valide et normalise une valeur brute d'adduit en l'une des chaînes d'adduit standard connues
+    (adduits intégrés ou personnalisés ajoutés via add_adduct()). La comparaison ignore la casse
+    et les espaces environnants. L'adduit est nécessaire pour le calcul de la masse neutre
+    et pour compléter la colonne "Adduct" du tableau de sortie.
 
-    :param raw_adduct: raw value to resolve
-    :raises ValueError: if raw_adduct is missing or not a recognized adduct.
-    :return: standard adduct string
+    :param raw_adduct: valeur brute à résoudre.
+    :raises ValueError: si raw_adduct est manquant ou ne correspond à aucun adduit reconnu.
+    :return: chaîne d'adduit standard, dans sa casse de référence.
     :rtype: str
 
-    Example::
+    Exemple::
 
-        >>> # Case and surrounding spaces are ignored, only the standard form is returned.
+        >>> # La casse et les espaces environnants sont ignorés, seule la forme standard est retournée.
         >>> adduct("  [m+h]+ ")
         '[M+H]+'
     """
@@ -172,13 +178,13 @@ def adduct(raw_adduct) -> str:
 
 def _mz(Precursor_MZ: float) -> float:
     """
-    Validate and normalize a precursor m/z value.
+    Valide et normalise une valeur de m/z du précurseur.
 
-    :param Precursor_MZ: m/z ratio of the precursor to validate.
+    :param Precursor_MZ: rapport m/z du précurseur à valider.
     :type Precursor_MZ: float
-    :raises ValueError: if Precursor_MZ cannot be converted to float, is NaN, or is not
-        strictly positive.
-    :return: the validated m/z value, as a float.
+    :raises ValueError: si Precursor_MZ ne peut pas être converti en float, est NaN, ou n'est pas
+        strictement positif.
+    :return: la valeur de m/z validée, sous forme de float.
     :rtype: float
     """
     mz = float(Precursor_MZ)
@@ -191,38 +197,48 @@ def _mz(Precursor_MZ: float) -> float:
 
     return mz
 
-def _validate_adduct(adduct: str) -> str:
+# --- Calcul de la masse neutre ----------------------------------------------
+
+def neutral_mass(Precursor_MZ: float, adduct_name: str) -> float:
     """
-    Validate that an adduct string is one of the known standard adducts.
+    Calcule la masse neutre à partir du rapport m/z du précurseur et de l'adduit du précurseur.
 
-    :param adduct: adduct string to validate
-    :type adduct: str
-    :raises ValueError: if adduct is not a string or is not a recognized adduct.
-    :return: the validated adduct string, unchanged.
-    :rtype: str
-    """
-    if not isinstance(adduct, str) or adduct not in ADDUCT_SHIFTS:
-        raise ValueError(
-            f"adduct unknown : {adduct!r}. Accepted values : {list(ADDUCT_SHIFTS)}."
-        )
-
-    return adduct
-
-def neutral_mass(Precursor_MZ: float, adduct: str) -> float:
-    """
-    Calculate the neutral mass from the precursor m/z ratio and the precursor adduct.
-
-    :param Precursor_MZ: m/z ratio of the precursor.
+    :param Precursor_MZ: rapport m/z du précurseur.
     :type Precursor_MZ: float
-    :param adduct: precursor adduct
-    :type adduct: str
-    :return: neutral mass in Daltons, rounded to 6 decimal places.
+    :param adduct_name: adduit du précurseur, déjà validé/normalisé via adduct().
+    :type adduct_name: str
+    :raises ValueError: si adduct_name n'est pas un adduit reconnu.
+    :return: masse neutre en Daltons, arrondie à 6 décimales.
     :rtype: float
     """
     mz = _mz(Precursor_MZ)
-    adduct = _validate_adduct(adduct)
 
-    shift = ADDUCT_SHIFTS[adduct]
-    sign = ADDUCT_SIGNS[adduct]
+    if not isinstance(adduct_name, str) or adduct_name not in ADDUCT_SHIFTS:
+        raise ValueError(
+            f"adduct unknown : {adduct_name!r}. Accepted values : {list(ADDUCT_SHIFTS)}."
+        )
+
+    shift = ADDUCT_SHIFTS[adduct_name]
+    sign = ADDUCT_SIGNS[adduct_name]
 
     return round(mz + sign * shift, 6)
+
+def resolve_adducts(records) -> tuple[list, list, list[str]]:
+    """
+    Résout l'adduit et la masse neutre pour un lot d'enregistrements (label, lipid_name, precursor_mz, raw_adduct).
+
+    :param records: itérable de tuples (label, lipid_name, precursor_mz, raw_adduct)
+    :return: listes (adducts, masses, error_messages)
+    :rtype: tuple[list, list, list[str]]
+    """
+    adducts, masses, errors = [], [], []
+    for label, lipid_name, precursor_mz, raw_adduct in records:
+        try:
+            resolved_adduct = adduct(raw_adduct)
+            mass = neutral_mass(precursor_mz, resolved_adduct)
+        except ValueError as e:
+            errors.append(f"{label} ({lipid_name}) : {e}")
+            resolved_adduct, mass = None, None
+        adducts.append(resolved_adduct)
+        masses.append(mass)
+    return adducts, masses, errors
