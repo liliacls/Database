@@ -17,21 +17,21 @@ def DB_MS1(
     file_row_name: str,
 ) -> None:
     """
-    Insert MS1 annotation data into the database.
-    For each row of the DataFrame, creates and inserts a record into the three tables: Detection, Lipid and Annotation.
+    Insère des données d'annotation MS1 dans la base de données.
+    Pour chaque ligne du DataFrame, crée et insère un enregistrement dans les trois tables : Detection, Lipid et Annotation.
 
-    :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
-               and optionally RT and CCS.
+    :param df: DataFrame contenant les colonnes Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
+               et éventuellement RT et CCS.
     :type df: pandas.DataFrame
-    :param filename: name of the file being integrated.
+    :param filename: nom du fichier en cours d'intégration.
     :type filename: str
-    :param integrator: name of the person performing the integration.
+    :param integrator: nom de la personne réalisant l'intégration.
     :type integrator: str
-    :param file_row_name: name of the file that provided the annotations.
+    :param file_row_name: nom du fichier ayant fourni les annotations.
     :type file_row_name: str
-    :raises Exception: on insertion error no row is committed (automatic ROLLBACK) and the error is logged.
-    :raises PostIntegrationError: if the rows were committed successfully but the post-commit
-        backup or history logging failed - the data is already in the database.
+    :raises Exception: en cas d'erreur d'insertion, aucune ligne n'est validée (ROLLBACK automatique) et l'erreur est journalisée.
+    :raises PostIntegrationError: si les lignes ont été validées (commit) avec succès, les données sont intégrées en base.
+                                  L'erreur indique un problème lors de la création de la sauvegarde ou lors de l'écriture de l'historique.
     """
     logger.info(f"Starting integration - {len(df)} rows to insert.")
     detections = []
