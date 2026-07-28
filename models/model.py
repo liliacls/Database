@@ -6,38 +6,40 @@ from sqlalchemy import ForeignKey
 
 
 class Base(DeclarativeBase):
-    """Declarative base class for all BacLipidDB ORM models.
+    """
+    Classe de base déclarative pour tous les modèles ORM de BacLipidDB.
 
-    All mapped classes (:class:`Detection`, :class:`Fragment`, :class:`Lipid`,
-    :class:`Annotation`) inherit from this class so SQLAlchemy can collect
-    their metadata and generate the corresponding database tables.
+    Toutes les classes mappées (:class:`Detection`, :class:`Fragment`, :class:`Lipid`,
+    :class:`Annotation`) héritent de cette classe afin que SQLAlchemy puisse collecter
+    leurs métadonnées et générer les tables de la base de données correspondantes.
     """
     
 
 class Detection(Base):
-    """A single MS1 or MS2 detection (ion observed in a run).
+    """
+    Une détection MS1 ou MS2 unique (ion observé lors d'une analyse).
 
-    Stores the precursor m/z, ionisation mode, adduct, retention time and
-    CCS. Linked to zero or more :class:`Fragment` rows when ``MS_level`` is
-    "MS2", and to one :class:`Annotation`.
+    Stocke le m/z du précurseur, le mode d'ionisation, l'adduit, le temps de
+    rétention et la CCS. Liée à zéro ou plusieurs lignes :class:`Fragment` quand
+    ``MS_level`` vaut "MS2", et à une :class:`Annotation`.
     """
 
     __tablename__ = "Detection"
     Detection_ID: Mapped[int] = mapped_column(primary_key=True)
 
-    Precursor_MZ: Mapped[float] = mapped_column()       # m/z of the ion (Da) - called "precursor" for consistency with MS2, but in MS1 it's not a true precursor since there is no fragmentation
-    MS_level: Mapped[str] = mapped_column()           # "MS1" (precursor only) or "MS2" (with fragment spectrum)
-    Ionisation_mode: Mapped[str] = mapped_column()      # "Positive" or "Negative"
-    Adduct: Mapped[str] = mapped_column()               # precursor adduct
-    Num_Peaks: Mapped[int | None] = mapped_column()   # number of fragment (MS2 only)
-    Neutral_mass: Mapped[float] = mapped_column()     # neutral mass derived from Precursor_MZ and Adduct (Da)
-    RT: Mapped[float | None] = mapped_column()          # retention time (minutes)
-    CCS: Mapped[float | None] = mapped_column()         # collision cross section (Ų)
+    Precursor_MZ: Mapped[float] = mapped_column()       # m/z de l'ion (Da), appelé "précurseur" par cohérence avec MS2, mais en MS1 ce n'est pas un véritable précurseur puisqu'il n'y a pas de fragmentation
+    MS_level: Mapped[str] = mapped_column()           # "MS1" (précurseur seul) ou "MS2" (avec spectre de fragments)
+    Ionisation_mode: Mapped[str] = mapped_column()      # "Positive" ou "Negative"
+    Adduct: Mapped[str] = mapped_column()               # adduit du précurseur
+    Num_Peaks: Mapped[int | None] = mapped_column()   # nombre de fragments (MS2 uniquement)
+    Neutral_mass: Mapped[float] = mapped_column()     # masse neutre dérivée de Precursor_MZ et de l'adduit (Da)
+    RT: Mapped[float | None] = mapped_column()          # temps de rétention (minutes)
+    CCS: Mapped[float | None] = mapped_column()         # section efficace de collision (Ų)
 
-    # Relationship 1→N: a detection can be associated with several fragments (MS2 only)
+    # Relation 1→N : une détection peut être associée à plusieurs fragments (MS2 uniquement)
     fragments: Mapped[list["Fragment"]] = relationship(back_populates="detection")
 
-    # Relationship 1→1: a detection is associated with a single annotation
+    # Relation 1→1 : une détection est associée à une seule annotation
     annotation: Mapped["Annotation"] = relationship(back_populates="detection")
 
     def __repr__(self):
@@ -45,19 +47,20 @@ class Detection(Base):
 
 
 class Fragment(Base):
-    """A fragment ion peak (m/z, intensity) belonging to an MS2 spectrum.
+    """
+    Un pic d'ion fragment (m/z, intensité) appartenant à un spectre MS2.
 
-    Each row is attached to the :class:`Detection` it was measured in.
+    Chaque ligne est rattachée à la :class:`Detection` dans laquelle elle a été mesurée.
     """
 
     __tablename__ = "Fragment"
     Fragment_ID: Mapped[int] = mapped_column(primary_key=True)
     Detection_id: Mapped[int] = mapped_column(ForeignKey("Detection.Detection_ID"))
 
-    MZ: Mapped[float | None] = mapped_column()          # m/z of the fragment ion (Da)
-    Intensity: Mapped[float | None] = mapped_column()   # fragment peak intensity
+    MZ: Mapped[float | None] = mapped_column()          # m/z de l'ion fragment (Da)
+    Intensity: Mapped[float | None] = mapped_column()   # intensité du pic de fragment
 
-    # Relationship N→1: a fragment is attached to a single detection
+    # Relation N→1 : un fragment est rattaché à une seule détection
     detection: Mapped["Detection"] = relationship(back_populates="fragments")
 
     def __repr__(self):
@@ -65,25 +68,26 @@ class Fragment(Base):
 
 
 class Lipid(Base):
-    """A lipid entity identified by name, formula and LIPID MAPS classification.
+    """
+    Une entité lipidique identifiée par son nom, sa formule et sa classification LIPID MAPS.
 
-    Independent of any given detection; linked to the :class:`Detection` it
-    was identified in through a single :class:`Annotation`.
+    Indépendante de toute détection donnée ; liée à la :class:`Detection` dans
+    laquelle elle a été identifiée via une seule :class:`Annotation`.
     """
 
     __tablename__ = "Lipid"
     Lipid_ID: Mapped[int] = mapped_column(primary_key=True)
 
     Lipid_name: Mapped[str] = mapped_column()
-    Lipid_category: Mapped[str | None] = mapped_column()  # LIPID MAPS category
-    Lipid_class: Mapped[str | None] = mapped_column()     # LIPID MAPS class
-    Lipid_subclass: Mapped[str | None] = mapped_column()  # LIPID MAPS subclass
+    Lipid_category: Mapped[str | None] = mapped_column()  # catégorie LIPID MAPS
+    Lipid_class: Mapped[str | None] = mapped_column()     # classe LIPID MAPS
+    Lipid_subclass: Mapped[str | None] = mapped_column()  # sous-classe LIPID MAPS
     Formula: Mapped[str] = mapped_column()
-    FA_composition: Mapped[str | None] = mapped_column()  # fatty acyl composition
-    Molecular_weight: Mapped[float] = mapped_column()     # average molecular weight (Da)
-    Monoisotopic_mass: Mapped[float] = mapped_column()    # monoisotopic mass (Da)
+    FA_composition: Mapped[str | None] = mapped_column()  # composition en acides gras
+    Molecular_weight: Mapped[float] = mapped_column()     # masse moléculaire moyenne (Da)
+    Monoisotopic_mass: Mapped[float] = mapped_column()    # masse monoisotopique exacte (Da)
 
-    # Relationship 1→1: a lipid is associated with a single annotation
+    # Relation 1→1 : un lipide est associé à une seule annotation
     annotation: Mapped["Annotation"] = relationship(back_populates="lipid")
 
     def __repr__(self):
@@ -91,9 +95,10 @@ class Lipid(Base):
 
 
 class Annotation(Base):
-    """Join table linking one :class:`Lipid` to one :class:`Detection`.
+    """
+    Table de jointure liant un :class:`Lipid` à une :class:`Detection`.
 
-    Represents the identification of a detected ion as a given lipid.
+    Représente l'identification d'un ion détecté comme un lipide donné.
     """
 
     __tablename__ = "Annotation"
@@ -103,10 +108,10 @@ class Annotation(Base):
         ForeignKey("Detection.Detection_ID"), unique=True
     )
 
-    # Relationship N→1: an annotation is attached to a single lipid
+    # Relation N→1 : une annotation est rattachée à un seul lipide
     lipid: Mapped["Lipid"] = relationship(back_populates="annotation")
 
-    # Relationship N→1: an annotation is attached to a single detection
+    # Relation N→1 : une annotation est rattachée à une seule détection
     detection: Mapped["Detection"] = relationship(back_populates="annotation")
 
     def __repr__(self):
