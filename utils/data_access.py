@@ -7,11 +7,11 @@ from models.model import Annotation
 @st.cache_data(ttl=60)
 def load_database(_engine: Engine) -> pd.DataFrame:
     """
-    Load and cache the full joined view (Annotation + Lipid + Detection).
+    Charge et met en cache la vue jointe complète (Annotation + Lipid + Detection).
 
-    :param _engine: SQLAlchemy engine connected to the database
+    :param _engine: moteur SQLAlchemy connecté à la base de données
     :type _engine: sqlalchemy.engine.Engine
-    :return: DataFrame with one row per Annotation, joined with its Lipid and Detection.
+    :return: DataFrame avec une ligne par Annotation, jointe avec son Lipid et sa Detection.
     :rtype: pandas.DataFrame
     """
     with Session(_engine) as session:
