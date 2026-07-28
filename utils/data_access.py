@@ -7,7 +7,7 @@ from models.model import Annotation
 @st.cache_data(ttl=60)
 def load_database(_engine: Engine) -> pd.DataFrame:
     """
-    Charge et met en cache la vue jointe complète (Annotation + Lipid + Detection).
+    Charge et met en cache les tables Annotation, Lipid, Detection.
 
     :param _engine: moteur SQLAlchemy connecté à la base de données
     :type _engine: sqlalchemy.engine.Engine

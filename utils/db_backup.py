@@ -10,7 +10,7 @@ def backup_database(label: str) -> Path:
     Crée BACKUP_DIR s'il n'existe pas encore, nettoie le label
     (caractères non alphanumériques/"_" remplacés par "_") avant
     de l'utiliser dans le nom de fichier de la sauvegarde. Supprime aussi
-    les enregistrements les plus anciens au-delà de BACKUP_COUNT (20) afin que
+    les enregistrements les plus anciens au-delà de BACKUP_COUNT afin que
     BACKUP_DIR ne grossisse pas indéfiniment. Si la création de la sauvegarde échoue,
     le fichier partiel est supprimé.
 
