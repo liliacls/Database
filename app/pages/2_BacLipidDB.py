@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 
 def _color(index: int) -> str:
     """
-    Generate a pastel color for a batch index without cycling through a
-    fixed-size palette. The index is the number of the file import (batch
-    number).
-    
-    :param index: batch index
+    Génère une couleur pastel pour un index de lot sans boucler sur une
+    palette de taille fixe. L'index correspond au numéro de l'import de
+    fichier (numéro de lot).
+
+    :param index: index du lot
     :type index: int
-    :return: hex color string
+    :return: chaîne de couleur hexadécimale
     :rtype: str
     """
 
@@ -30,7 +30,7 @@ def _color(index: int) -> str:
     r, g, b = colorsys.hls_to_rgb(hue, 0.85, 0.55)
     return "#{:02x}{:02x}{:02x}".format(round(r * 255), round(g * 255), round(b * 255))
 
-# logo of BacLipidDB
+# logo de BacLipidDB
 logo_path = PROJECT_ROOT / "assets" / "DB.svg"
 
 _, col, _ = st.columns([1, 1, 1])
@@ -73,11 +73,11 @@ st.divider()
 
 def _formula(formula: str) -> dict:
     """
-    Parse a chemical formula into a dict of element symbol -> atom count.
+    Analyse une formule chimique en un dict associant symbole d'élément -> nombre d'atomes.
 
-    :param formula: chemical formula
+    :param formula: formule chimique
     :type formula: str
-    :return: mapping of element symbol to atom count.
+    :return: correspondance entre symbole d'élément et nombre d'atomes.
     :rtype: dict
     """
     counts = {}
@@ -88,12 +88,12 @@ def _formula(formula: str) -> dict:
 
 def _load_data(_engine: Engine) -> pd.DataFrame:
     """
-    Load the full database to create the joined view (Annotation + Lipid + Detection).
-    Only Detection_ID is kept as an identifier column.
+    Charge et met en cache les tables Annotation, Lipid, Detection via la fonction dans `data_access.py`.
+    Seul Detection_ID est conservé comme colonne d'identifiant.
 
-    :param _engine: SQLAlchemy engine connected to the database
+    :param _engine: moteur SQLAlchemy connecté à la base de données
     :type _engine: sqlalchemy.engine.Engine
-    :return: DataFrame with one row per Annotation, joined with its Lipid and Detection.
+    :return: DataFrame avec une ligne par Annotation, jointe avec son Lipid et sa Detection.
     :rtype: pandas.DataFrame
     """
     return load_database(_engine)[[
@@ -105,16 +105,16 @@ def _load_data(_engine: Engine) -> pd.DataFrame:
 
 def _batch_map(history: list[dict]) -> dict[int, int]:
     """
-    Map each Detection_ID to the index of the import batch it belongs to.
+    Associe chaque Detection_ID à l'index du lot d'import auquel il appartient.
 
-    Used to color-code "Full view" rows by import batch (see _color).
-    Batch indices are assigned via enumerate(history), so batch_id follows
-    the order of entries in history (0 for the first import, 1 for the
+    Utilisé pour colorer les lignes de "Full view" selon le lot d'import (voir _color).
+    Les index de lot sont assignés via enumerate(history), donc batch_id suit
+    l'ordre des entrées dans history (0 pour le premier import, 1 pour le
     second, etc.).
 
-    :param history: import history, as returned by load_history().
+    :param history: historique des imports, tel que retourné par load_history().
     :type history: list[dict]
-    :return: mapping of Detection_ID to batch index.
+    :return: correspondance entre Detection_ID et index de lot.
     :rtype: dict[int, int]
     """
     mapping = {}
@@ -163,13 +163,13 @@ try:
 
             def _group(batch_id: float) -> str:
                 """
-                Classify a row's batch index into an import group, used to
-                assign the row a color category in the "Full view" table.
+                Classe l'index de lot d'une ligne dans un groupe d'import, utilisé pour
+                assigner à la ligne une catégorie de couleur dans la table "Full view".
 
-                :param batch_id: batch index of the row (from ``id_caption``),
-                    or NaN if the row's Detection_ID has no matching batch
+                :param batch_id: index de lot de la ligne (à partir de ``id_caption``),
+                    ou NaN si le Detection_ID de la ligne n'a pas de lot correspondant
                 :type batch_id: float
-                :return: "Latest import", "Other imports" or "Unknown"
+                :return: "Latest import", "Other imports" ou "Unknown"
                 :rtype: str
                 """
                 if pd.isna(batch_id):
@@ -194,16 +194,16 @@ try:
 
             def _row_color(row: pd.Series) -> list[str]:
                 """
-                Style callback for ``df.style.apply(..., axis=1)``: returns
-                the CSS background-color to apply to every cell of a table
-                row, based on which import batch the row belongs to.
+                Fonction de style pour ``df.style.apply(..., axis=1)`` : retourne
+                la couleur de fond CSS à appliquer à chaque cellule d'une ligne
+                de la table, selon le lot d'import auquel la ligne appartient.
 
-                :param row: one row of the "Full view" DataFrame, as passed
-                    by pandas Styler (``row.name`` is the row's positional
-                    index, used to look up its batch via ``caption_values``)
+                :param row: une ligne du DataFrame "Full view", telle que passée
+                    par le Styler pandas (``row.name`` est l'index positionnel
+                    de la ligne, utilisé pour retrouver son lot via ``caption_values``)
                 :type row: pandas.Series
-                :return: list of ``"background-color: #rrggbb"`` CSS strings,
-                    one per column, or empty strings if the batch is unknown
+                :return: liste de chaînes CSS ``"background-color: #rrggbb"``,
+                    une par colonne, ou des chaînes vides si le lot est inconnu
                 :rtype: list[str]
                 """
                 caption = caption_values[row.name]
@@ -384,7 +384,7 @@ try:
                 "Precursor_MZ":      st.column_config.NumberColumn(format="%.6f"),
                 "Neutral_mass":      st.column_config.NumberColumn(format="%.6f"),
                 "MZ":                st.column_config.NumberColumn(format="%.6f"),
-                "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f"),
+                "Monoisotopic_mass": st.column_config.NumberColumn(format="%.8f"),
                 "Molecular_weight":  st.column_config.NumberColumn(format="%.0f"),
                 "RT":                st.column_config.NumberColumn(format="%.4f"),
                 "CCS":               st.column_config.NumberColumn(format="%.4f"),
