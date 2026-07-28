@@ -6,24 +6,24 @@ from utils.loading_MS1 import DB_MS1
 from utils.loading_MS2 import ms2_parsing, DB_MS2
 from utils.molecular_weight import molecular_weight
 from utils.monoisotopic import monoisotopic_mass
-from utils.neutral_mass import neutral_mass, adduct
+from utils.neutral_mass import resolve_adducts
 from utils.exceptions import PostIntegrationError
 
-# ── Constants ────────────────────────────────────────────────────────────────────
+# ── Constantes ────────────────────────────────────────────────────────────────────
 
-# Required columns in MS1 file
+# Colonnes requises dans le fichier MS1
 REQUIRED_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Lipid_category", "Lipid_class", "Lipid_subclass", "Adduct"]
 
-# Columns that must not contain empty values
+# Colonnes qui ne doivent pas contenir de valeurs vides
 NON_EMPTY_COLUMNS = ["Lipid_Name", "Formula", "Precursor_MZ", "Adduct"]
 
-# Text columns stripped of stray leading/trailing whitespace
+# Colonnes texte dont les espaces superflus en début/fin sont supprimés afin d'éviter des duplications de la légende dans le graphique 4
 STRIP_COLUMNS = ["Lipid_category", "Lipid_class", "Lipid_subclass"]
 
 CHART_COLOR_SCALE = [[0, "#4292C6"], [1, "#08306B"]]
 COLOR = "#1F77B4"
 
-# session_state keys
+# Clés de session_state
 MS1 = "ms1"
 MS2 = "ms2"
 COLUMNS_VALID = "columns_valid"
@@ -35,34 +35,14 @@ DF_MS_LEVEL = "df_ms_level"
 EDITOR = "editor_integration"
 UPLOADER_VERSION = "uploader_version"
 
-# Full reset (sidebar button): clears everything
+# Réinitialisation complète (bouton de la barre latérale) --> efface tout
 RESET_KEYS = [MS1, MS2, DF_ID, DF_MS_LEVEL, DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
 
-# Reset on new file upload only: keeps step 1 settings and the file itself, but clears everything computed downstream
+# Réinitialisation uniquement lors du chargement d'un nouveau fichier --> conserve les paramètres de l'étape 1 et le fichier lui-même, mais efface tout ce qui est calculé en aval
 RELOAD_RESET_KEYS = [DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDITOR]
 
 
-def _adducts(records):
-    """Resolve the adduct and neutral mass for a batch of (label, lipid_name, precursor_mz, raw_adduct) records.
-
-    :param records: iterable of (label, lipid_name, precursor_mz, raw_adduct) tuples
-    :return: (adducts, masses, error_messages) lists, aligned with records ; failed entries resolve to None
-    :rtype: tuple[list, list, list[str]]
-    """
-    adducts, masses, errors = [], [], []
-    for label, lipid_name, precursor_mz, raw_adduct in records:
-        try:
-            resolved_adduct = adduct(raw_adduct)
-            mass = neutral_mass(precursor_mz, resolved_adduct)
-        except ValueError as e:
-            errors.append(f"{label} ({lipid_name}) : {e}")
-            resolved_adduct, mass = None, None
-        adducts.append(resolved_adduct)
-        masses.append(mass)
-    return adducts, masses, errors
-
-
-# ── Sidebar ────────────────────────────────────────────────────────────────────
+# ── Barre latérale ────────────────────────────────────────────────────────────────────
 
 def _workflow(done):
     return "✅" if done else "⬜"
@@ -87,7 +67,7 @@ with st.sidebar:
         st.session_state[UPLOADER_VERSION] = st.session_state.get(UPLOADER_VERSION, 0) + 1
         st.rerun()
 
-# ── Header ────────────────────────────────────────────────────────────────────
+# ── En-tête ────────────────────────────────────────────────────────────────────
 
 st.html(f"""
     <style>
@@ -102,7 +82,7 @@ st.html(f"""
     </div>
 """)
 
-# ── Progress bar ────────────────────────────────────────────────────────────────────
+# ── Barre de progression ────────────────────────────────────────────────────────────────────
 
 steps_status = [
     step1_done,
@@ -115,7 +95,7 @@ completed_step = sum(steps_status)
 
 st.progress(completed_step / len(steps_status), text=f"Step {completed_step} / {len(steps_status)} completed")
 
-# ── Info ────────────────────────────────────────────────────────────────────
+# ── Informations ────────────────────────────────────────────────────────────────────
 
 with st.expander("ℹ️ How to use this page"):
     st.markdown("""
@@ -129,13 +109,13 @@ with st.expander("ℹ️ How to use this page"):
 
     """)
 
-# ── STEP 1 ────────────────────────────────────────────────────────────────────
+# ── ÉTAPE 1 ────────────────────────────────────────────────────────────────────
 
 st.header(":blue[STEP 1] - Settings", divider="blue", text_alignment="left")
 
 col1, col2, col3, col4 = st.columns(4)
 
-# Once automatic completion (step 4) has run, step 1's parameters are locked to ensure consistency between the derived columns and the settings they were computed from.
+# Une fois que la complétion automatique (étape 4) a été exécutée, les paramètres de l'étape 1 sont verrouillés pour garantir la cohérence entre les colonnes dérivées et les paramètres à partir desquels elles ont été calculées.
 settings_locked = DF_COMPLETE in st.session_state
 
 with col1:
@@ -180,7 +160,7 @@ if None in [ms_level, ion_mode] or not integrator_name or not file_row_name:
 
 st.success(f"Selected : {ms_level} | {ion_mode} | Integrator : {integrator_name}", icon="✅")
 
-# ── STEP 2 ────────────────────────────────────────────────────────────────────
+# ── ÉTAPE 2 ────────────────────────────────────────────────────────────────────
 
 st.header(":blue[STEP 2] - File upload", divider="blue", text_alignment="left")
 
@@ -236,7 +216,7 @@ except Exception as e:
 if ms_level != "MS2":
     df = st.session_state[MS1].copy()
 
-# ── STEP 3 ────────────────────────────────────────────────────────────────────
+# ── ÉTAPE 3 ────────────────────────────────────────────────────────────────────
 
 st.header(":blue[STEP 3] - Required columns verification", divider="blue", text_alignment="left")
 
@@ -315,7 +295,7 @@ else:
                 "Precursor_MZ": st.column_config.NumberColumn(format="%.6f"),
             })
 
-# ── STEP 4 ────────────────────────────────────────────────────────────────────
+# ── ÉTAPE 4 ────────────────────────────────────────────────────────────────────
 
 st.header(":blue[STEP 4] - Preview and automatic completion", divider="blue", text_alignment="left")
 
@@ -355,7 +335,7 @@ if DF_COMPLETE not in st.session_state:
                     )
                     st.stop()
 
-                adducts, n_mass, e_adduct = _adducts(
+                adducts, n_mass, e_adduct = resolve_adducts(
                     (f"Scan {data['scan_id']}", data["lipid_name"], data["precursor_mz"], data.get("adduct"))
                     for data in ms2
                 )
@@ -383,7 +363,7 @@ if DF_COMPLETE not in st.session_state:
                     )
                     st.stop()
 
-                adducts, neutral_masses, e_adduct = _adducts(
+                adducts, neutral_masses, e_adduct = resolve_adducts(
                     (f"Row {idx}", row["Lipid_Name"], row["Precursor_MZ"], row.get("Adduct"))
                     for idx, row in df.iterrows()
                 )
@@ -413,12 +393,11 @@ st.caption(f"Settings : {ms_level} | {ion_mode}")
 
 if ms_level == "MS2":
     editor_num_rows = "fixed"
-    # These columns are computed automatically from Formula/Precursor_MZ and settings, disabling edition keeps them consistent with the values they were derived from.
     column_config = {
         "Precursor_MZ":      st.column_config.NumberColumn(format="%.6f", disabled=True),
         "Neutral_mass":      st.column_config.NumberColumn(format="%.6f", disabled=True),
         "Molecular_weight":  st.column_config.NumberColumn(format="%.0f", disabled=True),
-        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f", disabled=True),
+        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.8f", disabled=True),
         "Formula":           st.column_config.TextColumn(disabled=True),
         "MS_level":          st.column_config.TextColumn(disabled=True),
         "Num_Peaks":         st.column_config.NumberColumn(disabled=True),
@@ -427,12 +406,11 @@ if ms_level == "MS2":
     }
 else:
     editor_num_rows = "dynamic"
-    # These columns are computed automatically from Formula/Precursor_MZ and settings, disabling edition keeps them consistent with the values they were derived from.
     column_config = {
         "Precursor_MZ":     st.column_config.NumberColumn(format="%.6f", disabled=True),
         "Neutral_mass":     st.column_config.NumberColumn(format="%.6f", disabled=True),
         "Molecular_weight": st.column_config.NumberColumn(format="%.0f", disabled=True),
-        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f", disabled=True),
+        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.8f", disabled=True),
         "Formula":          st.column_config.TextColumn(disabled=True),
         "MS_level":         st.column_config.TextColumn(disabled=True),
         "Num_Peaks":        st.column_config.NumberColumn(disabled=True),
@@ -507,7 +485,7 @@ if DF_VALID in st.session_state:
         with col:
             st.plotly_chart(fig, width='stretch')
 
-# ── STEP 5 ────────────────────────────────────────────────────────────────────
+# ── ÉTAPE 5 ────────────────────────────────────────────────────────────────────
 
 st.header(":blue[STEP 5] - Database integration", divider="blue", text_alignment="left")
 
