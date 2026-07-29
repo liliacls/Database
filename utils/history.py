@@ -14,7 +14,7 @@ def load_history() -> list[dict]:
         content = f.read().strip()
         return json.loads(content) if content else []
 
-def save_history(history: list[dict]) -> None:
+def _save_history(history: list[dict]) -> None:
     """
     Écrase le fichier d'historique des imports avec la liste donnée.
     Utilisée en interne par append_history() et remove_history() pour persister leurs modifications : ne fait qu'écrire.
@@ -37,7 +37,7 @@ def append_history(entry: dict) -> None:
         raise TypeError(f"entry doit être un dict, reçu {type(entry).__name__}")
     history = load_history()
     history.append(entry)
-    save_history(history)
+    _save_history(history)
 
 def remove_history(index: int) -> None:
     """
@@ -51,4 +51,4 @@ def remove_history(index: int) -> None:
     if not (0 <= index < len(history)):
         raise IndexError(f"index {index} hors limites (historique de taille {len(history)})")
     history.pop(index)
-    save_history(history)
+    _save_history(history)
