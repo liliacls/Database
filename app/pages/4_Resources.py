@@ -48,7 +48,7 @@ guide_ms1 = pd.DataFrame(
             "Column": "Adduct",
             "Required": "✅",
             "Type": "text",
-            "Description": "Precursor adduct : [M+H]+, [M+NH4]+ or [M-H]-. Determines the neutral "
+            "Description": "Precursor adduct : Determines the neutral "
                             "mass calculation and is independent of the ionization mode.",
         },
         {
@@ -196,7 +196,7 @@ guide_ms2 = pd.DataFrame(
             "Column": "Adduct",
             "Required": "✅",
             "Type": "text",
-            "Description": "Precursor adduct : [M+H]+, [M+NH4]+ or [M-H]-. Determines the neutral "
+            "Description": "Precursor adduct : Determines the neutral "
                             "mass calculation and is independent of the ionization mode.",
         },
         {
