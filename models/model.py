@@ -34,7 +34,7 @@ class Detection(Base):
     Num_Peaks: Mapped[int | None] = mapped_column()   # nombre de fragments (MS2 uniquement)
     Neutral_mass: Mapped[float] = mapped_column()     # masse neutre dérivée de Precursor_MZ et de l'adduit (Da)
     RT: Mapped[float | None] = mapped_column()          # temps de rétention (minutes)
-    CCS: Mapped[float | None] = mapped_column()         # section efficace de collision (Ų)
+    CCS: Mapped[float | None] = mapped_column()         # section efficace de collision (Å²)
 
     # Relation 1→N : une détection peut être associée à plusieurs fragments (MS2 uniquement)
     fragments: Mapped[list["Fragment"]] = relationship(back_populates="detection")
