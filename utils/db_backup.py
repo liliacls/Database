@@ -16,10 +16,10 @@ def backup_database(label: str) -> Path:
 
     :param label: identifiant ajouté au nom de fichier de la sauvegarde.
     :type label: str
-    :return: chemin vers le fichier de sauvegarde créé.
-    :rtype: Path
     :raises sqlite3.Error: si la base de données source ne peut pas être lue ou
         si l'instantané ne peut pas être écrit.
+    :return: chemin vers le fichier de sauvegarde créé.
+    :rtype: Path
     """
     BACKUP_DIR.mkdir(exist_ok=True)
 
