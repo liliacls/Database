@@ -112,6 +112,15 @@ Workflow
    bascule vers ``MS2``, ``ms2`` si l'on bascule vers ``MS1``), tout en
    conservant les réglages de l'étape 1.
 
+   Pour ``MS1`` uniquement, les colonnes ``STRIP_COLUMNS`` (``Lipid_category``,
+   ``Lipid_class``, ``Lipid_subclass``), si elles sont présentes dans le
+   fichier, sont immédiatement débarrassées des espaces superflus en début/fin
+   de valeur (``str.strip()``). Ceci évite que des valeurs identiques mais
+   diversement espacées (ex. ``"Glycerophospholipids"`` et
+   ``"Glycerophospholipids "``) ne soient comptées comme des catégories,
+   classes ou sous-classes distinctes dans la légende des histogrammes de
+   l'étape 4.
+
 3. **Verification**
 
    - **MS2** : la validation est effectuée par ``ms2_parsing``. La page affiche
@@ -135,7 +144,7 @@ Workflow
      à partir de ``Formula``. Si une formule est invalide, la page affiche une erreur et s'arrête sans stocker le
      résultat.
    - ``Adduct`` et ``Neutral_mass``, résolus pour toutes les lignes/tous les
-     scans d'un coup par la fonction interne :func:`_adducts` (voir
+     scans d'un coup par :func:`utils.neutral_mass.resolve_adducts` (voir
      `Fonctions internes`_). Si un ou plusieurs adduits sont invalides, la
      page liste chaque ligne/scan en erreur et s'arrête sans stocker les
      résultats, même ceux valides. L'utilisateur doit corriger les adduits dans le fichier et recharger.
@@ -212,6 +221,19 @@ Workflow
    ``st.session_state.pop``). Une fois l'intégration finie, une nouvelle intégration est proposée
    (bouton **Reset** de la barre latérale).
 
+   Si :func:`utils.loading_MS1.DB_MS1` ou :func:`utils.loading_MS2.DB_MS2`
+   lève une :class:`utils.exceptions.PostIntegrationError`, les données sont
+   déjà commitées en base (l'intégration a réussi), mais la sauvegarde ou
+   l'écriture de l'historique post-commit a échoué. Ce cas est traité comme un
+   succès partiel : ``integration_done`` passe quand même à ``True`` (sans
+   ballons), et le message de l'exception est stocké dans
+   ``integration_warning`` puis affiché sous forme d'avertissement
+   (``st.warning``) précisant qu'il ne faut **pas** réintégrer le fichier
+   (les données sont déjà en base) et qu'il faut utiliser le bouton
+   **Reset** pour repartir sur une nouvelle intégration. Toute autre
+   exception (donnée non commitée) affiche une erreur simple
+   (``st.error``) et arrête la page sans modifier ``integration_done``.
+
 État de session (``st.session_state``)
 ----------------------------------------
 
@@ -276,18 +298,19 @@ Fonctions internes
    * - ``_workflow(done: bool) -> str``
      - Retourne l'icône ``"✅"`` si ``done`` est vrai, sinon ``"⬜"``. Utilisée
        pour afficher l'état de chaque étape dans la barre latérale.
-   * - ``_adducts(records) -> tuple[list, list, list[str]]``
-     - Résout, pour un lot de lignes/scans, l'adduit standardisé et la masse
-       neutre correspondants (voir détail ci-dessous).
 
-``_adducts(records)``
-~~~~~~~~~~~~~~~~~~~~~~
+Ce module ne définit pas de fonction interne pour la résolution des adduits :
+la page appelle directement, à l'étape 4, la fonction importée
+:func:`utils.neutral_mass.resolve_adducts` (voir ci-dessous).
 
-Résout l'adduit et la masse neutre pour un lot d'enregistrements
-``(label, lipid_name, precursor_mz, raw_adduct)``, en s'appuyant sur
-:func:`utils.neutral_mass.adduct` (normalisation/validation de l'adduit) puis
-:func:`utils.neutral_mass.neutral_mass` (calcul de la masse neutre à partir du
-``Precursor_MZ`` et de l'adduit résolu).
+Résolution des adduits (étape 4)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:func:`utils.neutral_mass.resolve_adducts` résout l'adduit et la masse neutre
+pour un lot d'enregistrements ``(label, lipid_name, precursor_mz,
+raw_adduct)``. En interne, elle s'appuie sur une fonction privée du module
+qui normalise/valide l'adduit, puis sur une autre qui calcule la masse
+neutre à partir du ``Precursor_MZ`` et de l'adduit résolu.
 
 Paramètres
    ``records``
@@ -297,8 +320,7 @@ Paramètres
         messages d'erreur (ex. ``"Row 3"`` pour MS1, ``"Scan 12"`` pour MS2) ;
       - ``lipid_name`` (*str*) : nom du lipide, ré-inséré dans le message
         d'erreur pour faciliter la correction du fichier ;
-      - ``precursor_mz`` (*float*) : m/z du précurseur, transmis à
-        :func:`utils.neutral_mass.neutral_mass` ;
+      - ``precursor_mz`` (*float*) : m/z du précurseur ;
       - ``raw_adduct`` (*str* ou *None*) : valeur brute de l'adduit telle que
         lue dans le fichier, avant normalisation.
 
@@ -316,11 +338,14 @@ Retour
      ``st.error``).
 
    Une entrée échoue (adduit/masse à ``None``, message ajouté à ``errors``) si
-   :func:`utils.neutral_mass.adduct` lève une ``ValueError`` — adduit manquant
-   ou non reconnu (valeurs acceptées : ``"[M+H]+"``, ``"[M+NH4]+"``,
-   ``"[M-H]-"``). Les autres entrées du lot continuent d'être traitées : un
-   seul appel à ``_adducts`` permet donc de collecter *toutes* les erreurs
-   d'adduit du fichier en une fois, plutôt que de s'arrêter à la première.
+   l'adduit brut est manquant ou non reconnu. La liste des adduits acceptés
+   n'est pas figée : elle comprend les deux adduits natifs ``"[M+H]+"`` et
+   ``"[M-H]-"``, plus tout adduit personnalisé ajouté via la page
+   **Resources** (:func:`utils.neutral_mass.add_adduct`/``remove_adduct``,
+   persistés dans ``adducts.json``). Les autres entrées du lot
+   continuent d'être traitées : un seul appel à ``resolve_adducts`` permet
+   donc de collecter *toutes* les erreurs d'adduit du fichier en une fois,
+   plutôt que de s'arrêter à la première.
 
 Exemple
    .. code-block:: python
@@ -329,13 +354,13 @@ Exemple
       ...     ("Row 0", "PE 34:1", 700.500000, "[M+H]+"),
       ...     ("Row 1", "PC 32:0", 750.500000, "XYZ"),   # adduit invalide
       ... ]
-      >>> adducts, masses, errors = _adducts(records)
+      >>> adducts, masses, errors = resolve_adducts(records)
       >>> adducts
       ['[M+H]+', None]
       >>> masses
       [699.492724, None]
       >>> errors
-      ["Row 1 (PC 32:0) : Unsupported adduct 'XYZ'. Accepted values : [M+H]+, [M+NH4]+, [M-H]-."]
+      ["Row 1 (PC 32:0) : Unsupported adduct 'XYZ'. Accepted values : [M+H]+, [M-H]-."]
 
    Dans l'étape 4 de la page, ``records`` est construit différemment selon le
    niveau MS :
@@ -343,13 +368,13 @@ Exemple
    .. code-block:: python
 
       # MS1 : une ligne de DataFrame par enregistrement
-      adducts, neutral_masses, e_adduct = _adducts(
+      adducts, neutral_masses, e_adduct = resolve_adducts(
           (f"Row {idx}", row["Lipid_Name"], row["Precursor_MZ"], row.get("Adduct"))
           for idx, row in df.iterrows()
       )
 
       # MS2 : un scan par enregistrement
-      adducts, n_mass, e_adduct = _adducts(
+      adducts, n_mass, e_adduct = resolve_adducts(
           (f"Scan {data['scan_id']}", data["lipid_name"], data["precursor_mz"], data.get("adduct"))
           for data in ms2
       )

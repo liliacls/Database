@@ -111,6 +111,7 @@ scripts.init_db
 .. automodule:: scripts.init_db
    :members:
    :undoc-members:
+   :private-members:
    :show-inheritance:
 
 scripts.reset_db
@@ -119,4 +120,5 @@ scripts.reset_db
 .. automodule:: scripts.reset_db
    :members:
    :undoc-members:
+   :private-members:
    :show-inheritance:
