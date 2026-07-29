@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-
+import _bootstrap
 from utils.loading_MS1 import DB_MS1
 from utils.loading_MS2 import ms2_parsing, DB_MS2
 from utils.molecular_weight import molecular_weight

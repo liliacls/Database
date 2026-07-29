@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from sqlalchemy.engine import Engine
 from datetime import datetime
+import _bootstrap
 from config import get_engine
 from utils.data_access import load_database
 from utils.msp_export import generate_msp as _generate_msp

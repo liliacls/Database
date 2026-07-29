@@ -3,7 +3,7 @@ import streamlit as st
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from pathlib import Path
-
+import _bootstrap
 from models.model import Detection
 from config import get_engine, DB_FILE
 

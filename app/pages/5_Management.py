@@ -3,7 +3,7 @@ import logging
 import pandas as pd
 import streamlit as st
 from sqlalchemy.orm import Session
-
+import _bootstrap
 from models.model import Annotation, Detection, Fragment, Lipid
 from config import get_engine
 from utils.data_access import load_database

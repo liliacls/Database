@@ -7,7 +7,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from sqlalchemy.engine import Engine
-
+import _bootstrap
 from config import get_engine, PROJECT_ROOT
 from utils.data_access import load_database
 from utils.history import load_history

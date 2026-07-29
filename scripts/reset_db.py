@@ -1,5 +1,7 @@
 import json
 import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from sqlalchemy.orm import Session
 from models.model import Annotation, Fragment, Detection, Lipid
 from config import get_engine
