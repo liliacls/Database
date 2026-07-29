@@ -44,7 +44,15 @@ RELOAD_RESET_KEYS = [DF_COMPLETE, DF_VALID, INTEGRATION_DONE, COLUMNS_VALID, EDI
 
 # ── Barre latérale ────────────────────────────────────────────────────────────────────
 
-def _workflow(done):
+def _workflow(done: bool) -> str:
+    """
+    Retourne l'icône représentant l'état d'une étape du workflow dans la barre latérale.
+
+    :param done: vrai si l'étape est terminée.
+    :type done: bool
+    :return: ``"✅"`` si ``done`` est vrai, sinon ``"⬜"``.
+    :rtype: str
+    """
     return "✅" if done else "⬜"
 
 step1_done = all(st.session_state.get(k) not in (None, "") for k in ["ms_level", "ion_mode", "integrator_name", "file_row_name"])
@@ -151,7 +159,7 @@ with col4:
         "File row name",
         key="file_row_name",
         disabled=settings_locked,
-        help="Name of the row file experiment who provided annotations",
+        help="Name of the raw file the annotations come from.",
     )
 
 if None in [ms_level, ion_mode] or not integrator_name or not file_row_name:
