@@ -16,7 +16,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 @st.cache_data(ttl=60)
-def statistics():
+def _statistics():
     """
     Calcule les statistiques résumées de la base de données, mises en cache pendant 60 secondes.
     Compte les détections MS1 et MS2 dans la base de données et calcule la taille sur disque du fichier de base de données.
@@ -111,7 +111,7 @@ st.divider()
 st.subheader("Database overview")
 st.write("")
 
-stats = statistics()
+stats = _statistics()
 
 if stats is None:
     st.warning("Unable to connect to the database.")
