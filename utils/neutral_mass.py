@@ -141,7 +141,7 @@ def remove_adduct(name: str) -> None:
 
 # ── Résolution et validation d'un adduit ────────────────────────────────────────────────────────────────────
 
-def adduct(raw_adduct) -> str:
+def _adduct(raw_adduct) -> str:
     """
     Valide et normalise une valeur brute d'adduit en l'une des chaînes d'adduit standard connues
     (adduits intégrés ou personnalisés ajoutés via add_adduct()). La comparaison ignore la casse
@@ -149,6 +149,7 @@ def adduct(raw_adduct) -> str:
     et pour compléter la colonne "Adduct" du tableau de sortie.
 
     :param raw_adduct: valeur brute à résoudre.
+    :type raw_adduct: str or float or None
     :raises ValueError: si raw_adduct est manquant ou ne correspond à aucun adduit reconnu.
     :return: chaîne d'adduit standard, dans sa casse de référence.
     :rtype: str
@@ -156,7 +157,7 @@ def adduct(raw_adduct) -> str:
     Exemple::
 
         >>> # La casse et les espaces environnants sont ignorés, seule la forme standard est retournée.
-        >>> adduct("  [m+h]+ ")
+        >>> _adduct("  [m+h]+ ")
         '[M+H]+'
     """
     if (
@@ -197,13 +198,13 @@ def _mz(Precursor_MZ: float) -> float:
 
 # ── Calcul de la masse neutre ────────────────────────────────────────────────────────────────────
 
-def neutral_mass(Precursor_MZ: float, adduct_name: str) -> float:
+def _neutral_mass(Precursor_MZ: float, adduct_name: str) -> float:
     """
     Calcule la masse neutre à partir du rapport m/z du précurseur et de l'adduit du précurseur.
 
     :param Precursor_MZ: rapport m/z du précurseur.
     :type Precursor_MZ: float
-    :param adduct_name: adduit du précurseur, déjà validé/normalisé via adduct().
+    :param adduct_name: adduit du précurseur, déjà validé/normalisé via _adduct().
     :type adduct_name: str
     :raises ValueError: si adduct_name n'est pas un adduit reconnu, ou si Precursor_MZ est NaN ou n'est pas strictement positif (voir _mz()).
     :raises TypeError: si Precursor_MZ est d'un type non convertible en float (voir _mz()).
@@ -227,14 +228,15 @@ def resolve_adducts(records) -> tuple[list, list, list[str]]:
     Résout l'adduit et la masse neutre pour un lot d'enregistrements (label, lipid_name, precursor_mz, raw_adduct).
 
     :param records: itérable de tuples (label, lipid_name, precursor_mz, raw_adduct)
+    :type records: iterable[tuple]
     :return: listes (adducts, masses, error_messages)
     :rtype: tuple[list, list, list[str]]
     """
     adducts, masses, errors = [], [], []
     for label, lipid_name, precursor_mz, raw_adduct in records:
         try:
-            resolved_adduct = adduct(raw_adduct)
-            mass = neutral_mass(precursor_mz, resolved_adduct)
+            resolved_adduct = _adduct(raw_adduct)
+            mass = _neutral_mass(precursor_mz, resolved_adduct)
         except ValueError as e:
             errors.append(f"{label} ({lipid_name}) : {e}")
             resolved_adduct, mass = None, None
