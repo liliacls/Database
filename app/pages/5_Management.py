@@ -166,6 +166,16 @@ def _apply(plan: dict) -> None:
 
 @st.dialog("Confirm changes")
 def _confirm_apply(plan: dict) -> None:
+    """
+    Boîte de dialogue de confirmation pour le plan d'édition/suppression de lignes.
+
+    Résume le nombre de lignes à mettre à jour et à supprimer, avertit que les suppressions
+    sont irréversibles depuis l'application, puis applique le plan (bouton **Confirm**) ou
+    l'annule (bouton **Cancel**) via ``_apply(plan)``.
+
+    :param plan: plan de mise à jour/suppression, tel que retourné par _database_modif().
+    :type plan: dict
+    """
     st.write(f"**{len(plan['updates'])}** row(s) will be updated.")
     st.write(f"**{len(plan['deletes'])}** row(s) will be permanently deleted.")
     if plan["deletes"]:
@@ -277,6 +287,18 @@ def _delete_import(entry: dict, index: int) -> None:
 
 @st.dialog("Confirm import deletion")
 def _history_del(entry: dict, index: int) -> None:
+    """
+    Boîte de dialogue de confirmation pour la suppression d'un import entier.
+
+    Avertit du nombre d'enregistrements qui seront supprimés, puis supprime l'import
+    (bouton **Confirm deletion**, via ``_delete_import(entry, index)``) ou annule
+    (bouton **Cancel**).
+
+    :param entry: entrée de l'historique à supprimer, telle que retournée par load_history().
+    :type entry: dict
+    :param index: index de l'entrée dans le fichier d'historique.
+    :type index: int
+    """
     detection_ids = entry.get("detection_ids", [])
     st.warning(
         f"This will permanently delete **{len(detection_ids)}** record(s) from "
@@ -307,6 +329,14 @@ if not history:
     st.info("No import history recorded yet.")
 else:
     def _label(i: int) -> str:
+        """
+        Formate une entrée de l'historique des imports pour l'afficher dans le sélecteur.
+
+        :param i: index de l'entrée dans ``history``.
+        :type i: int
+        :return: nom du fichier, date d'insertion, nombre de lignes et intégrateur.
+        :rtype: str
+        """
         e = history[i]
         by = f", by {e.get('integrator')}" if e.get("integrator") else ""
         return f"{e.get('filename', '-')} - {e.get('inserted', '-')} - {e.get('num_rows', '-')} rows{by}"
