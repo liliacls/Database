@@ -187,7 +187,7 @@ try:
                 "Precursor_MZ":      st.column_config.NumberColumn(format="%.6f"),
                 "Neutral_mass":      st.column_config.NumberColumn(format="%.6f"),
                 "Molecular_weight":  st.column_config.NumberColumn(format="%.0f"),
-                "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f"),
+                "Monoisotopic_mass": st.column_config.NumberColumn(format="%.8f"),
                 "RT":                st.column_config.NumberColumn(format="%.4f"),
                 "CCS":               st.column_config.NumberColumn(format="%.4f"),
             }
@@ -329,7 +329,7 @@ try:
                     df_error,
                     column_config={
                         "Neutral_mass":      st.column_config.NumberColumn(format="%.6f"),
-                        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.6f"),
+                        "Monoisotopic_mass": st.column_config.NumberColumn(format="%.8f"),
                         "Delta (Da)":        st.column_config.NumberColumn(format="%.6f"),
                         "Error (ppm)":       st.column_config.NumberColumn(format="%.4f"),
                     },
