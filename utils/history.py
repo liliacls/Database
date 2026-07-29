@@ -17,8 +17,7 @@ def load_history() -> list[dict]:
 def save_history(history: list[dict]) -> None:
     """
     Écrase le fichier d'historique des imports avec la liste donnée.
-    Utilisée en interne par append_history() et remove_history() pour persister leurs modifications ;
-    ne fait qu'écrire, sans logique d'ajout ou de suppression.
+    Utilisée en interne par append_history() et remove_history() pour persister leurs modifications : ne fait qu'écrire.
 
     :param history: liste complète des enregistrements d'import à écrire.
     :type history: list[dict]
