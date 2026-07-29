@@ -5,7 +5,7 @@ from models.model import Annotation, Fragment, Detection, Lipid
 from config import get_engine
 from config import HISTORY_PATH
 
-def reset_db():
+def _reset_db():
     """
     Supprime tous les enregistrements de BacLipidDB sans supprimer les tables.
 
@@ -15,8 +15,8 @@ def reset_db():
     3. Detection
     4. Lipid
 
-Usage :
-    python scripts/reset_db.py
+    Usage :
+        python scripts/reset_db.py
 
     :raises Exception: en cas d'échec de la suppression, aucune ligne n'est validée (ROLLBACK automatique à la fermeture de la session).
     """
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     confirm = input("Clear all records from the database ? (yes/no) : ").strip().lower()
     if confirm == "yes":
         try:
-            reset_db()
+            _reset_db()
         except Exception as ex:
             print(f"Error: {ex}")
             sys.exit(1)
