@@ -28,7 +28,7 @@ def _json_adducts() -> dict:
 
     Exemple::
 
-        >>> json_adducts()
+        >>> _json_adducts()
         {'[M+Na]+': {'shift': 22.989221, 'sign': -1}}
     """
     if not ADDUCTS_PATH.exists():
@@ -37,10 +37,11 @@ def _json_adducts() -> dict:
         content = f.read().strip()
         return json.loads(content) if content else {}
 
-def _rebuild() -> None:
+def _build() -> None:
     """
-    Charge les dictionnaires ADDUCT_SHIFTS et ADDUCT_SIGNS et y rajoute les adduits personnalisées lus depuis le JSON via _json_adducts().
+    Réinitialise ADDUCT_SHIFTS et ADDUCT_SIGNS avec les adduits natifs (BUILTIN_ADDUCT_SHIFTS et BUILTIN_ADDUCT_SIGNS), puis y ajoute les adduits personnalisés lus depuis le JSON via _json_adducts().
     """
+
     added = _json_adducts()
 
     ADDUCT_SHIFTS.clear()
@@ -62,7 +63,7 @@ def _save_adducts(added: dict) -> None:
     with open(ADDUCTS_PATH, "w", encoding="utf-8") as f:
         json.dump(added, f, ensure_ascii=False, indent=2)
 
-_rebuild()
+_build()
 
 # ── API de gestion des adduits ────────────────────────────────────────────────────────────────────
 
@@ -88,12 +89,9 @@ def add_adduct(name: str, shift: float, sign: int) -> None:
     :type name: str
     :param shift: décalage de masse en Daltons, doit être strictement positif.
     :type shift: float
-    :param sign: -1 si l'adduit est formé par addition à la molécule neutre
-        (le décalage est soustrait pour retrouver la masse neutre), +1 s'il est formé par perte
-        (le décalage est réajouté).
+    :param sign: -1 si l'adduit est formé par addition à la molécule neutre (le décalage est soustrait pour retrouver la masse neutre), +1 s'il est formé par perte (le décalage est réajouté).
     :type sign: int
-    :raises ValueError: si name est vide ou déjà utilisé (indépendamment de la casse),
-        si sign n'est pas -1/1, ou si shift n'est pas un nombre strictement positif.
+    :raises ValueError: si name est vide ou déjà utilisé (indépendamment de la casse), si sign n'est pas -1/1, ou si shift n'est pas un nombre strictement positif.
 
     Exemple::
 
@@ -117,7 +115,7 @@ def add_adduct(name: str, shift: float, sign: int) -> None:
     custom = _json_adducts()
     custom[name] = {"shift": shift, "sign": sign}
     _save_adducts(custom)
-    _rebuild()
+    _build()
 
 def remove_adduct(name: str) -> None:
     """
@@ -139,9 +137,9 @@ def remove_adduct(name: str) -> None:
 
     del custom[name]
     _save_adducts(custom)
-    _rebuild()
+    _build()
 
-# --- Résolution et validation d'un adduit -----------------------------------
+# ── Résolution et validation d'un adduit ────────────────────────────────────────────────────────────────────
 
 def adduct(raw_adduct) -> str:
     """
@@ -182,8 +180,8 @@ def _mz(Precursor_MZ: float) -> float:
 
     :param Precursor_MZ: rapport m/z du précurseur à valider.
     :type Precursor_MZ: float
-    :raises ValueError: si Precursor_MZ ne peut pas être converti en float, est NaN, ou n'est pas
-        strictement positif.
+    :raises ValueError: si Precursor_MZ est une chaîne non convertible en float, est NaN, ou n'est pas strictement positif.
+    :raises TypeError: si Precursor_MZ est d'un type non convertible en float.
     :return: la valeur de m/z validée, sous forme de float.
     :rtype: float
     """
@@ -197,7 +195,7 @@ def _mz(Precursor_MZ: float) -> float:
 
     return mz
 
-# --- Calcul de la masse neutre ----------------------------------------------
+# ── Calcul de la masse neutre ────────────────────────────────────────────────────────────────────
 
 def neutral_mass(Precursor_MZ: float, adduct_name: str) -> float:
     """
@@ -207,7 +205,8 @@ def neutral_mass(Precursor_MZ: float, adduct_name: str) -> float:
     :type Precursor_MZ: float
     :param adduct_name: adduit du précurseur, déjà validé/normalisé via adduct().
     :type adduct_name: str
-    :raises ValueError: si adduct_name n'est pas un adduit reconnu.
+    :raises ValueError: si adduct_name n'est pas un adduit reconnu, ou si Precursor_MZ est NaN ou n'est pas strictement positif (voir _mz()).
+    :raises TypeError: si Precursor_MZ est d'un type non convertible en float (voir _mz()).
     :return: masse neutre en Daltons, arrondie à 6 décimales.
     :rtype: float
     """
