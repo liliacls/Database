@@ -34,9 +34,9 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
     :type source: objet fichier-like
     :param delimiter: séparateur de colonnes. Si None, déduit de l'extension/du nom du fichier ("\\t" pour .tsv, "," sinon).
     :type delimiter: str ou None
+    :raises ValueError: si un bloc de scan est mal formé (champ requis manquant, RT/CCS non numérique, en-tête de fragments manquant, aucun fragment trouvé, ou nombre de fragments incohérent avec Num_peaks) ou si aucun scan n'est trouvé dans le fichier.
     :return: liste de dictionnaires avec les clés "scan_id", "precursor_mz", "formula","lipid_name", "fa_composition", "adduct", "lipid_category", "lipid_class","lipid_subclass", "rt", "ccs", "num_peaks" et "fragments" (liste de tuples (mz, intensity)).
     :rtype: list[dict]
-    :raises ValueError: si un bloc de scan est mal formé (champ requis manquant, RT/CCS non numérique, en-tête de fragments manquant, aucun fragment trouvé, ou nombre de fragments incohérent avec Num_peaks) ou si aucun scan n'est trouvé dans le fichier.
     """
 
     name = getattr(source, "name", "")
