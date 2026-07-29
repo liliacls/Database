@@ -2,7 +2,6 @@ import csv
 import io
 import logging
 from datetime import datetime
-from pathlib import Path
 from sqlalchemy.orm import Session
 from models.model import Detection, Fragment, Lipid, Annotation
 from config import get_engine
@@ -12,10 +11,10 @@ from utils.exceptions import PostIntegrationError
 
 logger = logging.getLogger(__name__)
 
-SCAN_PREFIX = "Scan #"
+SCAN = "Scan #"
 FRAGMENT_HEADER = ("m/z", "Intensity")
 
-# Field labels expected in each scan block (as the first cell of a "Label;Value" row).
+# Libellés de champs attendus dans chaque bloc de scan
 REQUIRED_SCAN_FIELDS = [
     "Lipid_Name",
     "Precursor_MZ",
@@ -26,44 +25,26 @@ REQUIRED_SCAN_FIELDS = [
     "Lipid_subclass",
     "Num_peaks",
 ]
-OPTIONAL_SCAN_FIELDS = ["FA_composition", "RT", "CCS"]
-
-def _empty(row: list[str]) -> bool:
-    """Returns True if the row is empty or contains only empty cells."""
-    return not row or not row[0].strip()
 
 def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
     """
-    Parse an MS2 file (.csv/.tsv) organized into stacked blocks and returns a list
-    of entries as dictionaries.
+    Parse un fichier MS2 (.csv/.tsv) organisé en blocs empilés et retourne une liste d'entrées sous forme de dictionnaires.
 
-    :param source: path to the .csv or .tsv file
-    :type source: Path or str or file-like object
-    :param delimiter: column separator. If None, inferred from the file's
-        extension/name ("\\t" for .tsv, "," otherwise).
-    :type delimiter: str or None
-    :return: list of dictionaries with the keys "scan_id", "precursor_mz", "formula",
-        "lipid_name", "fa_composition", "adduct", "lipid_category", "lipid_class",
-        "lipid_subclass", "rt", "ccs", "num_peaks" and "fragments" (list of (mz, intensity) tuples).
+    :param source: objet fichier-like
+    :type source: objet fichier-like
+    :param delimiter: séparateur de colonnes. Si None, déduit de l'extension/du nom du fichier ("\\t" pour .tsv, "," sinon).
+    :type delimiter: str ou None
+    :return: liste de dictionnaires avec les clés "scan_id", "precursor_mz", "formula","lipid_name", "fa_composition", "adduct", "lipid_category", "lipid_class","lipid_subclass", "rt", "ccs", "num_peaks" et "fragments" (liste de tuples (mz, intensity)).
     :rtype: list[dict]
-    :raises ValueError: if a scan block is malformed (missing required field, non-numeric
-        RT/CCS, missing fragment header, no fragments found, or fragment count
-        inconsistent with Num_peaks) or if no scan is found in the file.
+    :raises ValueError: si un bloc de scan est mal formé (champ requis manquant, RT/CCS non numérique, en-tête de fragments manquant, aucun fragment trouvé, ou nombre de fragments incohérent avec Num_peaks) ou si aucun scan n'est trouvé dans le fichier.
     """
 
-    if isinstance(source, (str, Path)):
-        path = Path(source)
-        if delimiter is None:
-            delimiter = "\t" if path.suffix.lower() == ".tsv" else ","
-        with open(path, "r", newline="", encoding="utf-8-sig") as f:
-            rows = list(csv.reader(f, delimiter=delimiter))
-    else:
-        name = getattr(source, "name", "")
-        if delimiter is None:
-            delimiter = "\t" if str(name).lower().endswith(".tsv") else ","
-        raw = source.getvalue() if hasattr(source, "getvalue") else source.read()
-        text = raw.decode("utf-8-sig") if isinstance(raw, bytes) else raw
-        rows = list(csv.reader(io.StringIO(text), delimiter=delimiter))
+    name = getattr(source, "name", "")
+    if delimiter is None:
+        delimiter = "\t" if str(name).lower().endswith(".tsv") else ","
+    raw = source.getvalue() if hasattr(source, "getvalue") else source.read()
+    text = raw.decode("utf-8-sig") if isinstance(raw, bytes) else raw
+    rows = list(csv.reader(io.StringIO(text), delimiter=delimiter))
 
     scans = []
     i = 0
@@ -73,21 +54,21 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
         row = rows[i]
         first_cell = row[0].strip() if row else ""
 
-        if not first_cell.startswith(SCAN_PREFIX):
+        if not first_cell.startswith(SCAN):
             i += 1
             continue
 
-        scan_id = first_cell[len(SCAN_PREFIX):].strip()
+        scan_id = first_cell[len(SCAN):].strip()
         i += 1
 
         fields = {}
         while i < n and tuple(c.strip() for c in rows[i][:2]) != FRAGMENT_HEADER:
-            if _empty(rows[i]):
-                raise ValueError(
-                    f"'m/z' / 'Intensity' header not found before an empty row in block '{first_cell}'."
-                )
-            label = rows[i][0].strip()
-            value = rows[i][1].strip() if len(rows[i]) > 1 else ""
+            row = rows[i]
+            if not row or not row[0].strip():
+                i += 1
+                continue
+            label = row[0].strip()
+            value = row[1].strip() if len(row) > 1 else ""
             fields[label] = value
             i += 1
 
@@ -130,9 +111,26 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
                 raise ValueError(f"Invalid CCS for scan '{first_cell}': '{fields['CCS']}'.")
 
         fragments = []
-        while i < n and not _empty(rows[i]):
-            mz, intensity = rows[i][0], rows[i][1]
-            fragments.append((float(mz), float(intensity)))
+        while i < n:
+            row = rows[i]
+            if row and row[0].strip().startswith(SCAN):
+                break
+            if not row or not row[0].strip():
+                i += 1
+                continue
+            if len(row) < 2:
+                raise ValueError(
+                    f"Malformed fragment row {row!r} for scan '{first_cell}': "
+                    "expected 'm/z' and 'Intensity' columns."
+                )
+            try:
+                mz, intensity = float(row[0]), float(row[1])
+            except ValueError:
+                raise ValueError(
+                    f"Invalid fragment row {row!r} for scan '{first_cell}': "
+                    "'m/z' and 'Intensity' must be numeric."
+                )
+            fragments.append((mz, intensity))
             i += 1
 
         if not fragments:
@@ -167,7 +165,6 @@ def ms2_parsing(source, delimiter: str | None = None) -> list[dict]:
 
     return scans
 
-
 def DB_MS2(
     scans: list[dict],
     filename: str,
@@ -175,23 +172,18 @@ def DB_MS2(
     file_row_name: str,
 ) -> None:
     """
-    Inserts MS2 scans into the database.
-    For each scan, creates and inserts a record in the Lipid, Detection
-    (+ its Fragments) and Annotation tables.
+    Insère des scans MS2 dans la base de données. Pour chaque scan, crée et insère un enregistrement dans les tables Lipid, Detection (+ ses Fragments) et Annotation.
 
-    :param scans: list of dictionaries (see :func:`ms2_parsing`), where each scan must
-        also carry the derived fields "molecular_weight", "monoisotopic_mass" and
-        "neutral_mass" (computed by the caller).
+    :param scans: liste de dictionnaires (voir :func:`ms2_parsing`), où chaque scan doit aussi porter les champs dérivés "molecular_weight", "monoisotopic_mass", "neutral_mass" et "ion_mode" (calculés/renseignés par l'appelant).
     :type scans: list[dict]
-    :param filename: name of the integrated file.
+    :param filename: nom du fichier intégré.
     :type filename: str
-    :param integrator: name of the person performing the integration.
+    :param integrator: nom de la personne réalisant l'intégration.
     :type integrator: str
-    :param file_row_name: name of the file that provided the annotations.
+    :param file_row_name: nom du fichier ayant fourni les annotations.
     :type file_row_name: str
-    :raises Exception: SQLAlchemy rollback if an insertion error occurs.
-    :raises PostIntegrationError: if the scans were committed successfully but the post-commit
-        backup or history logging failed - the data is already in the database.
+    :raises Exception: exception d'origine relevée (rollback implicite via la fermeture de la session) si une erreur survient pendant l'insertion.
+    :raises PostIntegrationError: si les scans ont été validés (commit) avec succès mais que la sauvegarde ou l'écriture de l'historique post-commit a échoué.
     """
     logger.info(f"Starting MS2 integration - {len(scans)} scans to insert.")
     detections = []
