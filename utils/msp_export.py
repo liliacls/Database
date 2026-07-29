@@ -15,6 +15,7 @@ def generate_msp(
     Retourne une chaîne au format .msp pour les détections MS2 correspondant aux filtres.
 
     :param engine: moteur SQLAlchemy connecté à la base de données.
+    :type engine: sqlalchemy.engine.Engine
     :param categories: liste des catégories de lipides sélectionnées (vide = toutes).
     :type categories: list
     :param classes: liste des classes de lipides sélectionnées (vide = toutes).
