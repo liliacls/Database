@@ -17,6 +17,8 @@
     --shadow: 0 1px 3px rgba(20, 50, 80, 0.08), 0 1px 2px rgba(20, 50, 80, 0.06);
     --success: #1a7f37;
     --success-bg: #e7f6ec;
+    --info: #145a8c;
+    --info-bg: #e0f2fd;
     --warning: #a15c00;
     --warning-bg: #fdf1de;
     --error: #c0392b;
@@ -37,6 +39,8 @@
       --shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.3);
       --success: #4fbf6c;
       --success-bg: #133024;
+      --info: #60B8FF;
+      --info-bg: #1A2D45;
       --warning: #e0a53d;
       --warning-bg: #2e2410;
       --error: #ec6a5c;
@@ -60,30 +64,46 @@
 
   /* ---------- Hero header ---------- */
   .hero {
+    position: relative;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: #ffffff;
-    padding: 2.5rem 1.5rem;
+    padding: 3.2rem 1.5rem 3rem;
     text-align: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, #000 40%, transparent 100%);
+    z-index: -1;
   }
   .hero h1 {
-    margin: 0 0 0.4rem;
-    font-size: 1.9rem;
+    margin: 0 0 0.5rem;
+    font-size: 2.1rem;
+    font-weight: 700;
     letter-spacing: 0.2px;
     color: #ffffff;
   }
   .hero p {
     margin: 0;
-    opacity: 0.9;
-    font-size: 0.95rem;
-    font-weight: bold;
+    opacity: 0.92;
+    font-size: 1rem;
+    font-weight: 500;
   }
   .hero .version {
     display: inline-block;
-    margin-top: 0.8rem;
-    padding: 0.2rem 0.75rem;
+    margin-top: 1rem;
+    padding: 0.25rem 0.85rem;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.18);
-    font-size: 0.rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-size: 0.8rem;
+    font-weight: 600;
     letter-spacing: 0.3px;
   }
 
@@ -119,23 +139,52 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
   }
   .sidebar nav a {
-    display: block;
-    padding: 0.35rem 0.5rem;
-    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0.55rem;
+    border-radius: 7px;
+    border-left: 2px solid transparent;
     color: var(--text);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   }
   .sidebar nav a:hover {
     background: var(--bg-secondary);
     color: var(--primary);
   }
-  .sidebar nav .sub {
-    padding-left: 1.1rem;
-    font-size: 0.85rem;
-    color: var(--text-muted);
+  .sidebar nav a.is-active {
+    background: var(--bg-secondary);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    font-weight: 600;
+  }
+  .sidebar nav .nav-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .sidebar nav a:hover .nav-num,
+  .sidebar nav a.is-active .nav-num {
+    background: var(--primary);
+    color: #ffffff;
   }
 
   main.content {
@@ -172,13 +221,15 @@
 
   p { color: var(--text); }
 
+  .table-wrap {
+    margin: 1.4rem 0;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.4rem 0;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
     font-size: 0.95rem;
   }
   th, td {
@@ -207,8 +258,27 @@
     font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
   }
 
+  pre {
+    background: #0d1b2a;
+    color: #e8edf5;
+    padding: 1.1rem 1.3rem;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+    margin: 1.4rem 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
+    font-size: inherit;
+  }
+
   /* Inline status chips (quoting literal app messages inside a sentence) */
-  span.warning, span.success-msg, span.error-msg {
+  span.warning, span.success-msg, span.info-msg, span.error-msg {
     display: inline-block;
     padding: 0.05rem 0.45rem;
     border-radius: 5px;
@@ -216,11 +286,12 @@
     font-size: 0.92em;
   }
   span.success-msg { color: var(--success); background: var(--success-bg); }
+  span.info-msg    { color: var(--info);    background: var(--info-bg); }
   span.warning     { color: var(--warning); background: var(--warning-bg); }
   span.error-msg   { color: var(--error);   background: var(--error-bg); }
 
   /* Block-level callouts (standalone remarks) */
-  p.warning, p.success-msg, p.error-msg {
+  p.warning, p.success-msg, p.info-msg, p.error-msg {
     padding: 0.85rem 1.1rem;
     border-radius: 8px;
     border-left: 4px solid;
@@ -229,7 +300,7 @@
     gap: 0.6rem;
     align-items: flex-start;
   }
-  p.warning::before, p.success-msg::before, p.error-msg::before {
+  p.warning::before, p.success-msg::before, p.info-msg::before, p.error-msg::before {
     flex-shrink: 0;
     font-weight: 700;
   }
@@ -245,6 +316,12 @@
     border-color: var(--success);
   }
   p.success-msg::before { content: "✔"; }
+  p.info-msg {
+    color: var(--info);
+    background: var(--info-bg);
+    border-color: var(--info);
+  }
+  p.info-msg::before { content: "ℹ"; }
   p.error-msg {
     color: var(--error);
     background: var(--error-bg);
@@ -264,6 +341,51 @@
   }
   .badge-ms1 { background: #a31fb4; }
   .badge-ms2 { background: #d9822b; }
+
+  /* ---------- Back to top ---------- */
+  #back-to-top {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    border: none;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(20, 50, 80, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.15s ease;
+  }
+  #back-to-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  #back-to-top:hover {
+    background: var(--primary-dark);
+  }
+
+  /* ---------- Scrollbar ---------- */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
 
   @media (max-width: 860px) {
     .layout {
@@ -291,14 +413,12 @@
     <p class="toc-title">Sommaire</p>
     <nav>
       <ul>
-        <li><a href="#accueil">Accueil (Home)</a></li>
-        <li>
-          <a href="#module-1"><strong>Module 1</strong> : Integration</a>
-          <a href="#module-2"><strong>Module 2</strong> : BacLipidDB</a>
-          <a href="#module-3"><strong>Module 3</strong> : Export</a>
-          <a href="#module-4"><strong>Module 4</strong> : Resources</a>
-          <a href="#module-5"><strong>Module 5</strong> : Management</a>
-        </li>
+        <li><a href="#accueil" class="nav-link">Accueil</a></li>
+        <li><a href="#module-1" class="nav-link"><span class="nav-num">1</span>Intégration</a></li>
+        <li><a href="#module-2" class="nav-link"><span class="nav-num">2</span>BacLipidDB</a></li>
+        <li><a href="#module-3" class="nav-link"><span class="nav-num">3</span>Export</a></li>
+        <li><a href="#module-4" class="nav-link"><span class="nav-num">4</span>Resources</a></li>
+        <li><a href="#module-5" class="nav-link"><span class="nav-num">5</span>Management</a></li>
       </ul>
     </nav>
   </aside>
@@ -324,8 +444,8 @@
 </p>
 
 <p>
-  Les statistiques affichées en dessous présentent le nombre de spectres MS1
-  et MS2 présents dans la base, ainsi que la taille de <strong>BacLipidDB</strong>.
+  Les statistiques affichées en dessous présentent le nombre de spectres <span class="badge badge-ms1">MS1</span>
+  et <span class="badge badge-ms2">MS2</span> présents dans la base, ainsi que la taille de <strong>BacLipidDB</strong> sur le disque.
 </p>
 
 </section>
@@ -335,10 +455,8 @@
 <h2 id="module-1">Module 1 : Intégration</h2>
 
 <p>
-  La page "Integration" est un module permettant l'insertion de données dans
-  <strong>BacLipidDB</strong>. L'intégration se déroule en cinq étapes. La
-  première étape consiste à la sélection de paramètres qui seront réutilisés
-  plus tard.
+  La page <strong>Integration</strong> est un module permettant l'insertion de données dans
+  <strong>BacLipidDB</strong>. L'intégration se déroule en cinq étapes.
 </p>
 
 <h3 id="step-1">1ère étape : Paramétrages (Step 1 - Settings)</h3>
@@ -346,47 +464,50 @@
 <p>
   La première étape demande à l'utilisateur de choisir le type de spectres
   qu'il souhaite insérer, ensuite le mode d'acquisition, son identité et
-  enfin le nom du fichier (raw) d'origine des annotations.
+  enfin le nom du fichier (raw) d'origine des annotations. Ces paramètres
+  seront réutilisés ultérieurement.
 </p>
 
+<div class="table-wrap">
 <table>
   <tbody>
     <tr>
       <td>Annotation level</td>
-      <td>MS1 / MS2</td>
-      <td>MS1 pour les annotations comportant uniquement l'ion précurseur, MS2 pour les annotations avec spectres de fragments.</td>
+      <td><span class="badge badge-ms1">MS1</span> / <span class="badge badge-ms2">MS2</span></td>
+      <td><span class="badge badge-ms1">MS1</span> pour les annotations comportant uniquement l'ion analysé, <span class="badge badge-ms2">MS2</span> pour les annotations d'un ion précurseur avec son spectre de fragmentation.</td>
     </tr>
     <tr>
       <td>Ionization mode</td>
       <td>Positive / Negative</td>
-      <td>Mode d'ionisation utilisé lors de l'acquisition. Sert uniquement à remplir la colonne <code>Ionisation_mode</code> en base.</td>
+      <td>Mode d'ionisation utilisé lors de l'acquisition. Sert uniquement à remplir le champ <code>Ionisation_mode</code> dans la base de données.</td>
     </tr>
     <tr>
       <td>Your name</td>
       <td>Texte libre</td>
-      <td>Nom de la personne qui intègre ce lot de données, enregistré dans l'historique d'import. À écrire sous la forme "Prénom NOM" (première lettre du prénom en majuscule, un espace, nom de famille entièrement en majuscules).</td>
+      <td>Nom de la personne qui intègre ce lot de données, enregistré dans l'historique d'import.</td>
     </tr>
     <tr>
       <td>File row name</td>
       <td>Texte libre</td>
-      <td>Nom du fichier brut (raw) de l'expérience à l'origine des annotations. Séparer les champs par des "_".</td>
+      <td>Nom du fichier brut (raw) de l'expérience à l'origine des annotations.</td>
     </tr>
   </tbody>
 </table>
+</div>
 
 <p class="warning">
-  Il est impératif de compléter correctement ces champs afin de maintenir des
-  données cohérentes et traçables dans le temps.
+  Il est impératif de compléter correctement les champs "Your name" et "File row name" afin de maintenir des données cohérentes et traçables dans le temps.
+  Privilégier le caractère "_" pour séparer les mots et éviter les caractères spéciaux. Pour "Your name" la manière recommandée est Prénom_NOM. Pour "File row name", reprendre le nom du fichier brut (raw) tel quel, en remplaçant les espaces et caractères spéciaux par "_".
 </p>
 
 <h3 id="step-2">2ème étape : Chargement du fichier (Step 2 - File upload)</h3>
 
 <p>
   La seconde étape est le chargement du fichier. Il faut faire bien attention
-  au format selon si vous avez sélectionné MS1 ou MS2 lors de l'étape 1. Pour
-  un fichier de données MS1 le format attendu est .csv, .tsv ou .xlsx. Pour un
-  fichier de données MS2 le format attendu est .csv ou .tsv. Si un fichier
-  .xlsx est chargé, ce dernier sera rejeté et il faudra le convertir dans l'un
+  au format selon si vous avez sélectionné <span class="badge badge-ms1">MS1</span> ou <span class="badge badge-ms2">MS2</span> lors de l'étape 1. Pour
+  un fichier de données <span class="badge badge-ms1">MS1</span> le format attendu est <strong>.csv</strong>, <strong>.tsv</strong> ou <strong>.xlsx</strong>. Pour un
+  fichier de données <span class="badge badge-ms2">MS2</span> le format attendu est <strong>.csv</strong> ou <strong>.tsv</strong>. Si un fichier
+  <strong>.xlsx</strong> est chargé, ce dernier sera rejeté et il faudra le convertir dans l'un
   des deux formats souhaités.
 </p>
 <p>
@@ -394,17 +515,19 @@
   évidemment possible à l'utilisateur de créer lui-même son fichier s'il ne
   souhaite pas télécharger les modèles (template), cependant l'introduction
   d'erreur peut nuire à l'intégration des données ensuite. Les points
-  importants à prendre en compte sont le nommage des colonnes, l'écriture des
+  importants à prendre en compte sont le nommage des colonnes, la manière dont sont écrites les
   données et les champs obligatoires <strong>(cf. Module 4)</strong>.
 </p>
-<p>
+
+<p class="warning">
   Le fichier chargé doit être nommé sous la forme
-  <code>Annotation_MS1/MS2_organisme_appareil</code>. La date du jour n'est
+  Annotation_MS1/MS2_organisme_appareil. La date du jour n'est
   pas à inclure dans le nom du fichier, car elle est déjà gérée par
-  l'historique d'import. Par exemple : <code>Annotation_MS1_A.baumannii_MALDI_FTICR.xlsx</code>,
-  <code>Annotation_MS2_A.baumannii_LC_MS.csv</code>.
+  l'historique d'import. Par exemple : Annotation_MS1_A.baumannii_MALDI_FTICR.xlsx,
+  Annotation_MS2_A.baumannii_LC_MS.csv.
 </p>
 
+<div class="table-wrap">
 <table>
   <thead>
     <tr>
@@ -429,24 +552,30 @@
     </tr>
   </tbody>
 </table>
+</div>
 
 <p>
-  Pour un fichier <strong>MS1</strong>, une fois le fichier déposé,
+  <strong>Pour un fichier <span class="badge badge-ms1">MS1</span> :</strong> Une fois le fichier déposé,
   l'application vérifie simplement qu'il peut être lu correctement. Si la
   lecture réussit, un message de confirmation s'affiche :
   <span class="success-msg">"File loaded : nom_du_fichier - X rows
   detected."</span>. Si la lecture échoue, un message d'erreur
   <span class="error-msg">"Error loading file : ..."</span> s'affiche à
-  la place et il faut corriger le fichier avant de le recharger.
+  la place. Il faudra résoudre cette erreur avant de le recharger.
 </p>
 
 <p>
-  Pour un fichier <strong>MS2</strong>, ce message (<span class="error-msg">"Error loading file : ..."</span>)
-  inclut toujours le détail précis du scan concerné et de la cause de
-  l'erreur. Selon le problème rencontré dans le fichier, le texte affiché est
-  l'un des suivants :
+  <strong>Pour un fichier <span class="badge badge-ms2">MS2</span> :</strong> Une fois le
+  fichier déposé et chaque scan analysé avec succès, un message de
+  confirmation s'affiche : <span class="success-msg">"File loaded :
+  nom_du_fichier - X scans detected."</span>. Si l'analyse échoue, un message
+  d'erreur <span class="error-msg">"Error loading file : ..."</span> s'affiche
+  à la place. Ce message inclut toujours le détail précis du scan concerné et
+  de la cause de l'erreur. Selon le problème rencontré dans le fichier, le
+  texte affiché est l'un des suivants :
 </p>
 
+<div class="table-wrap">
 <table>
   <thead>
     <tr>
@@ -456,81 +585,101 @@
   </thead>
   <tbody>
     <tr>
-      <td>Aucun scan trouvé dans le fichier</td>
-      <td><em>"Error loading file : No scan found in the file."</em></td>
+      <td><strong>Aucun scan trouvé dans le fichier</strong></td>
+      <td><em><span class="error-msg">"Error loading file : No scan found in the file."</span></em></td>
     </tr>
     <tr>
-      <td>Champ obligatoire manquant dans un scan</td>
-      <td><em>"Error loading file : Missing field(s) for scan 'Scan #2183': Adduct."</em></td>
+      <td><strong>Champ obligatoire manquant dans un scan</strong></td>
+      <td><em><span class="error-msg">"Error loading file : Missing field(s) for scan 'Scan #2183': Adduct."</span></em></td>
     </tr>
     <tr>
-      <td>Valeur non numérique (Precursor_MZ, Num_peaks, RT ou CCS)</td>
-      <td><em>"Error loading file : Invalid Precursor_MZ for scan 'Scan #2183': 'abc'."</em></td>
+      <td><strong>Valeur non numérique (Precursor_MZ, Num_peaks, RT ou CCS)</strong></td>
+      <td>
+        <em><span class="error-msg">"Error loading file : Invalid Precursor_MZ for scan 'Scan #2183': 'abc'."</span></em><br>
+        <em><span class="error-msg">"Error loading file : Invalid Num_peaks for scan 'Scan #2183': 'abc'."</span></em><br>
+        <em><span class="error-msg">"Error loading file : Invalid RT for scan 'Scan #2183': 'abc'."</span></em><br>
+        <em><span class="error-msg">"Error loading file : Invalid CCS for scan 'Scan #2183': 'abc'."</span></em>
+      </td>
     </tr>
     <tr>
-      <td>Aucun fragment trouvé pour un scan</td>
-      <td><em>"Error loading file : No fragments found for 'Scan #2183'."</em></td>
+      <td><strong>En-tête <code>m/z</code> / <code>Intensity</code> manquant après les champs d'un scan</strong></td>
+      <td><em><span class="error-msg">"Error loading file : 'm/z' / 'Intensity' header expected for scan 'Scan #2183'."</span></em></td>
     </tr>
     <tr>
-      <td>Le nombre de fragments ne correspond pas à Num_peaks</td>
-      <td><em>"Error loading file : 'Num_peaks'=6 does not match the number of fragments found (5) for 'Scan #2183'."</em></td>
+      <td><strong>Ligne de fragment incomplète (une seule colonne au lieu de deux)</strong></td>
+      <td><em><span class="error-msg">"Error loading file : Malformed fragment row ['85.5'] for scan 'Scan #2183': expected 'm/z' and 'Intensity' columns."</span></em></td>
+    </tr>
+    <tr>
+      <td><strong>Ligne de fragment non numérique</strong></td>
+      <td><em><span class="error-msg">"Error loading file : Invalid fragment row ['abc', '1000'] for scan 'Scan #2183': 'm/z' and 'Intensity' must be numeric."</span></em></td>
+    </tr>
+    <tr>
+      <td><strong>Aucun fragment trouvé pour un scan</strong></td>
+      <td><em><span class="error-msg">"Error loading file : No fragments found for 'Scan #2183'."</span></em></td>
+    </tr>
+    <tr>
+      <td><strong>Le nombre de fragments ne correspond pas à <code>Num_peaks</code></strong></td>
+      <td><em><span class="error-msg">"Error loading file : 'Num_peaks'=6 does not match the number of fragments found (5) for 'Scan #2183'."</span></em></td>
     </tr>
   </tbody>
 </table>
+</div>
 
 <p>
-  Dans tous les cas, il faut corriger le scan concerné directement dans le
+  Peu importe l'erreur, il faut corriger le scan concerné directement dans le
   fichier source, puis recharger le fichier.
 </p>
 
 <h3 id="step-3">3ème étape : Vérification des colonnes obligatoires (Step 3 - Required columns verification)</h3>
 
 <p>
-  Le fichier MS1 est vérifié en 3 étapes successives. Dès qu'une vérification
-  échoue, un message d'erreur s'affiche et vous devez corriger votre fichier
-  puis le recharger avant que la vérification suivante ne s'exécute. Si le
+  Le fichier <span class="badge badge-ms1">MS1</span> est vérifié en <strong>3 étapes</strong> successives. Dès qu'une vérification
+  échoue, un message d'erreur s'affiche, le fichier doit être corrigé 
+  puis rechargé avant que la vérification suivante ne s'exécute. Si le
   fichier est conforme, il s'affiche avec le message
   <span class="success-msg">"All required columns found"</span>.
 </p>
 
+<div class="table-wrap">
 <table>
   <thead>
     <tr>
       <th>#</th>
-      <th>Message affiché</th>
       <th>Cause</th>
+      <th>Message affiché</th>
       <th>Comment corriger</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>1</td>
-      <td><em>"The file is missing the following required columns : ..."</em></td>
       <td>Une ou plusieurs colonnes obligatoires absentes du fichier</td>
+      <td><em><span class="error-msg">"The file is missing the following required columns : ..."</span></em></td>
       <td>Ajouter la/les colonne(s) manquante(s) (voir le guide des colonnes, module Resources)</td>
     </tr>
     <tr>
       <td>2</td>
-      <td><em>"The file contains empty cells in required columns : ..."</em></td>
       <td><code>Lipid_Name</code>, <code>Formula</code>, <code>Precursor_MZ</code> ou <code>Adduct</code> contient une cellule vide</td>
+      <td><em><span class="error-msg">="The file contains empty cells in required columns : ..."</span></em></td>
       <td>Remplir les cellules vides de ces colonnes</td>
     </tr>
     <tr>
       <td>3</td>
-      <td><em>"The column Precursor_MZ must contain only numeric values..."</em></td>
       <td>Une valeur non numérique dans <code>Precursor_MZ</code> (texte, cellule mal formatée...)</td>
+      <td><em><span class="error-msg">"The column Precursor_MZ must contain only numeric values..."</span></em></td>
       <td>Corriger la/les ligne(s) indiquée(s) pour n'avoir que des nombres</td>
     </tr>
   </tbody>
 </table>
+</div>
 
 <p>
-  Pour un fichier <strong>MS2</strong>, le fichier ayant déjà été entièrement
+  Pour un fichier <span class="badge badge-ms2">MS2</span>, le fichier ayant déjà été entièrement
   vérifié à l'étape précédente, cette étape ne fait qu'afficher un
   récapitulatif : le message <span class="success-msg">"N scan(s) parsed
-  successfully"</span> ainsi qu'un tableau déroulant ("Preview scan data")
+  successfully"</span> ainsi qu'un encadré déroulant ("Preview scan data")
   reprenant le contenu de chaque scan, pour une dernière relecture avant de
-  passer à l'étape suivante.
+  passer à l'étape suivante. 
 </p>
 
 <h3 id="step-4">4ème étape : Complétion automatique et validation (Step 4 - Preview and automatic completion)</h3>
@@ -540,10 +689,11 @@
   besoin d'être renseignés dans le fichier source car ils peuvent être calculés
   automatiquement à partir des colonnes <code>Formula</code>,
   <code>Precursor_MZ</code> et <code>Adduct</code>, ainsi que des paramètres
-  choisis à l'étape 1. Un clic sur le bouton
+  choisis à <strong>l'étape 1</strong>. Un clic sur le bouton
   <strong>"Run automatic completion"</strong> lance ce calcul.
 </p>
 
+<div class="table-wrap">
 <table>
   <thead>
     <tr>
@@ -556,22 +706,22 @@
     <tr>
       <td><code>Molecular_weight</code></td>
       <td><code>Formula</code></td>
-      <td>La masse moléculaire moyenne est calculée à partir de la formule chimique </td>
+      <td>La masse moléculaire moyenne est calculée à partir de la formule chimique.</td>
     </tr>
     <tr>
       <td><code>Monoisotopic_mass</code></td>
       <td><code>Formula</code></td>
-      <td>La masse monoisotopique est calculée à partir de la formule chimique</td>
+      <td>La masse monoisotopique exacte est calculée à partir de la formule chimique.</td>
     </tr>
     <tr>
       <td><code>Adduct</code></td>
       <td><code>Adduct</code></td>
-      <td>La valeur brute de l'adduit est validée et normalisée vers sa forme standard (ex. <code>[M+H]+</code>, insensible à la casse et aux espaces). <code>Lipid_Name</code> n'intervient pas dans ce calcul : il sert uniquement à identifier la ligne/le scan concerné si l'adduit est invalide.</td>
+      <td>La valeur de l'adduit est vérifiée et mise au format standard (ex. <code>[M+H]+</code>).</td>
     </tr>
     <tr>
       <td><code>Neutral_mass</code></td>
       <td><code>Precursor_MZ</code> et <code>Adduct</code></td>
-      <td>La masse neutre est la masse du précurseur auquel on a rajoute ou supprimer la masse de l'adduit afin d'obtenir sa masse monoisotopique neutre</td>
+      <td>La masse neutre mesurée est calculée à partir de la masse du précurseur, à laquelle on ajoute ou retranche la masse de l'adduit (selon le type d'adduit) pour revenir à la masse de la molécule neutre.</td>
     </tr>
     <tr>
       <td><code>MS_level</code>, <code>Ionisation_mode</code></td>
@@ -580,11 +730,12 @@
     </tr>
     <tr>
       <td><code>Num_Peaks</code></td>
-      <td>Fixé à 0 pour un fichier MS1 ; nombre de fragments du scan pour un fichier MS2</td>
+      <td>Fixé à 0 pour un fichier <span class="badge badge-ms1">MS1</span> ; nombre de fragments du scan pour un fichier <span class="badge badge-ms2">MS2</span></td>
       <td></td>
     </tr>
   </tbody>
 </table>
+</div>
 
 <p>
   Si une formule est incorrecte ou qu'un adduit ne peut pas être reconnu, un
@@ -598,22 +749,25 @@
 
 <p>
   Une fois le calcul terminé, un tableau éditable s'affiche pour une dernière
-  relecture avant intégration. Les colonnes calculées automatiquement (voir
-  tableau ci-dessus, ainsi que <code>Precursor_MZ</code> et <code>Formula</code>)
-  ne sont pas modifiables, afin de garantir leur cohérence avec les valeurs
-  dont elles sont dérivées : elles n'affichent pas l'icône crayon ✎ à côté de
+  relecture avant intégration. Les colonnes <code>Molecular_weight</code>,
+  <code>Monoisotopic_mass</code>, <code>Adduct</code>, <code>Neutral_mass</code>,
+  <code>MS_level</code>, <code>Ionisation_mode</code>, <code>Num_Peaks</code>,
+  ainsi que <code>Precursor_MZ</code> et <code>Formula</code>,
+  ne sont pas modifiables. L'objectif est de garantir leur cohérence avec les valeurs
+  dont elles sont dérivées. Ces colonnes n'affichent pas l'icône crayon ✎ à côté de
   leur nom, contrairement aux colonnes éditables. Pour un fichier
-  <strong>MS1</strong>, les autres colonnes restent modifiables et il est
-  possible d'ajouter ou de supprimer des lignes. Pour un fichier
-  <strong>MS2</strong>, le nombre de lignes est fixe (une ligne par scan).
+  <span class="badge badge-ms1">MS1</span>, les autres colonnes restent modifiables et il est
+  possible de supprimer des lignes. Cependant, pour ajouter des lignes il faut modifier le fichier source et le recharger depuis l'étape 2.
+  Pour un fichier
+  <span class="badge badge-ms2">MS2</span> il n'est possible ni d'ajouter ni de supprimer des lignes.
 </p>
 
 <p>
   Le bouton <strong>"Validate data"</strong> vérifie que les colonnes
   obligatoires (<code>Lipid_Name</code>, <code>Formula</code>,
   <code>Precursor_MZ</code>, <code>Adduct</code>) ne contiennent aucune cellule
-  vide. Si c'est le cas, un message d'avertissement
-  <span class="error-msg">"The table contains empty cells in required columns :
+  vide. Dans le cas contraire, un message d'avertissement
+  <span class="warning">"The table contains empty cells in required columns :
   ..."</span> s'affiche et il faut compléter le tableau avant de valider à
   nouveau. Une fois la validation réussie, un résumé apparaît. Il présente le nombre total
   de lipides ainsi que le nombre de catégories, classes et sous-classes
@@ -622,7 +776,7 @@
 </p>
 
 <p>
-Pour des modifications non ponctuelles il est préférable de privilégier une modification du fichier
+Pour des modifications non ponctuelles, il est préférable de modifier directement le fichier source
 afin d'éviter d'introduire des erreurs potentielles.
 </p>
 
@@ -633,9 +787,7 @@ afin d'éviter d'introduire des erreurs potentielles.
   l'étape 4. Un message d'information rappelle le nombre de lipides prêts à
   être intégrés : <em>"Ready to integrate X lipids into the database."</em>
   Un clic sur le bouton <strong>"Integrate data"</strong> déclenche
-  l'insertion des données dans la base <strong>BacLipidDB</strong> (tables
-  <code>Detection</code>, <code>Lipid</code>, <code>Annotation</code>, et
-  <code>Fragment</code> pour les fichiers MS2).
+  l'insertion des données dans la base <strong>BacLipidDB</strong>.
 </p>
 
 <p>
@@ -652,7 +804,7 @@ afin d'éviter d'introduire des erreurs potentielles.
   mais qu'une étape suivant l'intégration (sauvegarde automatique de la base
   ou mise à jour de l'historique) échoue. Dans ce cas, un message
   d'avertissement s'affiche à la place du message de succès :
-  <span class="error-msg">Data was integrated successfully, but a
+  <span class="warning">"Data was integrated successfully, but a
   post-integration step failed : ..."</span>. Il ne faut alors <strong>pas
   recommencer l'intégration</strong> (les données sont déjà présentes dans la
   base) : il suffit d'utiliser le bouton <strong>"Reset 🔄"</strong> pour
@@ -672,7 +824,7 @@ afin d'éviter d'introduire des erreurs potentielles.
 <h2 id="module-2">Module 2 : BacLipidDB</h2>
 
 <p>
-  La page "BacLipidDB" est un module permettant la visualisation du contenu de la
+  La page <strong>Database page</strong> est un module permettant la visualisation du contenu de la
   base <strong>BacLipidDB</strong>. Un sélecteur en haut de page permet de choisir
   quelle vue afficher.
 </p>
@@ -683,6 +835,7 @@ afin d'éviter d'introduire des erreurs potentielles.
   Le sélecteur <strong>"Select a table"</strong> propose cinq options :
 </p>
 
+<div class="table-wrap">
 <table>
   <tbody>
     <tr>
@@ -691,7 +844,7 @@ afin d'éviter d'introduire des erreurs potentielles.
     </tr>
     <tr>
       <td><code>Fragment</code></td>
-      <td>Contenu brut de la table <code>Fragment</code> (fragments MS2).</td>
+      <td>Contenu brut de la table <code>Fragment</code> (fragments <span class="badge badge-ms2">MS2</span>).</td>
     </tr>
     <tr>
       <td><code>Lipid</code></td>
@@ -707,6 +860,7 @@ afin d'éviter d'introduire des erreurs potentielles.
     </tr>
   </tbody>
 </table>
+</div>
 
 <p>
   Un encadré <strong>"ℹ️ How to use this page"</strong>, repliable, résume ces cinq
@@ -720,14 +874,15 @@ afin d'éviter d'introduire des erreurs potentielles.
   sans jointure. Le titre du tableau rappelle le nombre de lignes, par exemple
   <em>"Table : Lipid - 128 rows"</em>. Les colonnes numériques suivantes sont
   affichées avec un nombre de décimales fixe : <code>Precursor_MZ</code>,
-  <code>Neutral_mass</code>, <code>MZ</code>, <code>Monoisotopic_mass</code> et
-  <code>Intensity</code> (6 décimales), <code>RT</code> et <code>CCS</code>
+  <code>Neutral_mass</code>, <code>MZ</code> et
+  <code>Intensity</code> (6 décimales), <code>Monoisotopic_mass</code>
+  (8 décimales), <code>RT</code> et <code>CCS</code>
   (4 décimales), <code>Molecular_weight</code> (0 décimale).
 </p>
 
 <p>
   Si la table sélectionnée ne contient aucune ligne, le message
-  <span class="success-msg">"This table contains no data yet."</span> s'affiche à
+  <span class="info-msg">"This table contains no data yet."</span> s'affiche à
   la place du tableau.
 </p>
 
@@ -746,8 +901,8 @@ afin d'éviter d'introduire des erreurs potentielles.
 </p>
 
 <p>
-  Chaque ligne est colorée selon le lot d'import (fichier) auquel elle appartient :
-  une couleur pastel distincte est attribuée à chaque import, dans l'ordre où ils
+  Chaque ligne est colorée selon le lot d'import (fichier) auquel elle appartient.
+  Une couleur pastel est attribuée à chaque import dans l'ordre où ils
   ont été intégrés dans <strong>Module 1</strong>. Sous le tableau un encadré repliable
   <strong>"color caption"</strong> rappelle pour chaque
   import sa couleur, le nom du fichier, sa date d'intégration, son nombre de lignes
@@ -757,7 +912,7 @@ afin d'éviter d'introduire des erreurs potentielles.
 <p class="warning">
   Une ligne peut apparaître sans couleur de fond si Detection_ID ne
   correspond à aucun import enregistré dans l'historique. Ce cas ne devrait pas se
-  produire en usage normal. Si cette erreur apparait il est important de le signaler 
+  produire en usage normal. Si cette erreur apparaît, il est important de le signaler
   à la personne en charge de la maintenance de l'application.
 </p>
 
@@ -771,12 +926,13 @@ afin d'éviter d'introduire des erreurs potentielles.
   <strong>Unknown</strong> (lignes sans import connu, en gris).
 </p>
 
+<div class="table-wrap">
 <table>
   <tbody>
     <tr>
       <td><strong>Measured neutral mass vs. theoretical monoisotopic mass</strong></td>
       <td>
-        Nuage de points comparant la masse neutre mesurée (<code>Neutral_mass</code>,
+        Nuage de points comparant la masse neutre (<code>Neutral_mass</code>,
         calculée à partir de <code>Precursor_MZ</code> et de l'adduit) à la masse
         monoisotopique théorique du lipide de référence (<code>Monoisotopic_mass</code>).
         Une droite pointillée <em>y = x</em> sert de repère visuel : plus un point s'en
@@ -810,6 +966,7 @@ afin d'éviter d'introduire des erreurs potentielles.
     </tr>
   </tbody>
 </table>
+</div>
 
 <p>
   Si aucune ligne ne dispose des données nécessaires à un graphique (masse neutre,
@@ -824,11 +981,11 @@ afin d'éviter d'introduire des erreurs potentielles.
   <strong>Module 1</strong> : nom du fichier, date d'intégration, niveau MS, mode
   d'ionisation, nombre de lignes insérées et nom de la personne qui a soumis
   l'import. Si aucun import n'a encore été effectué, le message
-  <span class="success-msg">"No imports recorded yet."</span> s'affiche à la place
+  <span class="info-msg">"No imports recorded yet."</span> s'affiche à la place
   du tableau.
 </p>
 
-<p class="warning">
+<p>
   En cas d'erreur lors du chargement d'une table (par exemple un problème d'accès
   à la base de données), le message <span class="error-msg">"Error loading table :
   ..."</span> s'affiche à la place du contenu attendu.
@@ -836,15 +993,493 @@ afin d'éviter d'introduire des erreurs potentielles.
 </section>
 <section class="section-card">
 
+<h2 id="module-3">Module 3 : Export</h2>
 
+<p>
+  La page <strong>Export</strong> est un module permettant de filtrer les annotations
+  présentes dans <strong>BacLipidDB</strong> puis de les exporter sous
+  différents formats. Un encadré <strong>"ℹ️ How to use this page"</strong>,
+  repliable, résume les trois étapes ci-dessous directement sur la page.
+</p>
+<p>
+  Si la base ne contient aucune donnée, le message
+  <span class="info-msg">"The database contains no data yet."</span>
+  s'affiche à la place de la page. Si le chargement des données échoue (par
+  exemple un problème d'accès à la base de données), le message
+  <span class="error-msg">"Unable to load data from the database: ..."</span>
+  s'affiche à la place.
+</p>
+
+<h3 id="module-3-filters">1ère étape : Filtres (Filters)</h3>
+
+<p>
+  Six filtres permettent de restreindre les annotations à exporter. Laisser un
+  filtre vide revient à inclure toutes les valeurs possibles pour ce filtre.
+</p>
+
+<div class="table-wrap">
+<table>
+  <tbody>
+    <tr>
+      <td>Lipid category</td>
+      <td>Sélection multiple parmi les catégories de lipides présentes en base. Si des lignes n'ont pas de catégorie renseignée, une option <code>(None)</code> apparaît pour les inclure.</td>
+    </tr>
+    <tr>
+      <td>Lipid class</td>
+      <td>Sélection multiple parmi les classes de lipides présentes en base, avec la même option <code>(None)</code> si nécessaire.</td>
+    </tr>
+    <tr>
+      <td>Lipid subclass</td>
+      <td>Sélection multiple parmi les sous-classes de lipides présentes en base, avec la même option <code>(None)</code> si nécessaire.</td>
+    </tr>
+    <tr>
+      <td>MS level</td>
+      <td>Sélection multiple parmi <code>MS1</code> / <code>MS2</code>.</td>
+    </tr>
+    <tr>
+      <td>Ionisation mode</td>
+      <td>Sélection multiple parmi les modes d'ionisation présents en base.</td>
+    </tr>
+    <tr>
+      <td>Precursor m/z range</td>
+      <td>Deux champs numériques (<strong>Min m/z</strong> et <strong>Max m/z</strong>) pré-remplis avec les valeurs minimale et maximale présentes en base. Seules les annotations dont le <code>Precursor_MZ</code> est compris dans cet intervalle sont incluses dans l'export.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="module-3-preview">2ème étape : Aperçu (Preview)</h3>
+
+<p>
+  Un titre <em>"Preview - N rows"</em> indique le nombre de lignes retenues
+  après application des filtres, suivi d'un tableau d'aperçu reprenant pour
+  chaque annotation son nom, sa formule, son <code>Precursor_MZ</code>, son
+  <code>MS_level</code>, son <code>RT</code>, sa <code>CCS</code> et son
+  <code>Num_Peaks</code>. Si aucune ligne ne correspond aux filtres choisis, le
+  message <span class="warning">"No data matches the selected filters."</span>
+  s'affiche à la place du tableau et des boutons de téléchargement.
+</p>
+
+<h3 id="module-3-download">3ème étape : Téléchargement (Download)</h3>
+
+<p>
+  Trois boutons permettent de télécharger les données filtrées, chacun sous un
+  format différent. Le nom du fichier généré inclut toujours la date du jour
+  (<code>YYYYMMDD</code>).
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Bouton</th>
+      <th>Contenu</th>
+      <th>Disponibilité</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CSV (<span class="badge badge-ms1">MS1</span> + <span class="badge badge-ms2">MS2</span>)</strong></td>
+      <td>
+        Toutes les annotations filtrées, colonnes <code>neutral_mass</code>,
+        <code>mz</code>, <code>formula</code> et <code>name</code>, au format
+        CSV compatible avec MZmine.
+      </td>
+      <td>Toujours disponible.</td>
+    </tr>
+    <tr>
+      <td><strong>MSP (<span class="badge badge-ms2">MS2</span>)</strong></td>
+      <td>
+        Annotations filtrées disposant de spectres de fragments, au format
+        <code>.msp</code>. Chaque entrée contient le nom du lipide, le
+        <code>Precursor_MZ</code>, la masse moléculaire (<code>MW</code>),
+        la masse neutre mesurée (<code>ExactMass</code>), le mode d'ionisation
+        (<code>Ion_mode</code>, <code>P</code> pour positif ou <code>N</code>
+        pour négatif), le <code>RT</code> et la <code>CCS</code> lorsqu'ils
+        sont disponibles, le nombre de fragments (<code>Num Peaks</code>) et la
+        liste des fragments (m/z et intensité).
+      </td>
+      <td>
+        Bouton grisé et non cliquable si aucune annotation <code>MS2</code> ne figure parmi les
+        lignes filtrées.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>CSV (CCS + RT)</strong></td>
+      <td>
+        Annotations filtrées disposant à la fois d'un <code>RT</code> et d'une
+        <code>CCS</code>, colonnes <code>neutral_mass</code>, <code>mz</code>,
+        <code>formula</code>, <code>name</code>, <code>RT</code> et <code>CCS</code>.
+      </td>
+      <td>
+        Bouton grisé si aucune ligne filtrée ne dispose à la fois d'un
+        <code>RT</code> et d'une <code>CCS</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p class="warning">
+  MZmine n'accepte pas un fichier CSV d'annotations <span class="badge badge-ms1">MS1</span> où certaines lignes
+  possèdent des valeurs de CCS/RT et d'autres non.
+  C'est pourquoi l'export CSV (CCS + RT) est proposé
+  séparément de l'export CSV (<span class="badge badge-ms1">MS1</span> + <span class="badge badge-ms2">MS2</span>).
+</p>
 
 </section>
+<section class="section-card">
 
+<h2 id="module-4">Module 4 : Resources</h2>
 
+<p>
+  La page <strong>Resources</strong> sert de guide pour préparer les fichiers d'intégration
+  destinés au <strong>Module 1</strong>. Elle détaille, pour les niveaux
+  <code>MS1</code> et <code>MS2</code>, les colonnes attendues avec leur type
+  et leur caractère obligatoire ou optionnel, propose un fichier modèle
+  téléchargeable pour chaque niveau, et permet de consulter et de gérer la
+  liste des adduits acceptés dans la colonne <code>Adduct</code>.
+</p>
 
+<h3 id="module-4-ms1">Guide des colonnes <span class="badge badge-ms1">MS1</span></h3>
 
+<p>
+  Un tableau récapitule les colonnes attendues dans un fichier d'intégration
+  <strong><span class="badge badge-ms1">MS1</span></strong>, avec pour chacune son type et si elle est obligatoire
+  ou non. Seules <code>FA_composition</code>, <code>RT</code> et <code>CCS</code>
+  sont optionnelles (à laisser vides dans le fichier si non disponibles).
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Colonne</th>
+      <th>Obligatoire</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Precursor_MZ</code></td>
+      <td>✅</td>
+      <td>float</td>
+      <td>m/z de l'ion mesuré par le spectromètre de masse.</td>
+    </tr>
+    <tr>
+      <td><code>Adduct</code></td>
+      <td>✅</td>
+      <td>text</td>
+      <td>Adduit du précurseur. Détermine le calcul de la masse neutre, indépendamment du mode d'ionisation.</td>
+    </tr>
+    <tr>
+      <td><code>Formula</code></td>
+      <td>✅</td>
+      <td>text</td>
+      <td>Formule chimique brute.</td>
+    </tr>
+    <tr>
+      <td><code>FA_composition</code></td>
+      <td>❌</td>
+      <td>text</td>
+      <td>Composition en acides gras (laisser vide si non disponible).</td>
+    </tr>
+    <tr>
+      <td><code>Lipid_Name</code></td>
+      <td>✅</td>
+      <td>text</td>
+      <td>Identifiant unique du lipide.</td>
+    </tr>
+    <tr>
+      <td><code>Lipid_category</code></td>
+      <td>✅</td>
+      <td>text</td>
+      <td>Catégorie LIPID MAPS.</td>
+    </tr>
+    <tr>
+      <td><code>Lipid_class</code></td>
+      <td>✅</td>
+      <td>text</td>
+      <td>Classe LIPID MAPS.</td>
+    </tr>
+    <tr>
+      <td><code>Lipid_subclass</code></td>
+      <td>✅</td>
+      <td>text</td>
+      <td>Sous-classe LIPID MAPS.</td>
+    </tr>
+    <tr>
+      <td><code>RT</code></td>
+      <td>❌</td>
+      <td>float</td>
+      <td>Temps de rétention en minutes (laisser vide si non disponible).</td>
+    </tr>
+    <tr>
+      <td><code>CCS</code></td>
+      <td>❌</td>
+      <td>float</td>
+      <td>Section efficace de collision en Å² (laisser vide si non disponible).</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p class="warning">
+  Les noms de colonnes sont sensibles à la casse : il faut utiliser exactement
+  la capitalisation indiquée dans le tableau ci-dessus. De plus, la formule
+  doit respecter la casse standard des symboles chimiques et ne contenir
+  aucun autre caractère. La formule ne doit pas être écrite sous forme de
+  formule développée.
+</p>
+
+<h3 id="module-4-template-ms1">Modèle <span class="badge badge-ms1">MS1</span></h3>
+
+<p>
+  Le bouton <strong>"Download <span class="badge badge-ms1">MS1</span> template (.csv)"</strong> télécharge le
+  fichier <code>BacLipidDB_MS1_template.csv</code> : une ligne d'exemple
+  illustrant les 7 colonnes obligatoires et laissant vides les 3 colonnes
+  optionnelles (<code>FA_composition</code>, <code>RT</code>, <code>CCS</code>).
+</p>
+
+<h3 id="module-4-ms2">Guide des colonnes <span class="badge badge-ms2">MS2</span></h3>
+
+<p>
+  Un fichier d'intégration <strong><span class="badge badge-ms2">MS2</span></strong> est organisé en blocs
+  empilés verticalement, un bloc par scan, séparés par une ligne vide.
+  Chaque bloc commence par une ligne <code>Scan #&lt;id&gt;</code>, suivie
+  d'une ligne <code>Label,Value</code> par champ (dans n'importe quel ordre),
+  puis de l'en-tête <code>m/z,Intensity</code> et des lignes de fragments :
+</p>
+
+<pre><code>Scan #&lt;id&gt;
+Precursor_MZ,&lt;precursor_mz&gt;
+Adduct,&lt;adduct&gt;
+Formula,&lt;formula&gt;
+FA_composition,&lt;fa_composition&gt;
+Lipid_Name,&lt;lipid_name&gt;
+Lipid_category,&lt;lipid_category&gt;
+Lipid_class,&lt;lipid_class&gt;
+Lipid_subclass,&lt;lipid_subclass&gt;
+Num_peaks,&lt;count&gt;
+m/z,Intensity
+&lt;mz_1&gt;,&lt;intensity_1&gt;
+&lt;mz_2&gt;,&lt;intensity_2&gt;
+...</code></pre>
+
+<p>
+  Un tableau récapitule ensuite les colonnes/champs attendus par bloc :
+  <code>Scan #&lt;id&gt;</code>, <code>Precursor_MZ</code>, <code>Adduct</code>,
+  <code>Formula</code>, <code>FA_composition</code>, <code>Lipid_Name</code>,
+  <code>Lipid_category</code>, <code>Lipid_class</code>, <code>Lipid_subclass</code>,
+  <code>Num_peaks</code>, <code>m/z</code>, <code>Intensity</code>, <code>RT</code>
+  et <code>CCS</code>. Seules <code>FA_composition</code>, <code>RT</code> et
+  <code>CCS</code> sont optionnelles : contrairement au <span class="badge badge-ms1">MS1</span>, elles doivent être
+  entièrement supprimées du bloc (ligne <code>Label,Value</code> comprise)
+  si non disponibles, au lieu d'être laissées vides. <code>Num_peaks</code>
+  doit correspondre au nombre de lignes <code>m/z</code>/<code>Intensity</code>
+  du bloc.
+</p>
+
+<p class="warning">
+  Les noms de colonnes sont sensibles à la casse. Il faut utiliser exactement
+  la capitalisation indiquée dans le tableau des champs attendus.
+</p>
+
+<h3 id="module-4-template-ms2">Modèle <span class="badge badge-ms2">MS2</span></h3>
+
+<p>
+  Le bouton <strong>"Download <span class="badge badge-ms2">MS2</span> template (.csv)"</strong> télécharge le
+  fichier <code>BacLipidDB_MS2_template.csv</code> : deux scans d'exemple
+  séparés par une ligne vide. Le premier scan inclut les champs optionnels
+  <code>RT</code> et <code>CCS</code> ; le second montre que ces lignes
+  peuvent être omises entièrement quand ces valeurs ne sont pas disponibles.
+</p>
+
+<h3 id="module-4-adducts">Adduits</h3>
+
+<p>
+  Un tableau liste les adduits acceptés dans la colonne <code>Adduct</code>
+  (intégration <span class="badge badge-ms1">MS1</span> et <span class="badge badge-ms2">MS2</span>) : nom de l'adduit, décalage de masse en Da
+  (<strong>Mass shift</strong>), opération à appliquer au m/z pour obtenir la
+  masse neutre, et un indicateur <strong>Custom</strong> (✅ pour un adduit
+  ajouté manuellement, ❌ pour un adduit natif de l'application).
+</p>
+
+<p>
+  Un formulaire <strong>"Add a custom adduct"</strong> permet d'ajouter un
+  nouvel adduit personnalisé : son nom (ex. <code>[M+Cl]-</code>), son
+  décalage de masse en Da, et son type de formation (<strong>Addition</strong>,
+  ex. <code>[M+H]+</code>/<code>[M+Na]+</code>, ou <strong>Loss</strong>, ex.
+  <code>[M-H]-</code>). En cas de succès, le message
+  <span class="success-msg">"Adduct '...' added."</span> s'affiche ; en cas
+  d'erreur (nom vide ou déjà utilisé, décalage non valide...), un message
+  <span class="error-msg">d'erreur</span> détaille le problème rencontré.
+  Les adduits personnalisés sont enregistrés localement et restent
+  disponibles d'une session à l'autre.
+</p>
+
+<p>
+  Si au moins un adduit personnalisé existe, un sélecteur
+  <strong>"Remove a custom adduct"</strong> et un bouton
+  <strong>"Remove"</strong> permettent de le retirer. Les adduits natifs de
+  l'application ne peuvent pas être supprimés.
+</p>
+
+</section>
+<section class="section-card">
+
+<h2 id="module-5">Module 5 : Management</h2>
+
+<p>
+  La page <strong>Management</strong> permet de corriger ou de supprimer des données déjà
+  intégrées dans <strong>BacLipidDB</strong>, via deux sections indépendantes :
+  <strong>Edit &amp; delete records</strong> (édition ou suppression ligne par
+  ligne) et <strong>Delete an entire import</strong> (suppression en une fois
+  de tout ce qu'un import donné a inséré en base). Un encadré
+  <strong>"ℹ️ How to use this page"</strong>, repliable, résume ces deux
+  sections directement sur la page.
+</p>
+
+<p class="warning">
+  Une sauvegarde de la base est systématiquement effectuée avant toute
+  modification, et chaque action destructrice ou modificatrice doit être
+  confirmée dans une boîte de dialogue dédiée avant d'être appliquée.
+</p>
+
+<h3 id="module-5-edit">Edit &amp; delete records</h3>
+
+<p>
+  Le tableau affiche, pour chaque annotation, les colonnes
+  <code>Annotation_ID</code>, <code>Detection_ID</code>, <code>Lipid_ID</code>,
+  <code>Lipid_name</code>, <code>Formula</code>, <code>Lipid_category</code>,
+  <code>Lipid_class</code>, <code>Lipid_subclass</code>, <code>Precursor_MZ</code>,
+  <code>Ionisation_mode</code>, <code>Adduct</code>, <code>Neutral_mass</code>,
+  <code>Molecular_weight</code>, <code>Monoisotopic_mass</code>,
+  <code>MS_level</code>, <code>Num_Peaks</code>, <code>RT</code> et <code>CCS</code>,
+  précédées d'une case à cocher <strong>Delete</strong>. Si la base ne
+  contient aucune annotation, le message
+  <span class="info-msg">"This table contains no data yet."</span>
+  s'affiche à la place du tableau.
+</p>
+
+<p>
+  Seules certaines colonnes sont modifiables : <code>Lipid_name</code>,
+  <code>Lipid_category</code>, <code>Lipid_class</code>, <code>Lipid_subclass</code>,
+  <code>Formula</code>, <code>RT</code> et <code>CCS</code>.
+  Les autres (<code>Annotation_ID</code>, <code>Detection_ID</code>,
+  <code>Lipid_ID</code>, <code>Precursor_MZ</code>, <code>Ionisation_mode</code>,
+  <code>Adduct</code>, <code>Neutral_mass</code>, <code>Molecular_weight</code>,
+  <code>Monoisotopic_mass</code>, <code>MS_level</code> et <code>Num_Peaks</code>)
+  sont verrouillées : modifier <code>Precursor_MZ</code>, <code>Ionisation_mode</code>
+  ou <code>Adduct</code> nécessiterait de recalculer <code>Neutral_mass</code>, ce qui
+  n'est pas pris en charge sur cette page ; les autres colonnes verrouillées sont des
+  valeurs calculées ou fixées à l'intégration. Modifier <code>Formula</code>
+  recalcule automatiquement <code>Molecular_weight</code> et
+  <code>Monoisotopic_mass</code>, exactement comme lors de la complétion
+  automatique du <strong>Module 1</strong>.
+</p>
+
+<p>
+  Le bouton <strong>"Apply changes"</strong> vérifie d'abord que
+  <code>Lipid_name</code>, <code>Formula</code> et <code>Precursor_MZ</code>
+  ne sont vides pour aucune ligne non cochée pour suppression ; toute cellule
+  vide ajoute un message <span class="error-msg">d'erreur</span> (une ligne
+  peut donc en cumuler plusieurs) et bloque l'application des changements. Si aucune ligne n'a été
+  modifiée, le message <span class="info-msg">"No changes detected."</span>
+  s'affiche. Sinon, une boîte de dialogue de confirmation résume le nombre de
+  lignes à mettre à jour et à supprimer, avertit que les suppressions sont
+  irréversibles depuis l'application et liste les lignes concernées. Les
+  boutons <strong>"Confirm"</strong> / <strong>"Cancel"</strong> permettent
+  respectivement d'appliquer ou d'annuler le plan ; en cas de confirmation, le
+  message <span class="success-msg">"Changes applied."</span> s'affiche une
+  fois la mise à jour terminée.
+</p>
+
+<p class="warning">
+  Supprimer une ligne supprime en base les données liées
+  (Fragment, Annotation, Detection et
+  Lipid) : cette action n'est pas récupérable depuis
+  l'application.
+</p>
+
+<h3 id="module-5-delete-import">Delete an entire import</h3>
+
+<p>
+  Un sélecteur <strong>"Select an import to delete"</strong> propose la liste
+  des imports déjà réalisés via le <strong>Module 1</strong> (nom du fichier,
+  date d'intégration, nombre de lignes insérées et nom de l'intégrateur). Si
+  aucun import n'a encore été effectué, le message
+  <span class="info-msg">"No import history recorded yet."</span>
+  s'affiche à la place.
+</p>
+
+<p>
+  Une fois un import sélectionné, un encadré rappelle le nombre de lignes
+  enregistrées au moment de l'import ainsi que le nombre de lignes encore
+  présentes en base : les deux valeurs peuvent différer si certaines lignes
+  de ce lot ont déjà été supprimées individuellement via
+  <strong>Edit &amp; delete records</strong>.
+</p>
+
+<p>
+  Le bouton <strong>"Delete this import"</strong> ouvre une boîte de dialogue
+  de confirmation qui avertit du nombre d'enregistrements qui seront
+  supprimés et rappelle qu'une sauvegarde de la base est prise
+  automatiquement. Les boutons <strong>"Confirm deletion"</strong> /
+  <strong>"Cancel"</strong> permettent respectivement de supprimer l'import ou
+  d'annuler ; en cas de confirmation, un message
+  <span class="success-msg">"Import <em>nom_du_fichier</em> deleted."</span> s'affiche.
+</p>
+
+</section>
   </main>
 </div>
+
+<button id="back-to-top" aria-label="Retour en haut" title="Retour en haut">&uarr;</button>
+
+<script>
+  (function () {
+    var backToTop = document.getElementById("back-to-top");
+    var toggleBackToTop = function () {
+      backToTop.classList.toggle("is-visible", window.scrollY > 400);
+    };
+    window.addEventListener("scroll", toggleBackToTop, { passive: true });
+    toggleBackToTop();
+    backToTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll(".sidebar nav a"));
+    var sections = navLinks
+      .map(function (link) {
+        return document.getElementById(link.getAttribute("href").slice(1));
+      })
+      .filter(Boolean);
+
+    var setActiveLink = function (id) {
+      navLinks.forEach(function (link) {
+        link.classList.toggle("is-active", link.getAttribute("href") === "#" + id);
+      });
+    };
+
+    if ("IntersectionObserver" in window) {
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActiveLink(entry.target.id);
+            }
+          });
+        },
+        { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+      );
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+    }
+  })();
+</script>
 
 </body>
 </html>
