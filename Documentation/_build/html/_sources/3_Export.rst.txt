@@ -14,9 +14,8 @@ Vue d'ensemble
 
 Ce module Streamlit (**MODULE 3**) permet de filtrer les annotations de
 **BacLipidDB** par catégorie, classe et sous-classe lipidique, niveau MS,
-mode d'ionisation et plage de m/z. Si des RT et des CCS sont renseignés, 
-il est également possible de filtrer sur ces valeurs. Les annotations filtrées peuvent ensuite être visualisées
-puis téléchargées dans des formats compatible avec MZmine .csv, .msp. 
+mode d'ionisation et plage de m/z. Les annotations filtrées peuvent ensuite être visualisées
+puis téléchargées dans des formats compatible avec MZmine .csv, .msp.
 
 
 Chargement des données

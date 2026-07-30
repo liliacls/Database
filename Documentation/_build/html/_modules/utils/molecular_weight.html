@@ -82,13 +82,13 @@
 <a class="viewcode-back" href="../../api.html#utils.molecular_weight.molecular_weight">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">molecular_weight</span><span class="p">(</span><span class="n">formula</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute the average molecular weight of the lipid from its chemical formula.</span>
-<span class="sd">    Uses molmass.Formula.mass for the calculation, then rounds to 6 decimal places.</span>
-<span class="sd">    Returns None without raising an exception if the formula is None, empty, or invalid.</span>
+<span class="sd">    Calcule la masse moléculaire moyenne du lipide à partir de sa formule chimique.</span>
+<span class="sd">    Utilise molmass.Formula.mass pour le calcul, puis arrondit à 6 décimales.</span>
+<span class="sd">    Retourne None sans lever d&#39;exception si la formule est None, vide ou invalide.</span>
 
-<span class="sd">    :param formula: chemical formula</span>
+<span class="sd">    :param formula: formule chimique</span>
 <span class="sd">    :type formula: str</span>
-<span class="sd">    :return: average molecular weight rounded to 6 decimal places, or None if invalid.</span>
+<span class="sd">    :return: masse moléculaire moyenne arrondie à 6 décimales, ou None si invalide.</span>
 <span class="sd">    :rtype: float or None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">formula</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

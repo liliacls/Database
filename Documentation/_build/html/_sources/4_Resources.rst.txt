@@ -90,8 +90,8 @@ Un formulaire (``st.form``) permet de saisir un nom d'adduit
 (``st.number_input``) et le type de formation (``st.radio``) : « Addition »
 (ex. ``[M+H]+``, ``[M+Na]+``) ou « Loss » (ex. ``[M-H]-``). Le signe transmis
 à :func:`utils.neutral_mass.add_adduct` vaut ``-1`` pour une addition
-et ``1`` pour une perte, conformément à la convention de
-:func:`utils.neutral_mass.neutral_mass` (``mz + sign * shift``). En cas de
+et ``1`` pour une perte, conformément à la convention utilisée en interne
+pour le calcul de la masse neutre (``mz + sign * shift``). En cas de
 succès, un message ``st.success`` est affiché et la page est rechargée
 (``st.rerun()``) ; en cas d'erreur (nom vide/déjà utilisé, décalage non
 strictement positif...), un message ``st.error`` affiche l'exception levée

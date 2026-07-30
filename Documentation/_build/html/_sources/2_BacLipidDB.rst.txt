@@ -28,7 +28,8 @@ directement depuis BacLipidDB via :func:`pandas.read_sql_table` puis affiché av
 :func:`st.dataframe`. Les colonnes numériques suivantes sont formatées via
 ``st.column_config.NumberColumn`` :
 
-- ``Precursor_MZ``, ``Neutral_mass``, ``MZ``, ``Monoisotopic_mass``, ``Intensity`` : 6 décimales
+- ``Precursor_MZ``, ``Neutral_mass``, ``MZ``, ``Intensity`` : 6 décimales
+- ``Monoisotopic_mass`` : 8 décimales
 - ``RT``, ``CCS`` : 4 décimales
 - ``Molecular_weight`` : 0 décimale
 

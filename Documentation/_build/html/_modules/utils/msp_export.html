@@ -92,15 +92,21 @@
     <span class="n">ionisation_modes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns a string in .msp format for MS2 detections matching the filters.</span>
+<span class="sd">    Retourne une chaîne au format .msp pour les détections MS2 correspondant aux filtres.</span>
 
-<span class="sd">    :param engine: engine: SQLAlchemy engine connected to the database.</span>
-<span class="sd">    :param categories: selected lipid category list (empty = all).</span>
-<span class="sd">    :param classes: selected lipid class list (empty = all).</span>
-<span class="sd">    :param sub_classes: selected lipid subclass list (empty = all).</span>
-<span class="sd">    :param mz_range: tuple (mz_min, mz_max) for filtering on Precursor_MZ.</span>
-<span class="sd">    :param ionisation_modes: selected ionisation mode list, &quot;Positive&quot;/&quot;Negative&quot;</span>
-<span class="sd">    :return: .msp file ready to be downloaded.</span>
+<span class="sd">    :param engine: moteur SQLAlchemy connecté à la base de données.</span>
+<span class="sd">    :type engine: sqlalchemy.engine.Engine</span>
+<span class="sd">    :param categories: liste des catégories de lipides sélectionnées (vide = toutes).</span>
+<span class="sd">    :type categories: list</span>
+<span class="sd">    :param classes: liste des classes de lipides sélectionnées (vide = toutes).</span>
+<span class="sd">    :type classes: list</span>
+<span class="sd">    :param sub_classes: liste des sous-classes de lipides sélectionnées (vide = toutes).</span>
+<span class="sd">    :type sub_classes: list</span>
+<span class="sd">    :param mz_range: tuple (mz_min, mz_max) pour filtrer sur Precursor_MZ.</span>
+<span class="sd">    :type mz_range: tuple</span>
+<span class="sd">    :param ionisation_modes: liste des modes d&#39;ionisation sélectionnés, &quot;Positive&quot;/&quot;Negative&quot; (None = tous).</span>
+<span class="sd">    :type ionisation_modes: list | None</span>
+<span class="sd">    :return: contenu du fichier .msp prêt à être téléchargé.</span>
 <span class="sd">    :rtype: str</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -143,7 +149,7 @@
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RT: </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">RT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">CCS</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CCS: </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">CCS</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Num Peaks: </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">Num_Peaks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Num Peaks: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">fragments</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">fragments</span><span class="p">:</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">frag</span><span class="o">.</span><span class="n">MZ</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">frag</span><span class="o">.</span><span class="n">Intensity</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

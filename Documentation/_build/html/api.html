@@ -105,8 +105,31 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.data_access">utils.data_access</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.data_access.load_database"><code class="docutils literal notranslate"><span class="pre">load_database()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.db_backup">utils.db_backup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.db_backup.backup_database"><code class="docutils literal notranslate"><span class="pre">backup_database()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.exceptions">utils.exceptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.exceptions.PostIntegrationError"><code class="docutils literal notranslate"><span class="pre">PostIntegrationError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.history">utils.history</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.history.load_history"><code class="docutils literal notranslate"><span class="pre">load_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.history.append_history"><code class="docutils literal notranslate"><span class="pre">append_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.history.remove_history"><code class="docutils literal notranslate"><span class="pre">remove_history()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-utils.loading_MS1">utils.loading_MS1</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#utils.loading_MS1.DB_MS1"><code class="docutils literal notranslate"><span class="pre">DB_MS1()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.loading_MS2">utils.loading_MS2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.loading_MS2.ms2_parsing"><code class="docutils literal notranslate"><span class="pre">ms2_parsing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.loading_MS2.DB_MS2"><code class="docutils literal notranslate"><span class="pre">DB_MS2()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-utils.molecular_weight">utils.molecular_weight</a><ul>
@@ -122,22 +145,18 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-utils.neutral_mass">utils.neutral_mass</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.json_adducts"><code class="docutils literal notranslate"><span class="pre">json_adducts()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.list_adducts"><code class="docutils literal notranslate"><span class="pre">list_adducts()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.add_adduct"><code class="docutils literal notranslate"><span class="pre">add_adduct()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.remove_adduct"><code class="docutils literal notranslate"><span class="pre">remove_adduct()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.adduct"><code class="docutils literal notranslate"><span class="pre">adduct()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.neutral_mass"><code class="docutils literal notranslate"><span class="pre">neutral_mass()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.neutral_mass.resolve_adducts"><code class="docutils literal notranslate"><span class="pre">resolve_adducts()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-scripts.init_db">scripts.init_db</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#init-db-py">init_db.py</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scripts.init_db.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scripts.init_db._main"><code class="docutils literal notranslate"><span class="pre">_main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-scripts.reset_db">scripts.reset_db</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#reset-db-py">reset_db.py</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scripts.reset_db.reset_db"><code class="docutils literal notranslate"><span class="pre">reset_db()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scripts.reset_db._reset_db"><code class="docutils literal notranslate"><span class="pre">_reset_db()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -176,14 +195,27 @@
 (<code class="docutils literal notranslate"><span class="pre">sphinx.ext.autodoc</span></code>). Contrairement aux pages Streamlit (<a class="reference internal" href="Home.html"><span class="doc">Home</span></a>,
 <a class="reference internal" href="1_Integration.html"><span class="doc">Data_Integration</span></a>, <a class="reference internal" href="2_BacLipidDB.html"><span class="doc">BacLipidDB</span></a>, <a class="reference internal" href="3_Export.html"><span class="doc">Export</span></a>), les modules
 ci-dessous sont écrits sous forme de fonctions/classes documentées, ce qui
-permet une extraction automatique.</p>
+permet une génération automatique.</p>
 </div>
 <section id="module-config">
 <span id="config"></span><h2>config<a class="headerlink" href="#module-config" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="config.get_engine">
 <span class="sig-prename descclassname"><span class="pre">config.</span></span><span class="sig-name descname"><span class="pre">get_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/config.html#get_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config.get_engine" title="Link to this definition"></a></dt>
-<dd><p>Create and cache the SQLAlchemy engine for the SQLite database connection.</p>
+<dd><p>Crée et met en cache le moteur SQLAlchemy pour la connexion à la base de données SQLite.</p>
+<p>Grâce à <code class="docutils literal notranslate"><span class="pre">st.cache_resource</span></code>, le moteur n’est instancié qu’une seule fois par
+session Streamlit puis réutilisé, évitant de rouvrir une connexion à chaque rerun.
+La fonction <cite>enable_foreign_key</cite> est attaché à <code class="docutils literal notranslate"><span class="pre">connect</span></code> pour activer la pragma SQLite
+<code class="docutils literal notranslate"><span class="pre">foreign_keys</span></code> (désactivée par défaut) afin que les contraintes de clé étrangère
+soient bien appliquées sur chaque nouvelle connexion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>moteur SQLAlchemy connecté à la base de données du projet (voir <code class="xref py py-data docutils literal notranslate"><span class="pre">DB_PATH</span></code>).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>sqlalchemy.engine.Engine</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -193,10 +225,10 @@ permet une extraction automatique.</p>
 <dt class="sig sig-object py" id="models.model.Base">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Base" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeclarativeBase</span></code></p>
-<p>Declarative base class for all BacLipidDB ORM models.</p>
-<p>All mapped classes (<a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a>, <a class="reference internal" href="#models.model.Fragment" title="models.model.Fragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fragment</span></code></a>, <a class="reference internal" href="#models.model.Lipid" title="models.model.Lipid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lipid</span></code></a>,
-<a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>) inherit from this class so SQLAlchemy can collect
-their metadata and generate the corresponding database tables.</p>
+<p>Classe de base déclarative pour tous les modèles ORM de BacLipidDB.</p>
+<p>Toutes les classes mappées (<a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a>, <a class="reference internal" href="#models.model.Fragment" title="models.model.Fragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fragment</span></code></a>, <a class="reference internal" href="#models.model.Lipid" title="models.model.Lipid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lipid</span></code></a>,
+<a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>) héritent de cette classe afin que SQLAlchemy puisse collecter
+leurs métadonnées et générer les tables de la base de données correspondantes.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="models.model.Base.registry">
 <span class="sig-name descname"><span class="pre">registry</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">_RegistryType</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;sqlalchemy.orm.decl_api.registry</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#models.model.Base.registry" title="Link to this definition"></a></dt>
@@ -210,10 +242,10 @@ their metadata and generate the corresponding database tables.</p>
 <dt class="sig sig-object py" id="models.model.Detection">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Detection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Detection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Detection" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
-<p>A single MS1 or MS2 detection (ion observed in a run).</p>
-<p>Stores the precursor m/z, ionisation mode, adduct, retention time and
-CCS. Linked to zero or more <a class="reference internal" href="#models.model.Fragment" title="models.model.Fragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fragment</span></code></a> rows when <code class="docutils literal notranslate"><span class="pre">MS_level</span></code> is
-“MS2”, and to one <a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>.</p>
+<p>Une détection MS1 ou MS2 unique (ion observé lors d’une analyse).</p>
+<p>Stocke le m/z du précurseur, le mode d’ionisation, l’adduit, le temps de
+rétention et la CCS. Liée à zéro ou plusieurs lignes <a class="reference internal" href="#models.model.Fragment" title="models.model.Fragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fragment</span></code></a> quand
+<code class="docutils literal notranslate"><span class="pre">MS_level</span></code> vaut “MS2”, et à une <a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="models.model.Detection.Detection_ID">
 <span class="sig-name descname"><span class="pre">Detection_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Detection.Detection_ID" title="Link to this definition"></a></dt>
@@ -275,8 +307,8 @@ CCS. Linked to zero or more <a class="reference internal" href="#models.model.Fr
 <dt class="sig sig-object py" id="models.model.Fragment">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Fragment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Fragment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Fragment" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
-<p>A fragment ion peak (m/z, intensity) belonging to an MS2 spectrum.</p>
-<p>Each row is attached to the <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a> it was measured in.</p>
+<p>Un pic d’ion fragment (m/z, intensité) appartenant à un spectre MS2.</p>
+<p>Chaque ligne est rattachée à la <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a> dans laquelle elle a été mesurée.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="models.model.Fragment.Fragment_ID">
 <span class="sig-name descname"><span class="pre">Fragment_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Fragment.Fragment_ID" title="Link to this definition"></a></dt>
@@ -308,9 +340,9 @@ CCS. Linked to zero or more <a class="reference internal" href="#models.model.Fr
 <dt class="sig sig-object py" id="models.model.Lipid">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Lipid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Lipid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Lipid" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
-<p>A lipid entity identified by name, formula and LIPID MAPS classification.</p>
-<p>Independent of any given detection; linked to the <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a> it
-was identified in through a single <a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>.</p>
+<p>Une entité lipidique identifiée par son nom, sa formule et sa classification LIPID MAPS.</p>
+<p>Indépendante de toute détection donnée ; liée à la <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a> dans
+laquelle elle a été identifiée via une seule <a class="reference internal" href="#models.model.Annotation" title="models.model.Annotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Annotation</span></code></a>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="models.model.Lipid.Lipid_ID">
 <span class="sig-name descname"><span class="pre">Lipid_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Lipid.Lipid_ID" title="Link to this definition"></a></dt>
@@ -367,8 +399,8 @@ was identified in through a single <a class="reference internal" href="#models.m
 <dt class="sig sig-object py" id="models.model.Annotation">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">models.model.</span></span><span class="sig-name descname"><span class="pre">Annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/models/model.html#Annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#models.model.Annotation" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#models.model.Base" title="models.model.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
-<p>Join table linking one <a class="reference internal" href="#models.model.Lipid" title="models.model.Lipid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lipid</span></code></a> to one <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a>.</p>
-<p>Represents the identification of a detected ion as a given lipid.</p>
+<p>Table de jointure liant un <a class="reference internal" href="#models.model.Lipid" title="models.model.Lipid"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lipid</span></code></a> à une <a class="reference internal" href="#models.model.Detection" title="models.model.Detection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code></a>.</p>
+<p>Représente l’identification d’un ion détecté comme un lipide donné.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="models.model.Annotation.Annotation_ID">
 <span class="sig-name descname"><span class="pre">Annotation_ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#models.model.Annotation.Annotation_ID" title="Link to this definition"></a></dt>
@@ -397,28 +429,189 @@ was identified in through a single <a class="reference internal" href="#models.m
 </dd></dl>
 
 </section>
+<section id="module-utils.data_access">
+<span id="utils-data-access"></span><h2>utils.data_access<a class="headerlink" href="#module-utils.data_access" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.data_access.load_database">
+<span class="sig-prename descclassname"><span class="pre">utils.data_access.</span></span><span class="sig-name descname"><span class="pre">load_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/utils/data_access.html#load_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.data_access.load_database" title="Link to this definition"></a></dt>
+<dd><p>Charge et met en cache les tables Annotation, Lipid, Detection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>_engine</strong> (<em>sqlalchemy.engine.Engine</em>) – moteur SQLAlchemy connecté à la base de données</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame avec une ligne par Annotation, jointe avec son Lipid et sa Detection.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.db_backup">
+<span id="utils-db-backup"></span><h2>utils.db_backup<a class="headerlink" href="#module-utils.db_backup" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.db_backup.backup_database">
+<span class="sig-prename descclassname"><span class="pre">utils.db_backup.</span></span><span class="sig-name descname"><span class="pre">backup_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/utils/db_backup.html#backup_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.db_backup.backup_database" title="Link to this definition"></a></dt>
+<dd><p>Crée une sauvegarde horodaté de la base de données SQLite.
+Crée BACKUP_DIR s’il n’existe pas encore, nettoie le label
+(caractères non alphanumériques/”_” remplacés par “_”) avant
+de l’utiliser dans le nom de fichier de la sauvegarde. Supprime aussi
+les enregistrements les plus anciens au-delà de BACKUP_COUNT afin que
+BACKUP_DIR ne grossisse pas indéfiniment. Si la création de la sauvegarde échoue,
+le fichier partiel est supprimé.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>label</strong> (<em>str</em>) – identifiant ajouté au nom de fichier de la sauvegarde.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sqlite3.Error</strong> – si la base de données source ne peut pas être lue ou
+si l’instantané ne peut pas être écrit.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>chemin vers le fichier de sauvegarde créé.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.exceptions">
+<span id="utils-exceptions"></span><h2>utils.exceptions<a class="headerlink" href="#module-utils.exceptions" title="Link to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="utils.exceptions.PostIntegrationError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.exceptions.</span></span><span class="sig-name descname"><span class="pre">PostIntegrationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/exceptions.html#PostIntegrationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.exceptions.PostIntegrationError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Erreur levée lors de l’echec de création d’une sauvegarde ou de l’écriture de l’historique.
+Ce n’est pas un échec d’intégration, les données sont déjà stockées dans la base de données.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – message décrivant l’échec de la sauvegarde ou de l’écriture de l’historique.</p></li>
+<li><p><strong>detection_ids</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – identifiants des <code class="docutils literal notranslate"><span class="pre">Detection</span></code> déjà validées (commit) en base avant l’échec.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.history">
+<span id="utils-history"></span><h2>utils.history<a class="headerlink" href="#module-utils.history" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.history.load_history">
+<span class="sig-prename descclassname"><span class="pre">utils.history.</span></span><span class="sig-name descname"><span class="pre">load_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/utils/history.html#load_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.history.load_history" title="Link to this definition"></a></dt>
+<dd><p>Charge l’historique des imports via HISTORY_PATH et retourne son contenu sous forme d’une liste de dictionnaires.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>liste des enregistrements d’import, ou une liste vide si le fichier n’existe pas ou est vide.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.history.append_history">
+<span class="sig-prename descclassname"><span class="pre">utils.history.</span></span><span class="sig-name descname"><span class="pre">append_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/history.html#append_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.history.append_history" title="Link to this definition"></a></dt>
+<dd><p>Charge l’historique existant, ajoute une seule entrée à la liste en mémoire, puis réécrit tout le fichier d’historique des imports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>entry</strong> (<em>dict</em>) – entrée d’historique à ajouter.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – si entry n’est pas un dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.history.remove_history">
+<span class="sig-prename descclassname"><span class="pre">utils.history.</span></span><span class="sig-name descname"><span class="pre">remove_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/history.html#remove_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.history.remove_history" title="Link to this definition"></a></dt>
+<dd><p>Supprime une seule entrée de l’historique des imports par index de liste.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – index de l’entrée à supprimer, tel que retourné par load_history().</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>IndexError</strong> – si index est hors limites de l’historique chargé.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-utils.loading_MS1">
 <span id="utils-loading-ms1"></span><h2>utils.loading_MS1<a class="headerlink" href="#module-utils.loading_MS1" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.loading_MS1.DB_MS1">
 <span class="sig-prename descclassname"><span class="pre">utils.loading_MS1.</span></span><span class="sig-name descname"><span class="pre">DB_MS1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_row_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/loading_MS1.html#DB_MS1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.loading_MS1.DB_MS1" title="Link to this definition"></a></dt>
-<dd><p>Insert MS1 annotation data into the database.
-For each row of the DataFrame, creates and inserts a record into the three tables: Detection, Lipid and Annotation.</p>
+<dd><p>Insère des données d’annotation MS1 dans la base de données.
+Pour chaque ligne du DataFrame, crée et insère un enregistrement dans les trois tables : Detection, Lipid et Annotation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass
-and optionally RT and CCS.</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – name of the file being integrated.</p></li>
-<li><p><strong>integrator</strong> (<em>str</em>) – name of the person performing the integration.</p></li>
-<li><p><strong>file_row_name</strong> (<em>str</em>) – name of the file that provided the annotations.</p></li>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – DataFrame contenant les colonnes Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass et éventuellement RT et CCS.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – nom du fichier en cours d’intégration.</p></li>
+<li><p><strong>integrator</strong> (<em>str</em>) – nom de la personne réalisant l’intégration.</p></li>
+<li><p><strong>file_row_name</strong> (<em>str</em>) – nom du fichier ayant fourni les annotations.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Exception</strong> – on insertion error no row is committed (automatic ROLLBACK) and the error is logged.</p></li>
-<li><p><strong>PostIntegrationError</strong> – if the rows were committed successfully but the post-commit
-backup or history logging failed - the data is already in the database.</p></li>
+<li><p><strong>Exception</strong> – en cas d’erreur d’insertion, aucune ligne n’est validée (ROLLBACK automatique) et l’erreur est journalisée.</p></li>
+<li><p><a class="reference internal" href="#utils.exceptions.PostIntegrationError" title="utils.exceptions.PostIntegrationError"><strong>PostIntegrationError</strong></a> – si les lignes ont été validées (commit) avec succès, les données sont intégrées en base.
+L’erreur indique un problème lors de la création de la sauvegarde ou lors de l’écriture de l’historique.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.loading_MS2">
+<span id="utils-loading-ms2"></span><h2>utils.loading_MS2<a class="headerlink" href="#module-utils.loading_MS2" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.loading_MS2.ms2_parsing">
+<span class="sig-prename descclassname"><span class="pre">utils.loading_MS2.</span></span><span class="sig-name descname"><span class="pre">ms2_parsing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/utils/loading_MS2.html#ms2_parsing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.loading_MS2.ms2_parsing" title="Link to this definition"></a></dt>
+<dd><p>Parse un fichier MS2 (.csv/.tsv) organisé en blocs empilés et retourne une liste d’entrées sous forme de dictionnaires.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>objet fichier-like</em>) – objet fichier-like</p></li>
+<li><p><strong>delimiter</strong> (<em>str ou None</em>) – séparateur de colonnes. Si None, déduit de l’extension/du nom du fichier (”t” pour .tsv, “,” sinon).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – si un bloc de scan est mal formé (champ requis manquant, RT/CCS non numérique, en-tête de fragments manquant, aucun fragment trouvé, ou nombre de fragments incohérent avec Num_peaks) ou si aucun scan n’est trouvé dans le fichier.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>liste de dictionnaires avec les clés “scan_id”, “precursor_mz”, “formula”,”lipid_name”, “fa_composition”, “adduct”, “lipid_category”, “lipid_class”,”lipid_subclass”, “rt”, “ccs”, “num_peaks” et “fragments” (liste de tuples (mz, intensity)).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.loading_MS2.DB_MS2">
+<span class="sig-prename descclassname"><span class="pre">utils.loading_MS2.</span></span><span class="sig-name descname"><span class="pre">DB_MS2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_row_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/loading_MS2.html#DB_MS2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.loading_MS2.DB_MS2" title="Link to this definition"></a></dt>
+<dd><p>Insère des scans MS2 dans la base de données. Pour chaque scan, crée et insère un enregistrement dans les tables Lipid, Detection (+ ses Fragments) et Annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scans</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>) – liste de dictionnaires (voir <a class="reference internal" href="#utils.loading_MS2.ms2_parsing" title="utils.loading_MS2.ms2_parsing"><code class="xref py py-func docutils literal notranslate"><span class="pre">ms2_parsing()</span></code></a>), où chaque scan doit aussi porter les champs dérivés “molecular_weight”, “monoisotopic_mass”, “neutral_mass” et “ion_mode” (calculés/renseignés par l’appelant).</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – nom du fichier intégré.</p></li>
+<li><p><strong>integrator</strong> (<em>str</em>) – nom de la personne réalisant l’intégration.</p></li>
+<li><p><strong>file_row_name</strong> (<em>str</em>) – nom du fichier ayant fourni les annotations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Exception</strong> – exception d’origine relevée (rollback implicite via la fermeture de la session) si une erreur survient pendant l’insertion.</p></li>
+<li><p><a class="reference internal" href="#utils.exceptions.PostIntegrationError" title="utils.exceptions.PostIntegrationError"><strong>PostIntegrationError</strong></a> – si les scans ont été validés (commit) avec succès mais que la sauvegarde ou l’écriture de l’historique post-commit a échoué.</p></li>
 </ul>
 </dd>
 </dl>
@@ -430,15 +623,15 @@ backup or history logging failed - the data is already in the database.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.molecular_weight.molecular_weight">
 <span class="sig-prename descclassname"><span class="pre">utils.molecular_weight.</span></span><span class="sig-name descname"><span class="pre">molecular_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/molecular_weight.html#molecular_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.molecular_weight.molecular_weight" title="Link to this definition"></a></dt>
-<dd><p>Compute the average molecular weight of the lipid from its chemical formula.
-Uses molmass.Formula.mass for the calculation, then rounds to 6 decimal places.
-Returns None without raising an exception if the formula is None, empty, or invalid.</p>
+<dd><p>Calcule la masse moléculaire moyenne du lipide à partir de sa formule chimique.
+Utilise molmass.Formula.mass pour le calcul, puis arrondit à 6 décimales.
+Retourne None sans lever d’exception si la formule est None, vide ou invalide.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>formula</strong> (<em>str</em>) – chemical formula</p>
+<dd class="field-odd"><p><strong>formula</strong> (<em>str</em>) – formule chimique</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>average molecular weight rounded to 6 decimal places, or None if invalid.</p>
+<dd class="field-even"><p>masse moléculaire moyenne arrondie à 6 décimales, ou None si invalide.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float or None</p>
@@ -452,15 +645,15 @@ Returns None without raising an exception if the formula is None, empty, or inva
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.monoisotopic.monoisotopic_mass">
 <span class="sig-prename descclassname"><span class="pre">utils.monoisotopic.</span></span><span class="sig-name descname"><span class="pre">monoisotopic_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/monoisotopic.html#monoisotopic_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.monoisotopic.monoisotopic_mass" title="Link to this definition"></a></dt>
-<dd><p>Compute the monoisotopic mass of the lipid from its chemical formula.
-Uses molmass.Formula.monoisotopic_mass for the calculation.
-Returns None without raising an exception if the formula is null, empty, or invalid.</p>
+<dd><p>Calcule la masse monoisotopique du lipide à partir de sa formule chimique.
+Utilise molmass.Formula.monoisotopic_mass pour le calcul.
+Retourne None sans lever d’exception si la formule est nulle, vide ou invalide.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>formula</strong> (<em>str</em><em> or </em><em>None</em>) – chemical formula</p>
+<dd class="field-odd"><p><strong>formula</strong> (<em>str</em><em> or </em><em>None</em>) – formule chimique</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>monoisotopic mass rounded to 6 decimal places, or None if invalid.</p>
+<dd class="field-even"><p>masse monoisotopique arrondie à 8 décimales, ou None si invalide.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float or None</p>
@@ -474,20 +667,20 @@ Returns None without raising an exception if the formula is null, empty, or inva
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.msp_export.generate_msp">
 <span class="sig-prename descclassname"><span class="pre">utils.msp_export.</span></span><span class="sig-name descname"><span class="pre">generate_msp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mz_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ionisation_modes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/utils/msp_export.html#generate_msp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.msp_export.generate_msp" title="Link to this definition"></a></dt>
-<dd><p>Returns a string in .msp format for MS2 detections matching the filters.</p>
+<dd><p>Retourne une chaîne au format .msp pour les détections MS2 correspondant aux filtres.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>engine</strong> – engine: SQLAlchemy engine connected to the database.</p></li>
-<li><p><strong>categories</strong> – selected lipid category list (empty = all).</p></li>
-<li><p><strong>classes</strong> – selected lipid class list (empty = all).</p></li>
-<li><p><strong>sub_classes</strong> – selected lipid subclass list (empty = all).</p></li>
-<li><p><strong>mz_range</strong> – tuple (mz_min, mz_max) for filtering on Precursor_MZ.</p></li>
-<li><p><strong>ionisation_modes</strong> – selected ionisation mode list, “Positive”/”Negative”</p></li>
+<li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – moteur SQLAlchemy connecté à la base de données.</p></li>
+<li><p><strong>categories</strong> (<em>list</em>) – liste des catégories de lipides sélectionnées (vide = toutes).</p></li>
+<li><p><strong>classes</strong> (<em>list</em>) – liste des classes de lipides sélectionnées (vide = toutes).</p></li>
+<li><p><strong>sub_classes</strong> (<em>list</em>) – liste des sous-classes de lipides sélectionnées (vide = toutes).</p></li>
+<li><p><strong>mz_range</strong> (<em>tuple</em>) – tuple (mz_min, mz_max) pour filtrer sur Precursor_MZ.</p></li>
+<li><p><strong>ionisation_modes</strong> (<em>list</em><em> | </em><em>None</em>) – liste des modes d’ionisation sélectionnés, “Positive”/”Negative” (None = tous).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>.msp file ready to be downloaded.</p>
+<dd class="field-even"><p>contenu du fichier .msp prêt à être téléchargé.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -499,38 +692,18 @@ Returns None without raising an exception if the formula is null, empty, or inva
 <section id="module-utils.neutral_mass">
 <span id="utils-neutral-mass"></span><h2>utils.neutral_mass<a class="headerlink" href="#module-utils.neutral_mass" title="Link to this heading"></a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="utils.neutral_mass.json_adducts">
-<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">json_adducts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#json_adducts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.json_adducts" title="Link to this definition"></a></dt>
-<dd><p>Load the custom adducts persisted in the JSON file at ADDUCTS_PATH.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>mapping of adduct name to {“shift”: float, “sign”: int}, or an empty
-dict if the file does not exist or is empty.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">json_adducts</span><span class="p">()</span>
-<span class="go">{&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="utils.neutral_mass.list_adducts">
 <span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">list_adducts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#list_adducts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.list_adducts" title="Link to this definition"></a></dt>
-<dd><p>Return the currently persisted custom adducts.</p>
+<dd><p>Retourne les adduits personnalisés présent dans le JSON.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>mapping of adduct name to {“shift”: float, “sign”: int}.</p>
+<dd class="field-odd"><p>correspondance entre le nom de l’adduit et {“shift”: float, “sign”: int}.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
-<p>Example:</p>
+<p>Exemple:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">list_adducts</span><span class="p">()</span>
 <span class="go">{&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
 </pre></div>
@@ -540,26 +713,21 @@ dict if the file does not exist or is empty.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.neutral_mass.add_adduct">
 <span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">add_adduct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#add_adduct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.add_adduct" title="Link to this definition"></a></dt>
-<dd><p>Validate and add a new custom adduct.</p>
+<dd><p>Valide et ajoute un nouvel adduit aux adduits ajoutés.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – adduct name. Comparison against existing adducts is
-case-insensitive, matching the lookup done by adduct().</p></li>
-<li><p><strong>shift</strong> (<em>float</em>) – mass shift in Daltons, must be strictly positive.</p></li>
-<li><p><strong>sign</strong> (<em>int</em>) – -1 if the adduct is formed by addition to the neutral molecule
-(shift is subtracted to recover the neutral mass), +1 if formed by loss
-(shift is added back).</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – nom de l’adduit. La comparaison avec les adduits existants ne distingue pas majuscules et minuscules.</p></li>
+<li><p><strong>shift</strong> (<em>float</em>) – décalage de masse en Daltons, doit être strictement positif.</p></li>
+<li><p><strong>sign</strong> (<em>int</em>) – -1 si l’adduit est formé par addition à la molécule neutre (le décalage est soustrait pour retrouver la masse neutre), +1 s’il est formé par perte (le décalage est réajouté).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if name is empty or already used (case-insensitively),
-sign is not -1/1, or shift is not a strictly positive number.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – si name est vide ou déjà utilisé (indépendamment de la casse), si sign n’est pas -1/1, ou si shift n’est pas un nombre strictement positif.</p>
 </dd>
 </dl>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># [M+Na]+ is formed by addition of sodium, so sign=-1 (the shift is</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># subtracted back to recover the neutral mass from the precursor m/z).</span>
+<p>Exemple:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># [M+Na]+ est formé par addition de sodium, donc sign=-1 (le décalage est soustrait pour retrouver la masse neutre à partir du m/z du précurseur).</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">add_adduct</span><span class="p">(</span><span class="s2">&quot;[M+Na]+&quot;</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mf">22.989221</span><span class="p">,</span> <span class="n">sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">list_adducts</span><span class="p">()</span>
 <span class="go">{&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
@@ -570,16 +738,16 @@ sign is not -1/1, or shift is not a strictly positive number.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.neutral_mass.remove_adduct">
 <span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">remove_adduct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#remove_adduct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.remove_adduct" title="Link to this definition"></a></dt>
-<dd><p>Remove a previously added custom adduct. Built-in adducts cannot be removed.</p>
+<dd><p>Supprime un adduit personnalisé ajouté précédemment. Les adduits intégrés ne peuvent pas être supprimés.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of the custom adduct to remove.</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – nom de l’adduit personnalisé à supprimer.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if name is not a persisted custom adduct.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – si name n’est pas un adduit personnalisé.</p>
 </dd>
 </dl>
-<p>Example:</p>
+<p>Exemple:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">remove_adduct</span><span class="p">(</span><span class="s2">&quot;[M+Na]+&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">list_adducts</span><span class="p">()</span>
 <span class="go">{}</span>
@@ -588,48 +756,18 @@ sign is not -1/1, or shift is not a strictly positive number.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="utils.neutral_mass.adduct">
-<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">adduct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_adduct</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#adduct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.adduct" title="Link to this definition"></a></dt>
-<dd><p>Validate and normalize a raw adduct value into one of the standard adduct strings. The adduct is required for the neutral mass calculation
-and the completion of the “Adduct” column in the output table.</p>
+<dt class="sig sig-object py" id="utils.neutral_mass.resolve_adducts">
+<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">resolve_adducts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#resolve_adducts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.resolve_adducts" title="Link to this definition"></a></dt>
+<dd><p>Résout l’adduit et la masse neutre pour un lot d’enregistrements (label, lipid_name, precursor_mz, raw_adduct).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>raw_adduct</strong> – raw value to resolve</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if raw_adduct is missing or not a recognized adduct.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>standard adduct string</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Case and surrounding spaces are ignored, only the standard form is returned.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">adduct</span><span class="p">(</span><span class="s2">&quot;  [m+h]+ &quot;</span><span class="p">)</span>
-<span class="go">&#39;[M+H]+&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.neutral_mass.neutral_mass">
-<span class="sig-prename descclassname"><span class="pre">utils.neutral_mass.</span></span><span class="sig-name descname"><span class="pre">neutral_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Precursor_MZ</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adduct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/utils/neutral_mass.html#neutral_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.neutral_mass.neutral_mass" title="Link to this definition"></a></dt>
-<dd><p>Calculate the neutral mass from the precursor m/z ratio and the precursor adduct.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Precursor_MZ</strong> (<em>float</em>) – m/z ratio of the precursor.</p></li>
-<li><p><strong>adduct</strong> (<em>str</em>) – precursor adduct</p></li>
-</ul>
+<dd class="field-odd"><p><strong>records</strong> (<em>iterable</em><em>[</em><em>tuple</em><em>]</em>) – itérable de tuples (label, lipid_name, precursor_mz, raw_adduct)</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>neutral mass in Daltons, rounded to 6 decimal places.</p>
+<dd class="field-even"><p>listes (adducts, masses, error_messages)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p>tuple[list, list, list[str]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -637,43 +775,41 @@ and the completion of the “Adduct” column in the output table.</p>
 </section>
 <section id="module-scripts.init_db">
 <span id="scripts-init-db"></span><h2>scripts.init_db<a class="headerlink" href="#module-scripts.init_db" title="Link to this heading"></a></h2>
-<section id="init-db-py">
-<h3>init_db.py<a class="headerlink" href="#init-db-py" title="Link to this heading"></a></h3>
-<p>Create the database and all tables if they do not exist yet
-Initialization script for the database “BacLipidDB.db”
-Run this script only once to create the SQLite tables defined in models/model.py</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.init_db._main">
+<span class="sig-prename descclassname"><span class="pre">scripts.init_db.</span></span><span class="sig-name descname"><span class="pre">_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/scripts/init_db.html#_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.init_db._main" title="Link to this definition"></a></dt>
+<dd><p>Initialise la base de données BacLipidDB en créant toutes les tables
+définies dans models/model.py si elles n’existent pas encore.</p>
+<p>Teste d’abord la connexion au moteur SQLAlchemy, puis crée les tables.
+En cas d’échec, affiche l’erreur et quitte le script avec le code 1.</p>
 <dl class="simple">
 <dt>Usage :</dt><dd><p>python scripts/init_db.py</p>
 </dd>
 </dl>
-</section>
-<dl class="py function">
-<dt class="sig sig-object py" id="scripts.init_db.main">
-<span class="sig-prename descclassname"><span class="pre">scripts.init_db.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/init_db.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.init_db.main" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+</dd></dl>
 
 </section>
 <section id="module-scripts.reset_db">
 <span id="scripts-reset-db"></span><h2>scripts.reset_db<a class="headerlink" href="#module-scripts.reset_db" title="Link to this heading"></a></h2>
-<section id="reset-db-py">
-<h3>reset_db.py<a class="headerlink" href="#reset-db-py" title="Link to this heading"></a></h3>
-<p>Delete all records from BacLipidDB without dropping the tables.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.reset_db._reset_db">
+<span class="sig-prename descclassname"><span class="pre">scripts.reset_db.</span></span><span class="sig-name descname"><span class="pre">_reset_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/reset_db.html#_reset_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.reset_db._reset_db" title="Link to this definition"></a></dt>
+<dd><p>Supprime tous les enregistrements de BacLipidDB sans supprimer les tables.</p>
+<p>L’ordre de suppression respecte les contraintes de clés étrangères :
+1. Annotation  (références vers Lipid et Detection)
+2. Fragment    (référence vers Detection)
+3. Detection
+4. Lipid</p>
 <dl class="simple">
-<dt>The deletion order respects foreign key constraints:</dt><dd><ol class="arabic simple">
-<li><p>Annotation  (references to Lipid and Detection)</p></li>
-<li><p>Fragment    (reference to Detection)</p></li>
-<li><p>Detection</p></li>
-<li><p>Lipid</p></li>
-</ol>
-</dd>
 <dt>Usage :</dt><dd><p>python scripts/reset_db.py</p>
 </dd>
 </dl>
-</section>
-<dl class="py function">
-<dt class="sig sig-object py" id="scripts.reset_db.reset_db">
-<span class="sig-prename descclassname"><span class="pre">scripts.reset_db.</span></span><span class="sig-name descname"><span class="pre">reset_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/reset_db.html#reset_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.reset_db.reset_db" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – en cas d’échec de la suppression, aucune ligne n’est validée (ROLLBACK automatique à la fermeture de la session).</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>

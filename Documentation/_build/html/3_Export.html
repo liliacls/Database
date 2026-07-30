@@ -102,13 +102,12 @@ pour générer cette page automatiquement. La documentation ci-dessous est rédi
 <h2>Vue d’ensemble<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
 <p>Ce module Streamlit (<strong>MODULE 3</strong>) permet de filtrer les annotations de
 <strong>BacLipidDB</strong> par catégorie, classe et sous-classe lipidique, niveau MS,
-mode d’ionisation et plage de m/z. Si des RT et des CCS sont renseignés,
-il est également possible de filtrer sur ces valeurs. Les annotations filtrées peuvent ensuite être visualisées
+mode d’ionisation et plage de m/z. Les annotations filtrées peuvent ensuite être visualisées
 puis téléchargées dans des formats compatible avec MZmine .csv, .msp.</p>
 </section>
 <section id="chargement-des-donnees">
 <h2>Chargement des données<a class="headerlink" href="#chargement-des-donnees" title="Link to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">_load_data(_engine)</span></code> s’appuie sur <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code> (la vue jointe
+<p><code class="docutils literal notranslate"><span class="pre">_load_data(_engine)</span></code> s’appuie sur <a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a> (la vue jointe
 commune <code class="docutils literal notranslate"><span class="pre">Annotation</span></code> + <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> + <code class="docutils literal notranslate"><span class="pre">Detection</span></code>, mise en cache via <code class="docutils literal notranslate"><span class="pre">st.cache_data(ttl=60)</span></code>
 et partagée avec les pages 2_BacLipidDB et 5_Management), renomme certaines colonnes (<code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code> → <code class="docutils literal notranslate"><span class="pre">name</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Formula</span></code> → <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> → <code class="docutils literal notranslate"><span class="pre">mz</span></code>, <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code> → <code class="docutils literal notranslate"><span class="pre">neutral_mass</span></code>). Les lignes conservées sont :
@@ -198,7 +197,7 @@ séparé du CSV MS1 + MS2 ci-dessus.</p></li>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_load_data(_engine:</span> <span class="pre">Engine)</span> <span class="pre">-&gt;</span> <span class="pre">pandas.DataFrame</span></code></p></td>
 <td><p>Recadre et renomme les colonnes utiles de la vue jointe renvoyée par
-<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code>.</p></td>
+<a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">generate_msp(_engine,</span> <span class="pre">categories,</span> <span class="pre">classes,</span> <span class="pre">sub_classes,</span> <span class="pre">mz_range,</span> <span class="pre">ionisation_modes)</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code></p></td>
 <td><p>Met en cache l’appel à <a class="reference internal" href="api.html#utils.msp_export.generate_msp" title="utils.msp_export.generate_msp"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.msp_export.generate_msp()</span></code></a> pour l’export MSP
@@ -210,7 +209,7 @@ des détections MS2 correspondant aux filtres.</p></td>
 <section id="dependances-internes">
 <h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></p></li>
+<li><p><a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#module-config" title="config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a> (<code class="docutils literal notranslate"><span class="pre">get_engine</span></code>)</p></li>
 <li><p><a class="reference internal" href="api.html#utils.msp_export.generate_msp" title="utils.msp_export.generate_msp"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.msp_export.generate_msp()</span></code></a></p></li>
 </ul>

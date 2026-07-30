@@ -111,7 +111,7 @@ suppression de lignes individuelles.</p></li>
 <li><p><strong>Delete an entire import</strong> : suppression en une fois de tout ce qu’un import donné a inséré
 en base, à partir de l’historique.</p></li>
 </ul>
-<p>Une sauvegarde de la base (<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.db_backup.backup_database()</span></code>) est systématiquement prise
+<p>Une sauvegarde de la base (<a class="reference internal" href="api.html#utils.db_backup.backup_database" title="utils.db_backup.backup_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.db_backup.backup_database()</span></code></a>) est systématiquement prise
 avant toute modification, et chaque action destructrice ou modificatrice passe par une boîte de
 dialogue de confirmation (<code class="docutils literal notranslate"><span class="pre">&#64;st.dialog</span></code>).</p>
 </section>
@@ -119,7 +119,7 @@ dialogue de confirmation (<code class="docutils literal notranslate"><span class
 <h2>Edit &amp; delete records<a class="headerlink" href="#edit-delete-records" title="Link to this heading"></a></h2>
 <section id="chargement-des-donnees">
 <h3>Chargement des données<a class="headerlink" href="#chargement-des-donnees" title="Link to this heading"></a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">_load_database()</span></code> s’appuie sur <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code> (la même
+<p><code class="docutils literal notranslate"><span class="pre">_load_database()</span></code> s’appuie sur <a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a> (la même
 requête jointe <code class="docutils literal notranslate"><span class="pre">Annotation</span></code> + <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> + <code class="docutils literal notranslate"><span class="pre">Detection</span></code> que les pages <strong>2_BacLipidDB</strong> et
 <strong>3_Export</strong>), dont elle ne conserve que les colonnes nécessaires à l’affichage et au report des
 modifications en base : <code class="docutils literal notranslate"><span class="pre">Annotation_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>,
@@ -134,11 +134,12 @@ affiché à la place.</p>
 <p>Une colonne <code class="docutils literal notranslate"><span class="pre">Delete</span></code> (case à cocher) est ajoutée en tête du tableau affiché via
 <code class="docutils literal notranslate"><span class="pre">st.data_editor</span></code>. Les colonnes <code class="docutils literal notranslate"><span class="pre">Annotation_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Ionisation_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">Adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Molecular_weight</span></code>,
-<code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code> et <code class="docutils literal notranslate"><span class="pre">MS_level</span></code> sont verrouillées (<code class="docutils literal notranslate"><span class="pre">disabled</span></code>). Restent donc modifiables :</p>
+<code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">MS_level</span></code> et <code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code> sont verrouillées (<code class="docutils literal notranslate"><span class="pre">disabled</span></code>). Restent
+donc modifiables :</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_category</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_subclass</span></code> (<code class="docutils literal notranslate"><span class="pre">EDITABLE_LIPID_FIELDS</span></code>) ;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Formula</span></code> ;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Num_Peaks</span></code>, <code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code> (<code class="docutils literal notranslate"><span class="pre">EDITABLE_DETECTION_FIELDS</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code> (<code class="docutils literal notranslate"><span class="pre">EDITABLE_DETECTION_FIELDS</span></code>).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Ionisation_mode</span></code> et <code class="docutils literal notranslate"><span class="pre">Adduct</span></code> ne sont pas éditables ici car les modifier
 nécessiterait de recalculer <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code> (dérivée uniquement de ces deux dernières colonnes),
@@ -189,7 +190,7 @@ utilisant cette vue reflètent l’état à jour de la base.</p></li>
 </section>
 <section id="delete-an-entire-import">
 <h2>Delete an entire import<a class="headerlink" href="#delete-an-entire-import" title="Link to this heading"></a></h2>
-<p>L’historique des imports (<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code>) est présenté dans un
+<p>L’historique des imports (<a class="reference internal" href="api.html#utils.history.load_history" title="utils.history.load_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></a>) est présenté dans un
 <code class="docutils literal notranslate"><span class="pre">st.selectbox</span></code> (<code class="docutils literal notranslate"><span class="pre">_label(i)</span></code> formate chaque entrée : nom de fichier, date d’insertion, nombre
 de lignes et intégrateur). Une fois un import sélectionné, le nombre d’enregistrements de ce lot
 encore présents en base est recalculé (<code class="docutils literal notranslate"><span class="pre">session.query(Detection)...count()</span></code>) et affiché à côté
@@ -208,7 +209,7 @@ SQLAlchemy : récupère les <code class="docutils literal notranslate"><span cla
 supprime les lignes de <code class="docutils literal notranslate"><span class="pre">Fragment</span></code>, <code class="docutils literal notranslate"><span class="pre">Annotation</span></code> et <code class="docutils literal notranslate"><span class="pre">Detection</span></code> correspondant à ces
 <code class="docutils literal notranslate"><span class="pre">detection_ids</span></code>, puis celles de <code class="docutils literal notranslate"><span class="pre">Lipid</span></code> correspondant aux <code class="docutils literal notranslate"><span class="pre">Lipid_ID</span></code> récupérés, commit,
 invalide le cache (<code class="docutils literal notranslate"><span class="pre">load_database.clear()</span></code>), puis retire l’entrée de l’historique
-(<code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.remove_history()</span></code>).</p>
+(<a class="reference internal" href="api.html#utils.history.remove_history" title="utils.history.remove_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.remove_history()</span></code></a>).</p>
 </section>
 <section id="fonctions-internes">
 <h2>Fonctions internes<a class="headerlink" href="#fonctions-internes" title="Link to this heading"></a></h2>
@@ -245,16 +246,20 @@ puis retire l’entrée de l’historique.</p></td>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_history_del(entry:</span> <span class="pre">dict,</span> <span class="pre">index:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code></p></td>
 <td><p>Boîte de dialogue de confirmation pour la suppression d’un import entier.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_label(i:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">str</span></code></p></td>
+<td><p>Formate une entrée de l’historique des imports (nom de fichier, date, nombre de
+lignes, intégrateur) pour l’afficher dans le sélecteur d’import à supprimer.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
 <section id="dependances-internes">
 <h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.db_backup.backup_database()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.remove_history()</span></code></p></li>
+<li><p><a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#utils.db_backup.backup_database" title="utils.db_backup.backup_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.db_backup.backup_database()</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#utils.history.load_history" title="utils.history.load_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#utils.history.remove_history" title="utils.history.remove_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.remove_history()</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#utils.molecular_weight.molecular_weight" title="utils.molecular_weight.molecular_weight"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.molecular_weight.molecular_weight()</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#utils.monoisotopic.monoisotopic_mass" title="utils.monoisotopic.monoisotopic_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.monoisotopic.monoisotopic_mass()</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#module-config" title="config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a> (<code class="docutils literal notranslate"><span class="pre">get_engine</span></code>)</p></li>

@@ -78,7 +78,6 @@
   <h1>Source code for utils.neutral_mass</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ADDUCTS_PATH</span>
 
 <span class="n">PROTON_MASS</span> <span class="o">=</span> <span class="mf">1.007276</span>
@@ -96,92 +95,90 @@
 <span class="n">ADDUCT_SHIFTS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">ADDUCT_SIGNS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="json_adducts">
-<a class="viewcode-back" href="../../api.html#utils.neutral_mass.json_adducts">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">json_adducts</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load the custom adducts persisted in the JSON file at ADDUCTS_PATH.</span>
+<span class="c1"># ── Persistance des adduits personnalisés ────────────────────────────────────────────────────────────────────</span>
 
-<span class="sd">    :return: mapping of adduct name to {&quot;shift&quot;: float, &quot;sign&quot;: int}, or an empty</span>
-<span class="sd">        dict if the file does not exist or is empty.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_json_adducts</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Charge les adduits ajoutés depuis le fichier JSON situé via le chemin ADDUCTS_PATH.</span>
+
+<span class="sd">    :return: correspondance entre le nom de l&#39;adduit et {&quot;shift&quot;: float, &quot;sign&quot;: int}, ou un dictionnaire vide si le fichier n&#39;existe pas ou est vide.</span>
 <span class="sd">    :rtype: dict</span>
 
-<span class="sd">    Example::</span>
+<span class="sd">    Exemple::</span>
 
-<span class="sd">        &gt;&gt;&gt; json_adducts()</span>
+<span class="sd">        &gt;&gt;&gt; _json_adducts()</span>
 <span class="sd">        {&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ADDUCTS_PATH</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">{}</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ADDUCTS_PATH</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="k">if</span> <span class="n">content</span> <span class="k">else</span> <span class="p">{}</span></div>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="k">if</span> <span class="n">content</span> <span class="k">else</span> <span class="p">{}</span>
 
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_save_adducts</span><span class="p">(</span><span class="n">custom</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_build</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Overwrite ADDUCTS_PATH with the given custom adducts.</span>
-
-<span class="sd">    :param custom: mapping of adduct name to {&quot;shift&quot;: float, &quot;sign&quot;: int}.</span>
-<span class="sd">    :type custom: dict</span>
+<span class="sd">    Réinitialise ADDUCT_SHIFTS et ADDUCT_SIGNS avec les adduits natifs (BUILTIN_ADDUCT_SHIFTS et BUILTIN_ADDUCT_SIGNS), puis y ajoute les adduits personnalisés lus depuis le JSON via _json_adducts().</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ADDUCTS_PATH</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">custom</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_refresh</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rebuild ADDUCT_SHIFTS and ADDUCT_SIGNS from the built-ins plus the persisted custom adducts.&quot;&quot;&quot;</span>
-    <span class="n">custom</span> <span class="o">=</span> <span class="n">json_adducts</span><span class="p">()</span>
+    <span class="n">added</span> <span class="o">=</span> <span class="n">_json_adducts</span><span class="p">()</span>
 
     <span class="n">ADDUCT_SHIFTS</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">ADDUCT_SHIFTS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">BUILTIN_ADDUCT_SHIFTS</span><span class="p">)</span>
     <span class="n">ADDUCT_SIGNS</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">ADDUCT_SIGNS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">BUILTIN_ADDUCT_SIGNS</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">custom</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">added</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">ADDUCT_SHIFTS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;shift&quot;</span><span class="p">]</span>
         <span class="n">ADDUCT_SIGNS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span>
 
-<span class="n">_refresh</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_adducts</span><span class="p">(</span><span class="n">added</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Écrase le fichier JSON via ADDUCTS_PATH avec les adduits ajoutés donnés.</span>
+
+<span class="sd">    :param added: correspondance entre le nom de l&#39;adduit et {&quot;shift&quot;: float, &quot;sign&quot;: int}.</span>
+<span class="sd">    :type added: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ADDUCTS_PATH</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">added</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">_build</span><span class="p">()</span>
+
+<span class="c1"># ── API de gestion des adduits ────────────────────────────────────────────────────────────────────</span>
 
 <div class="viewcode-block" id="list_adducts">
 <a class="viewcode-back" href="../../api.html#utils.neutral_mass.list_adducts">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_adducts</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the currently persisted custom adducts.</span>
+<span class="sd">    Retourne les adduits personnalisés présent dans le JSON.</span>
 
-<span class="sd">    :return: mapping of adduct name to {&quot;shift&quot;: float, &quot;sign&quot;: int}.</span>
+<span class="sd">    :return: correspondance entre le nom de l&#39;adduit et {&quot;shift&quot;: float, &quot;sign&quot;: int}.</span>
 <span class="sd">    :rtype: dict</span>
 
-<span class="sd">    Example::</span>
+<span class="sd">    Exemple::</span>
 
 <span class="sd">        &gt;&gt;&gt; list_adducts()</span>
 <span class="sd">        {&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">json_adducts</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">_json_adducts</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="add_adduct">
 <a class="viewcode-back" href="../../api.html#utils.neutral_mass.add_adduct">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_adduct</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">shift</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate and add a new custom adduct.</span>
+<span class="sd">    Valide et ajoute un nouvel adduit aux adduits ajoutés.</span>
 
-<span class="sd">    :param name: adduct name. Comparison against existing adducts is</span>
-<span class="sd">        case-insensitive, matching the lookup done by adduct().</span>
+<span class="sd">    :param name: nom de l&#39;adduit. La comparaison avec les adduits existants ne distingue pas majuscules et minuscules.</span>
 <span class="sd">    :type name: str</span>
-<span class="sd">    :param shift: mass shift in Daltons, must be strictly positive.</span>
+<span class="sd">    :param shift: décalage de masse en Daltons, doit être strictement positif.</span>
 <span class="sd">    :type shift: float</span>
-<span class="sd">    :param sign: -1 if the adduct is formed by addition to the neutral molecule</span>
-<span class="sd">        (shift is subtracted to recover the neutral mass), +1 if formed by loss</span>
-<span class="sd">        (shift is added back).</span>
+<span class="sd">    :param sign: -1 si l&#39;adduit est formé par addition à la molécule neutre (le décalage est soustrait pour retrouver la masse neutre), +1 s&#39;il est formé par perte (le décalage est réajouté).</span>
 <span class="sd">    :type sign: int</span>
-<span class="sd">    :raises ValueError: if name is empty or already used (case-insensitively),</span>
-<span class="sd">        sign is not -1/1, or shift is not a strictly positive number.</span>
+<span class="sd">    :raises ValueError: si name est vide ou déjà utilisé (indépendamment de la casse), si sign n&#39;est pas -1/1, ou si shift n&#39;est pas un nombre strictement positif.</span>
 
-<span class="sd">    Example::</span>
+<span class="sd">    Exemple::</span>
 
-<span class="sd">        &gt;&gt;&gt; # [M+Na]+ is formed by addition of sodium, so sign=-1 (the shift is</span>
-<span class="sd">        &gt;&gt;&gt; # subtracted back to recover the neutral mass from the precursor m/z).</span>
+<span class="sd">        &gt;&gt;&gt; # [M+Na]+ est formé par addition de sodium, donc sign=-1 (le décalage est soustrait pour retrouver la masse neutre à partir du m/z du précurseur).</span>
 <span class="sd">        &gt;&gt;&gt; add_adduct(&quot;[M+Na]+&quot;, shift=22.989221, sign=-1)</span>
 <span class="sd">        &gt;&gt;&gt; list_adducts()</span>
 <span class="sd">        {&#39;[M+Na]+&#39;: {&#39;shift&#39;: 22.989221, &#39;sign&#39;: -1}}</span>
@@ -198,53 +195,56 @@
     <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">shift</span><span class="p">)</span> <span class="ow">or</span> <span class="n">shift</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mass shift must be strictly positive.&quot;</span><span class="p">)</span>
 
-    <span class="n">custom</span> <span class="o">=</span> <span class="n">json_adducts</span><span class="p">()</span>
+    <span class="n">custom</span> <span class="o">=</span> <span class="n">_json_adducts</span><span class="p">()</span>
     <span class="n">custom</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;shift&quot;</span><span class="p">:</span> <span class="n">shift</span><span class="p">,</span> <span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="n">sign</span><span class="p">}</span>
     <span class="n">_save_adducts</span><span class="p">(</span><span class="n">custom</span><span class="p">)</span>
-    <span class="n">_refresh</span><span class="p">()</span></div>
+    <span class="n">_build</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="remove_adduct">
 <a class="viewcode-back" href="../../api.html#utils.neutral_mass.remove_adduct">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_adduct</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Remove a previously added custom adduct. Built-in adducts cannot be removed.</span>
+<span class="sd">    Supprime un adduit personnalisé ajouté précédemment. Les adduits intégrés ne peuvent pas être supprimés.</span>
 
-<span class="sd">    :param name: name of the custom adduct to remove.</span>
+<span class="sd">    :param name: nom de l&#39;adduit personnalisé à supprimer.</span>
 <span class="sd">    :type name: str</span>
-<span class="sd">    :raises ValueError: if name is not a persisted custom adduct.</span>
+<span class="sd">    :raises ValueError: si name n&#39;est pas un adduit personnalisé.</span>
 
-<span class="sd">    Example::</span>
+<span class="sd">    Exemple::</span>
 
 <span class="sd">        &gt;&gt;&gt; remove_adduct(&quot;[M+Na]+&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; list_adducts()</span>
 <span class="sd">        {}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">custom</span> <span class="o">=</span> <span class="n">json_adducts</span><span class="p">()</span>
+    <span class="n">custom</span> <span class="o">=</span> <span class="n">_json_adducts</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">custom</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is not a custom adduct and cannot be removed.&quot;</span><span class="p">)</span>
 
     <span class="k">del</span> <span class="n">custom</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
     <span class="n">_save_adducts</span><span class="p">(</span><span class="n">custom</span><span class="p">)</span>
-    <span class="n">_refresh</span><span class="p">()</span></div>
+    <span class="n">_build</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="adduct">
-<a class="viewcode-back" href="../../api.html#utils.neutral_mass.adduct">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">adduct</span><span class="p">(</span><span class="n">raw_adduct</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="c1"># ── Résolution et validation d&#39;un adduit ────────────────────────────────────────────────────────────────────</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_adduct</span><span class="p">(</span><span class="n">raw_adduct</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate and normalize a raw adduct value into one of the standard adduct strings. The adduct is required for the neutral mass calculation </span>
-<span class="sd">    and the completion of the &quot;Adduct&quot; column in the output table.</span>
+<span class="sd">    Valide et normalise une valeur brute d&#39;adduit en l&#39;une des chaînes d&#39;adduit standard connues</span>
+<span class="sd">    (adduits intégrés ou personnalisés ajoutés via add_adduct()). La comparaison ignore la casse</span>
+<span class="sd">    et les espaces environnants. L&#39;adduit est nécessaire pour le calcul de la masse neutre</span>
+<span class="sd">    et pour compléter la colonne &quot;Adduct&quot; du tableau de sortie.</span>
 
-<span class="sd">    :param raw_adduct: raw value to resolve</span>
-<span class="sd">    :raises ValueError: if raw_adduct is missing or not a recognized adduct.</span>
-<span class="sd">    :return: standard adduct string</span>
+<span class="sd">    :param raw_adduct: valeur brute à résoudre.</span>
+<span class="sd">    :type raw_adduct: str or float or None</span>
+<span class="sd">    :raises ValueError: si raw_adduct est manquant ou ne correspond à aucun adduit reconnu.</span>
+<span class="sd">    :return: chaîne d&#39;adduit standard, dans sa casse de référence.</span>
 <span class="sd">    :rtype: str</span>
 
-<span class="sd">    Example::</span>
+<span class="sd">    Exemple::</span>
 
-<span class="sd">        &gt;&gt;&gt; # Case and surrounding spaces are ignored, only the standard form is returned.</span>
-<span class="sd">        &gt;&gt;&gt; adduct(&quot;  [m+h]+ &quot;)</span>
+<span class="sd">        &gt;&gt;&gt; # La casse et les espaces environnants sont ignorés, seule la forme standard est retournée.</span>
+<span class="sd">        &gt;&gt;&gt; _adduct(&quot;  [m+h]+ &quot;)</span>
 <span class="sd">        &#39;[M+H]+&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span>
@@ -260,18 +260,17 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Unsupported adduct &#39;</span><span class="si">{</span><span class="n">raw_adduct</span><span class="si">}</span><span class="s2">&#39;. Accepted values : </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ADDUCT_SHIFTS</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
-    <span class="k">return</span> <span class="n">normalized</span></div>
-
+    <span class="k">return</span> <span class="n">normalized</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_mz</span><span class="p">(</span><span class="n">Precursor_MZ</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate and normalize a precursor m/z value.</span>
+<span class="sd">    Valide et normalise une valeur de m/z du précurseur.</span>
 
-<span class="sd">    :param Precursor_MZ: m/z ratio of the precursor to validate.</span>
+<span class="sd">    :param Precursor_MZ: rapport m/z du précurseur à valider.</span>
 <span class="sd">    :type Precursor_MZ: float</span>
-<span class="sd">    :raises ValueError: if Precursor_MZ cannot be converted to float, is NaN, or is not</span>
-<span class="sd">        strictly positive.</span>
-<span class="sd">    :return: the validated m/z value, as a float.</span>
+<span class="sd">    :raises ValueError: si Precursor_MZ est une chaîne non convertible en float, est NaN, ou n&#39;est pas strictement positif.</span>
+<span class="sd">    :raises TypeError: si Precursor_MZ est d&#39;un type non convertible en float.</span>
+<span class="sd">    :return: la valeur de m/z validée, sous forme de float.</span>
 <span class="sd">    :rtype: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Precursor_MZ</span><span class="p">)</span>
@@ -284,43 +283,55 @@
 
     <span class="k">return</span> <span class="n">mz</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_validate_adduct</span><span class="p">(</span><span class="n">adduct</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="c1"># ── Calcul de la masse neutre ────────────────────────────────────────────────────────────────────</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_neutral_mass</span><span class="p">(</span><span class="n">Precursor_MZ</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">adduct_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate that an adduct string is one of the known standard adducts.</span>
+<span class="sd">    Calcule la masse neutre à partir du rapport m/z du précurseur et de l&#39;adduit du précurseur.</span>
 
-<span class="sd">    :param adduct: adduct string to validate</span>
-<span class="sd">    :type adduct: str</span>
-<span class="sd">    :raises ValueError: if adduct is not a string or is not a recognized adduct.</span>
-<span class="sd">    :return: the validated adduct string, unchanged.</span>
-<span class="sd">    :rtype: str</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">adduct</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">adduct</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ADDUCT_SHIFTS</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;adduct unknown : </span><span class="si">{</span><span class="n">adduct</span><span class="si">!r}</span><span class="s2">. Accepted values : </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">ADDUCT_SHIFTS</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">adduct</span>
-
-<div class="viewcode-block" id="neutral_mass">
-<a class="viewcode-back" href="../../api.html#utils.neutral_mass.neutral_mass">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">neutral_mass</span><span class="p">(</span><span class="n">Precursor_MZ</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">adduct</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the neutral mass from the precursor m/z ratio and the precursor adduct.</span>
-
-<span class="sd">    :param Precursor_MZ: m/z ratio of the precursor.</span>
+<span class="sd">    :param Precursor_MZ: rapport m/z du précurseur.</span>
 <span class="sd">    :type Precursor_MZ: float</span>
-<span class="sd">    :param adduct: precursor adduct</span>
-<span class="sd">    :type adduct: str</span>
-<span class="sd">    :return: neutral mass in Daltons, rounded to 6 decimal places.</span>
+<span class="sd">    :param adduct_name: adduit du précurseur, déjà validé/normalisé via _adduct().</span>
+<span class="sd">    :type adduct_name: str</span>
+<span class="sd">    :raises ValueError: si adduct_name n&#39;est pas un adduit reconnu, ou si Precursor_MZ est NaN ou n&#39;est pas strictement positif (voir _mz()).</span>
+<span class="sd">    :raises TypeError: si Precursor_MZ est d&#39;un type non convertible en float (voir _mz()).</span>
+<span class="sd">    :return: masse neutre en Daltons, arrondie à 6 décimales.</span>
 <span class="sd">    :rtype: float</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mz</span> <span class="o">=</span> <span class="n">_mz</span><span class="p">(</span><span class="n">Precursor_MZ</span><span class="p">)</span>
-    <span class="n">adduct</span> <span class="o">=</span> <span class="n">_validate_adduct</span><span class="p">(</span><span class="n">adduct</span><span class="p">)</span>
 
-    <span class="n">shift</span> <span class="o">=</span> <span class="n">ADDUCT_SHIFTS</span><span class="p">[</span><span class="n">adduct</span><span class="p">]</span>
-    <span class="n">sign</span> <span class="o">=</span> <span class="n">ADDUCT_SIGNS</span><span class="p">[</span><span class="n">adduct</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">adduct_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">adduct_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ADDUCT_SHIFTS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;adduct unknown : </span><span class="si">{</span><span class="n">adduct_name</span><span class="si">!r}</span><span class="s2">. Accepted values : </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">ADDUCT_SHIFTS</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
-    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">mz</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">shift</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span></div>
+    <span class="n">shift</span> <span class="o">=</span> <span class="n">ADDUCT_SHIFTS</span><span class="p">[</span><span class="n">adduct_name</span><span class="p">]</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="n">ADDUCT_SIGNS</span><span class="p">[</span><span class="n">adduct_name</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">mz</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">shift</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+<div class="viewcode-block" id="resolve_adducts">
+<a class="viewcode-back" href="../../api.html#utils.neutral_mass.resolve_adducts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_adducts</span><span class="p">(</span><span class="n">records</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Résout l&#39;adduit et la masse neutre pour un lot d&#39;enregistrements (label, lipid_name, precursor_mz, raw_adduct).</span>
+
+<span class="sd">    :param records: itérable de tuples (label, lipid_name, precursor_mz, raw_adduct)</span>
+<span class="sd">    :type records: iterable[tuple]</span>
+<span class="sd">    :return: listes (adducts, masses, error_messages)</span>
+<span class="sd">    :rtype: tuple[list, list, list[str]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">adducts</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">lipid_name</span><span class="p">,</span> <span class="n">precursor_mz</span><span class="p">,</span> <span class="n">raw_adduct</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resolved_adduct</span> <span class="o">=</span> <span class="n">_adduct</span><span class="p">(</span><span class="n">raw_adduct</span><span class="p">)</span>
+            <span class="n">mass</span> <span class="o">=</span> <span class="n">_neutral_mass</span><span class="p">(</span><span class="n">precursor_mz</span><span class="p">,</span> <span class="n">resolved_adduct</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lipid_name</span><span class="si">}</span><span class="s2">) : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">resolved_adduct</span><span class="p">,</span> <span class="n">mass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">adducts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resolved_adduct</span><span class="p">)</span>
+        <span class="n">masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">adducts</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">errors</span></div>
 
 </pre></div>
 

@@ -52,7 +52,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#workflow">Workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#etat-de-session-st-session-state">État de session (<code class="docutils literal notranslate"><span class="pre">st.session_state</span></code>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#fonctions-internes">Fonctions internes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#adducts-records"><code class="docutils literal notranslate"><span class="pre">_adducts(records)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resolution-des-adduits-etape-4">Résolution des adduits (étape 4)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#dependances-internes">Dépendances internes</a></li>
@@ -129,7 +129,7 @@ fichier importé, elles sont conservées telles quelles dans le tableau et
 transmises à <a class="reference internal" href="api.html#utils.loading_MS1.DB_MS1" title="utils.loading_MS1.DB_MS1"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS1.DB_MS1()</span></code></a>, qui les insère dans la table
 <code class="docutils literal notranslate"><span class="pre">Detection</span></code> (<code class="docutils literal notranslate"><span class="pre">None</span></code> si absentes ou vides).</p>
 <p><strong>Fichier MS2</strong> (<code class="docutils literal notranslate"><span class="pre">.csv</span></code>/<code class="docutils literal notranslate"><span class="pre">.tsv</span></code> organisé en blocs empilés, un bloc = un scan)</p>
-<p>Le fichier est parsé par <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.ms2_parsing()</span></code>, qui valide
+<p>Le fichier est parsé par <a class="reference internal" href="api.html#utils.loading_MS2.ms2_parsing" title="utils.loading_MS2.ms2_parsing"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.ms2_parsing()</span></code></a>, qui valide
 elle-même chaque bloc. Chaque bloc commence par une ligne d’en-tête
 <code class="docutils literal notranslate"><span class="pre">Scan</span> <span class="pre">#&lt;identifiant&gt;</span></code> dont l’identifiant est extrait sous la clé
 <code class="docutils literal notranslate"><span class="pre">scan_id</span></code>. Ce <code class="docutils literal notranslate"><span class="pre">scan_id</span></code> n’est utilisé qu’en interne (voir
@@ -188,7 +188,7 @@ texte délimité, pas le format binaire <code class="docutils literal notranslat
 déclenché que si son identifiant  (<code class="docutils literal notranslate"><span class="pre">uploaded_file.file_id</span></code>) ou le
 niveau MS (<code class="docutils literal notranslate"><span class="pre">df_ms_level</span></code>) diffère de la dernière valeur connue.</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">MS2</span></code> → <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.ms2_parsing()</span></code> (liste de scans stockée
+<li><p><code class="docutils literal notranslate"><span class="pre">MS2</span></code> → <a class="reference internal" href="api.html#utils.loading_MS2.ms2_parsing" title="utils.loading_MS2.ms2_parsing"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.ms2_parsing()</span></code></a> (liste de scans stockée
 sous la clé <code class="docutils literal notranslate"><span class="pre">ms2</span></code>) ;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MS1</span></code> → <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code> (<code class="docutils literal notranslate"><span class="pre">.csv</span></code>/<code class="docutils literal notranslate"><span class="pre">.tsv</span></code>) ou
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.read_excel()</span></code> (<code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>), stocké sous la clé <code class="docutils literal notranslate"><span class="pre">ms1</span></code>.</p></li>
@@ -197,6 +197,14 @@ sous la clé <code class="docutils literal notranslate"><span class="pre">ms2</s
 calculés en aval) ainsi que la donnée de l’autre niveau MS (<code class="docutils literal notranslate"><span class="pre">ms1</span></code> si l’on
 bascule vers <code class="docutils literal notranslate"><span class="pre">MS2</span></code>, <code class="docutils literal notranslate"><span class="pre">ms2</span></code> si l’on bascule vers <code class="docutils literal notranslate"><span class="pre">MS1</span></code>), tout en
 conservant les réglages de l’étape 1.</p>
+<p>Pour <code class="docutils literal notranslate"><span class="pre">MS1</span></code> uniquement, les colonnes <code class="docutils literal notranslate"><span class="pre">STRIP_COLUMNS</span></code> (<code class="docutils literal notranslate"><span class="pre">Lipid_category</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_subclass</span></code>), si elles sont présentes dans le
+fichier, sont immédiatement débarrassées des espaces superflus en début/fin
+de valeur (<code class="docutils literal notranslate"><span class="pre">str.strip()</span></code>). Ceci évite que des valeurs identiques mais
+diversement espacées (ex. <code class="docutils literal notranslate"><span class="pre">&quot;Glycerophospholipids&quot;</span></code> et
+<code class="docutils literal notranslate"><span class="pre">&quot;Glycerophospholipids</span> <span class="pre">&quot;</span></code>) ne soient comptées comme des catégories,
+classes ou sous-classes distinctes dans la légende des histogrammes de
+l’étape 4.</p>
 </li>
 <li><p><strong>Verification</strong></p>
 <ul class="simple">
@@ -221,7 +229,7 @@ et <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mas
 à partir de <code class="docutils literal notranslate"><span class="pre">Formula</span></code>. Si une formule est invalide, la page affiche une erreur et s’arrête sans stocker le
 résultat.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Adduct</span></code> et <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, résolus pour toutes les lignes/tous les
-scans d’un coup par la fonction interne <code class="xref py py-func docutils literal notranslate"><span class="pre">_adducts()</span></code> (voir
+scans d’un coup par <a class="reference internal" href="api.html#utils.neutral_mass.resolve_adducts" title="utils.neutral_mass.resolve_adducts"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.resolve_adducts()</span></code></a> (voir
 <a class="reference internal" href="#fonctions-internes">Fonctions internes</a>). Si un ou plusieurs adduits sont invalides, la
 page liste chaque ligne/scan en erreur et s’arrête sans stocker les
 résultats, même ceux valides. L’utilisateur doit corriger les adduits dans le fichier et recharger.</p></li>
@@ -270,7 +278,7 @@ métadonnées affichées à l’étape 4. Les fragments (m/z/intensité) de
 chaque scan, eux, n’existent que dans <code class="docutils literal notranslate"><span class="pre">st.session_state[&quot;ms2&quot;]</span></code> (liste
 de dictionnaires produite par le parsing) : ils n’apparaissent jamais
 dans ce tableau.</p>
-<p>Or <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.DB_MS2()</span></code> a besoin des dictionnaires complets
+<p>Or <a class="reference internal" href="api.html#utils.loading_MS2.DB_MS2" title="utils.loading_MS2.DB_MS2"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.DB_MS2()</span></code></a> a besoin des dictionnaires complets
 pour insérer les fragments en base. La page reporte donc d’abord les
 valeurs de <code class="docutils literal notranslate"><span class="pre">df_validated</span></code> (potentiellement modifiées par
 l’utilisateur) dans les dictionnaires de <code class="docutils literal notranslate"><span class="pre">st.session_state[&quot;ms2&quot;]</span></code>.
@@ -283,7 +291,7 @@ l’étape 4 : l’ordre reste donc identique entre les deux structures.</p>
 <code class="docutils literal notranslate"><span class="pre">lipid_subclass</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code>, <code class="docutils literal notranslate"><span class="pre">ccs</span></code>, <code class="docutils literal notranslate"><span class="pre">molecular_weight</span></code>,
 <code class="docutils literal notranslate"><span class="pre">monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">adduct</span></code>, <code class="docutils literal notranslate"><span class="pre">ion_mode</span></code>) sont
 ainsi écrasés dans chaque dictionnaire de scan. Les fragments, absents
-du tableau, restent donc inchangés. <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.DB_MS2()</span></code>
+du tableau, restent donc inchangés. <a class="reference internal" href="api.html#utils.loading_MS2.DB_MS2" title="utils.loading_MS2.DB_MS2"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.DB_MS2()</span></code></a>
 est ensuite appelée avec cette liste de scans mise à jour.</p>
 </li>
 </ul>
@@ -294,6 +302,18 @@ l’historique et de la sauvegarde de la base. En cas de succès,
 sont affichés une seule fois (flag <code class="docutils literal notranslate"><span class="pre">show_balloons</span></code> consommé via
 <code class="docutils literal notranslate"><span class="pre">st.session_state.pop</span></code>). Une fois l’intégration finie, une nouvelle intégration est proposée
 (bouton <strong>Reset</strong> de la barre latérale).</p>
+<p>Si <a class="reference internal" href="api.html#utils.loading_MS1.DB_MS1" title="utils.loading_MS1.DB_MS1"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS1.DB_MS1()</span></code></a> ou <a class="reference internal" href="api.html#utils.loading_MS2.DB_MS2" title="utils.loading_MS2.DB_MS2"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.loading_MS2.DB_MS2()</span></code></a>
+lève une <a class="reference internal" href="api.html#utils.exceptions.PostIntegrationError" title="utils.exceptions.PostIntegrationError"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.exceptions.PostIntegrationError</span></code></a>, les données sont
+déjà commitées en base (l’intégration a réussi), mais la sauvegarde ou
+l’écriture de l’historique post-commit a échoué. Ce cas est traité comme un
+succès partiel : <code class="docutils literal notranslate"><span class="pre">integration_done</span></code> passe quand même à <code class="docutils literal notranslate"><span class="pre">True</span></code> (sans
+ballons), et le message de l’exception est stocké dans
+<code class="docutils literal notranslate"><span class="pre">integration_warning</span></code> puis affiché sous forme d’avertissement
+(<code class="docutils literal notranslate"><span class="pre">st.warning</span></code>) précisant qu’il ne faut <strong>pas</strong> réintégrer le fichier
+(les données sont déjà en base) et qu’il faut utiliser le bouton
+<strong>Reset</strong> pour repartir sur une nouvelle intégration. Toute autre
+exception (donnée non commitée) affiche une erreur simple
+(<code class="docutils literal notranslate"><span class="pre">st.error</span></code>) et arrête la page sans modifier <code class="docutils literal notranslate"><span class="pre">integration_done</span></code>.</p>
 </li>
 </ol>
 </section>
@@ -383,19 +403,18 @@ conserver les réglages de l’étape 1 et le fichier tout juste chargé.</p>
 <td><p>Retourne l’icône <code class="docutils literal notranslate"><span class="pre">&quot;✅&quot;</span></code> si <code class="docutils literal notranslate"><span class="pre">done</span></code> est vrai, sinon <code class="docutils literal notranslate"><span class="pre">&quot;⬜&quot;</span></code>. Utilisée
 pour afficher l’état de chaque étape dans la barre latérale.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_adducts(records)</span> <span class="pre">-&gt;</span> <span class="pre">tuple[list,</span> <span class="pre">list,</span> <span class="pre">list[str]]</span></code></p></td>
-<td><p>Résout, pour un lot de lignes/scans, l’adduit standardisé et la masse
-neutre correspondants (voir détail ci-dessous).</p></td>
-</tr>
 </tbody>
 </table>
-<section id="adducts-records">
-<h3><code class="docutils literal notranslate"><span class="pre">_adducts(records)</span></code><a class="headerlink" href="#adducts-records" title="Link to this heading"></a></h3>
-<p>Résout l’adduit et la masse neutre pour un lot d’enregistrements
-<code class="docutils literal notranslate"><span class="pre">(label,</span> <span class="pre">lipid_name,</span> <span class="pre">precursor_mz,</span> <span class="pre">raw_adduct)</span></code>, en s’appuyant sur
-<a class="reference internal" href="api.html#utils.neutral_mass.adduct" title="utils.neutral_mass.adduct"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.adduct()</span></code></a> (normalisation/validation de l’adduit) puis
-<a class="reference internal" href="api.html#utils.neutral_mass.neutral_mass" title="utils.neutral_mass.neutral_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.neutral_mass()</span></code></a> (calcul de la masse neutre à partir du
-<code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> et de l’adduit résolu).</p>
+<p>Ce module ne définit pas de fonction interne pour la résolution des adduits :
+la page appelle directement, à l’étape 4, la fonction importée
+<a class="reference internal" href="api.html#utils.neutral_mass.resolve_adducts" title="utils.neutral_mass.resolve_adducts"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.resolve_adducts()</span></code></a> (voir ci-dessous).</p>
+<section id="resolution-des-adduits-etape-4">
+<h3>Résolution des adduits (étape 4)<a class="headerlink" href="#resolution-des-adduits-etape-4" title="Link to this heading"></a></h3>
+<p><a class="reference internal" href="api.html#utils.neutral_mass.resolve_adducts" title="utils.neutral_mass.resolve_adducts"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.resolve_adducts()</span></code></a> résout l’adduit et la masse neutre
+pour un lot d’enregistrements <code class="docutils literal notranslate"><span class="pre">(label,</span> <span class="pre">lipid_name,</span> <span class="pre">precursor_mz,</span>
+<span class="pre">raw_adduct)</span></code>. En interne, elle s’appuie sur une fonction privée du module
+qui normalise/valide l’adduit, puis sur une autre qui calcule la masse
+neutre à partir du <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> et de l’adduit résolu.</p>
 <dl>
 <dt>Paramètres</dt><dd><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">records</span></code></dt><dd><p>Itérable de tuples <code class="docutils literal notranslate"><span class="pre">(label,</span> <span class="pre">lipid_name,</span> <span class="pre">precursor_mz,</span> <span class="pre">raw_adduct)</span></code> :</p>
@@ -404,8 +423,7 @@ neutre correspondants (voir détail ci-dessous).</p></td>
 messages d’erreur (ex. <code class="docutils literal notranslate"><span class="pre">&quot;Row</span> <span class="pre">3&quot;</span></code> pour MS1, <code class="docutils literal notranslate"><span class="pre">&quot;Scan</span> <span class="pre">12&quot;</span></code> pour MS2) ;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">lipid_name</span></code> (<em>str</em>) : nom du lipide, ré-inséré dans le message
 d’erreur pour faciliter la correction du fichier ;</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">precursor_mz</span></code> (<em>float</em>) : m/z du précurseur, transmis à
-<a class="reference internal" href="api.html#utils.neutral_mass.neutral_mass" title="utils.neutral_mass.neutral_mass"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.neutral_mass()</span></code></a> ;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">precursor_mz</span></code> (<em>float</em>) : m/z du précurseur ;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">raw_adduct</span></code> (<em>str</em> ou <em>None</em>) : valeur brute de l’adduit telle que
 lue dans le fichier, avant normalisation.</p></li>
 </ul>
@@ -425,35 +443,38 @@ affichée telle quelle par la page (une entrée par ligne dans
 <code class="docutils literal notranslate"><span class="pre">st.error</span></code>).</p></li>
 </ul>
 <p>Une entrée échoue (adduit/masse à <code class="docutils literal notranslate"><span class="pre">None</span></code>, message ajouté à <code class="docutils literal notranslate"><span class="pre">errors</span></code>) si
-<a class="reference internal" href="api.html#utils.neutral_mass.adduct" title="utils.neutral_mass.adduct"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.adduct()</span></code></a> lève une <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> — adduit manquant
-ou non reconnu (valeurs acceptées : <code class="docutils literal notranslate"><span class="pre">&quot;[M+H]+&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;[M+NH4]+&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;[M-H]-&quot;</span></code>). Les autres entrées du lot continuent d’être traitées : un
-seul appel à <code class="docutils literal notranslate"><span class="pre">_adducts</span></code> permet donc de collecter <em>toutes</em> les erreurs
-d’adduit du fichier en une fois, plutôt que de s’arrêter à la première.</p>
+l’adduit brut est manquant ou non reconnu. La liste des adduits acceptés
+n’est pas figée : elle comprend les deux adduits natifs <code class="docutils literal notranslate"><span class="pre">&quot;[M+H]+&quot;</span></code> et
+<code class="docutils literal notranslate"><span class="pre">&quot;[M-H]-&quot;</span></code>, plus tout adduit personnalisé ajouté via la page
+<strong>Resources</strong> (<a class="reference internal" href="api.html#utils.neutral_mass.add_adduct" title="utils.neutral_mass.add_adduct"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.neutral_mass.add_adduct()</span></code></a>/<code class="docutils literal notranslate"><span class="pre">remove_adduct</span></code>,
+persistés dans <code class="docutils literal notranslate"><span class="pre">adducts.json</span></code>). Les autres entrées du lot
+continuent d’être traitées : un seul appel à <code class="docutils literal notranslate"><span class="pre">resolve_adducts</span></code> permet
+donc de collecter <em>toutes</em> les erreurs d’adduit du fichier en une fois,
+plutôt que de s’arrêter à la première.</p>
 </dd>
 <dt>Exemple</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">records</span> <span class="o">=</span> <span class="p">[</span>
 <span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;Row 0&quot;</span><span class="p">,</span> <span class="s2">&quot;PE 34:1&quot;</span><span class="p">,</span> <span class="mf">700.500000</span><span class="p">,</span> <span class="s2">&quot;[M+H]+&quot;</span><span class="p">),</span>
 <span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;Row 1&quot;</span><span class="p">,</span> <span class="s2">&quot;PC 32:0&quot;</span><span class="p">,</span> <span class="mf">750.500000</span><span class="p">,</span> <span class="s2">&quot;XYZ&quot;</span><span class="p">),</span>   <span class="c1"># adduit invalide</span>
 <span class="gp">... </span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">adducts</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">_adducts</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adducts</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">resolve_adducts</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adducts</span>
 <span class="go">[&#39;[M+H]+&#39;, None]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">masses</span>
 <span class="go">[699.492724, None]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">errors</span>
-<span class="go">[&quot;Row 1 (PC 32:0) : Unsupported adduct &#39;XYZ&#39;. Accepted values : [M+H]+, [M+NH4]+, [M-H]-.&quot;]</span>
+<span class="go">[&quot;Row 1 (PC 32:0) : Unsupported adduct &#39;XYZ&#39;. Accepted values : [M+H]+, [M-H]-.&quot;]</span>
 </pre></div>
 </div>
 <p>Dans l’étape 4 de la page, <code class="docutils literal notranslate"><span class="pre">records</span></code> est construit différemment selon le
 niveau MS :</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># MS1 : une ligne de DataFrame par enregistrement</span>
-<span class="n">adducts</span><span class="p">,</span> <span class="n">neutral_masses</span><span class="p">,</span> <span class="n">e_adduct</span> <span class="o">=</span> <span class="n">_adducts</span><span class="p">(</span>
+<span class="n">adducts</span><span class="p">,</span> <span class="n">neutral_masses</span><span class="p">,</span> <span class="n">e_adduct</span> <span class="o">=</span> <span class="n">resolve_adducts</span><span class="p">(</span>
     <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Row </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Lipid_Name&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Precursor_MZ&quot;</span><span class="p">],</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Adduct&quot;</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()</span>
 <span class="p">)</span>
 
 <span class="c1"># MS2 : un scan par enregistrement</span>
-<span class="n">adducts</span><span class="p">,</span> <span class="n">n_mass</span><span class="p">,</span> <span class="n">e_adduct</span> <span class="o">=</span> <span class="n">_adducts</span><span class="p">(</span>
+<span class="n">adducts</span><span class="p">,</span> <span class="n">n_mass</span><span class="p">,</span> <span class="n">e_adduct</span> <span class="o">=</span> <span class="n">resolve_adducts</span><span class="p">(</span>
     <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scan </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;scan_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;lipid_name&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;precursor_mz&quot;</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;adduct&quot;</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">ms2</span>
 <span class="p">)</span>
@@ -467,7 +488,7 @@ niveau MS :</p>
 <h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="api.html#module-utils.loading_MS1" title="utils.loading_MS1"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.loading_MS1</span></code></a></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.loading_MS2</span></code></p></li>
+<li><p><a class="reference internal" href="api.html#module-utils.loading_MS2" title="utils.loading_MS2"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.loading_MS2</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#module-utils.molecular_weight" title="utils.molecular_weight"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.molecular_weight</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#module-utils.monoisotopic" title="utils.monoisotopic"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.monoisotopic</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#module-utils.neutral_mass" title="utils.neutral_mass"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils.neutral_mass</span></code></a></p></li>

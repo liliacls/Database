@@ -58,7 +58,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#table-lipid">Table <code class="docutils literal notranslate"><span class="pre">Lipid</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#table-annotation">Table <code class="docutils literal notranslate"><span class="pre">Annotation</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#conventions">Conventions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#voir-aussi">Voir aussi</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Référence API (générée automatiquement)</a></li>
@@ -180,7 +179,7 @@ référence par une vue d’ensemble du schéma et des relations entre les table
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
-<td><p>Masse neutre dérivée de <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> et du mode d’ionisation (Da).</p></td>
+<td><p>Masse neutre dérivée de <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> et de l’<code class="docutils literal notranslate"><span class="pre">Adduct</span></code> (Da).</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RT</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
@@ -317,16 +316,6 @@ référence par une vue d’ensemble du schéma et des relations entre les table
 <li><p>Les clés primaires sont nommées avec le suffixe <code class="docutils literal notranslate"><span class="pre">_ID</span></code>.</p></li>
 <li><p>Les clés étrangères sont nommées avec le suffixe <code class="docutils literal notranslate"><span class="pre">_id</span></code>.</p></li>
 <li><p>Chaque classe définit un <code class="docutils literal notranslate"><span class="pre">__repr__</span></code> pour afficher un objet de façon lisible lors du débogage.</p></li>
-</ul>
-</section>
-<section id="voir-aussi">
-<h2>Voir aussi<a class="headerlink" href="#voir-aussi" title="Link to this heading"></a></h2>
-<p>Documentation SQLAlchemy :</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/21/orm/declarative_styles.html">DeclarativeBase</a></p></li>
-<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/21/orm/mapping_styles.html#orm-mapping-styles">Mapped</a></p></li>
-<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/21/orm/mapping_api.html#sqlalchemy.orm.Mapper.columns">mapped_column</a></p></li>
-<li><p><a class="reference external" href="https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html">relationship, ForeignKey</a></p></li>
 </ul>
 </section>
 </section>

@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.loading_MS2 &mdash; BacLipidAPP 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BacLipidAPP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Home.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../1_Integration.html">Data_Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../2_BacLipidDB.html">BacLipidDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../3_Export.html">Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../4_Resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../5_Management.html">Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model.html">Modèle de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Référence API (générée automatiquement)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BacLipidAPP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils.loading_MS2</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils.loading_MS2</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Detection</span><span class="p">,</span> <span class="n">Fragment</span><span class="p">,</span> <span class="n">Lipid</span><span class="p">,</span> <span class="n">Annotation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.db_backup</span><span class="w"> </span><span class="kn">import</span> <span class="n">backup_database</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.history</span><span class="w"> </span><span class="kn">import</span> <span class="n">append_history</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostIntegrationError</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">SCAN</span> <span class="o">=</span> <span class="s2">&quot;Scan #&quot;</span>
+<span class="n">FRAGMENT_HEADER</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;m/z&quot;</span><span class="p">,</span> <span class="s2">&quot;Intensity&quot;</span><span class="p">)</span>
+
+<span class="c1"># Libellés de champs attendus dans chaque bloc de scan</span>
+<span class="n">REQUIRED_SCAN_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Lipid_Name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Precursor_MZ&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Formula&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Adduct&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Lipid_category&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Lipid_class&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Lipid_subclass&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Num_peaks&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<div class="viewcode-block" id="ms2_parsing">
+<a class="viewcode-back" href="../../api.html#utils.loading_MS2.ms2_parsing">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ms2_parsing</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse un fichier MS2 (.csv/.tsv) organisé en blocs empilés et retourne une liste d&#39;entrées sous forme de dictionnaires.</span>
+
+<span class="sd">    :param source: objet fichier-like</span>
+<span class="sd">    :type source: objet fichier-like</span>
+<span class="sd">    :param delimiter: séparateur de colonnes. Si None, déduit de l&#39;extension/du nom du fichier (&quot;\\t&quot; pour .tsv, &quot;,&quot; sinon).</span>
+<span class="sd">    :type delimiter: str ou None</span>
+<span class="sd">    :raises ValueError: si un bloc de scan est mal formé (champ requis manquant, RT/CCS non numérique, en-tête de fragments manquant, aucun fragment trouvé, ou nombre de fragments incohérent avec Num_peaks) ou si aucun scan n&#39;est trouvé dans le fichier.</span>
+<span class="sd">    :return: liste de dictionnaires avec les clés &quot;scan_id&quot;, &quot;precursor_mz&quot;, &quot;formula&quot;,&quot;lipid_name&quot;, &quot;fa_composition&quot;, &quot;adduct&quot;, &quot;lipid_category&quot;, &quot;lipid_class&quot;,&quot;lipid_subclass&quot;, &quot;rt&quot;, &quot;ccs&quot;, &quot;num_peaks&quot; et &quot;fragments&quot; (liste de tuples (mz, intensity)).</span>
+<span class="sd">    :rtype: list[dict]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">delimiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;,&quot;</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;getvalue&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8-sig&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="k">else</span> <span class="n">raw</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">))</span>
+
+    <span class="n">scans</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">first_cell</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">row</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">first_cell</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">SCAN</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">continue</span>
+
+        <span class="n">scan_id</span> <span class="o">=</span> <span class="n">first_cell</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">SCAN</span><span class="p">):]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="ow">and</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="mi">2</span><span class="p">])</span> <span class="o">!=</span> <span class="n">FRAGMENT_HEADER</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">fields</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;m/z&#39; / &#39;Intensity&#39; header expected for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">REQUIRED_SCAN_FIELDS</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Missing field(s) for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">precursor_mz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Precursor_MZ&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid Precursor_MZ for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;: &#39;</span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;Precursor_MZ&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">num_peaks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Num_peaks&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid Num_peaks for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;: &#39;</span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;Num_peaks&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">rt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RT&quot;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;RT&quot;</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid RT for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;: &#39;</span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;RT&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="n">ccs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CCS&quot;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ccs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;CCS&quot;</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid CCS for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;: &#39;</span><span class="si">{</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;CCS&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="n">fragments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">SCAN</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Malformed fragment row </span><span class="si">{</span><span class="n">row</span><span class="si">!r}</span><span class="s2"> for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;: &quot;</span>
+                    <span class="s2">&quot;expected &#39;m/z&#39; and &#39;Intensity&#39; columns.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid fragment row </span><span class="si">{</span><span class="n">row</span><span class="si">!r}</span><span class="s2"> for scan &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;: &quot;</span>
+                    <span class="s2">&quot;&#39;m/z&#39; and &#39;Intensity&#39; must be numeric.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">fragments</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fragments</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No fragments found for &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_peaks</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;Num_peaks&#39;=</span><span class="si">{</span><span class="n">num_peaks</span><span class="si">}</span><span class="s2"> does not match the number of fragments &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;found (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span><span class="si">}</span><span class="s2">) for &#39;</span><span class="si">{</span><span class="n">first_cell</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">scans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;scan_id&quot;</span><span class="p">:</span> <span class="n">scan_id</span><span class="p">,</span>
+                <span class="s2">&quot;precursor_mz&quot;</span><span class="p">:</span> <span class="n">precursor_mz</span><span class="p">,</span>
+                <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Formula&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;lipid_name&quot;</span><span class="p">:</span> <span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Lipid_Name&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;fa_composition&quot;</span><span class="p">:</span> <span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FA_composition&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;adduct&quot;</span><span class="p">:</span> <span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Adduct&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;lipid_category&quot;</span><span class="p">:</span> <span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Lipid_category&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;lipid_class&quot;</span><span class="p">:</span> <span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Lipid_class&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;lipid_subclass&quot;</span><span class="p">:</span> <span class="n">fields</span><span class="p">[</span><span class="s2">&quot;Lipid_subclass&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;rt&quot;</span><span class="p">:</span> <span class="n">rt</span><span class="p">,</span>
+                <span class="s2">&quot;ccs&quot;</span><span class="p">:</span> <span class="n">ccs</span><span class="p">,</span>
+                <span class="s2">&quot;num_peaks&quot;</span><span class="p">:</span> <span class="n">num_peaks</span><span class="p">,</span>
+                <span class="s2">&quot;fragments&quot;</span><span class="p">:</span> <span class="n">fragments</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">scans</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No scan found in the file.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">scans</span></div>
+
+
+<div class="viewcode-block" id="DB_MS2">
+<a class="viewcode-back" href="../../api.html#utils.loading_MS2.DB_MS2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">DB_MS2</span><span class="p">(</span>
+    <span class="n">scans</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">integrator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">file_row_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Insère des scans MS2 dans la base de données. Pour chaque scan, crée et insère un enregistrement dans les tables Lipid, Detection (+ ses Fragments) et Annotation.</span>
+
+<span class="sd">    :param scans: liste de dictionnaires (voir :func:`ms2_parsing`), où chaque scan doit aussi porter les champs dérivés &quot;molecular_weight&quot;, &quot;monoisotopic_mass&quot;, &quot;neutral_mass&quot; et &quot;ion_mode&quot; (calculés/renseignés par l&#39;appelant).</span>
+<span class="sd">    :type scans: list[dict]</span>
+<span class="sd">    :param filename: nom du fichier intégré.</span>
+<span class="sd">    :type filename: str</span>
+<span class="sd">    :param integrator: nom de la personne réalisant l&#39;intégration.</span>
+<span class="sd">    :type integrator: str</span>
+<span class="sd">    :param file_row_name: nom du fichier ayant fourni les annotations.</span>
+<span class="sd">    :type file_row_name: str</span>
+<span class="sd">    :raises Exception: exception d&#39;origine relevée (rollback implicite via la fermeture de la session) si une erreur survient pendant l&#39;insertion.</span>
+<span class="sd">    :raises PostIntegrationError: si les scans ont été validés (commit) avec succès mais que la sauvegarde ou l&#39;écriture de l&#39;historique post-commit a échoué.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting MS2 integration - </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">)</span><span class="si">}</span><span class="s2"> scans to insert.&quot;</span><span class="p">)</span>
+    <span class="n">detections</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="n">get_engine</span><span class="p">())</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans</span><span class="p">:</span>
+                <span class="n">lipid</span> <span class="o">=</span> <span class="n">Lipid</span><span class="p">(</span>
+                    <span class="n">Lipid_name</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;lipid_name&quot;</span><span class="p">],</span>
+                    <span class="n">Lipid_category</span><span class="o">=</span><span class="n">scan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lipid_category&quot;</span><span class="p">),</span>
+                    <span class="n">Lipid_class</span><span class="o">=</span><span class="n">scan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lipid_class&quot;</span><span class="p">),</span>
+                    <span class="n">Lipid_subclass</span><span class="o">=</span><span class="n">scan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lipid_subclass&quot;</span><span class="p">),</span>
+                    <span class="n">Formula</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;formula&quot;</span><span class="p">],</span>
+                    <span class="n">FA_composition</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;fa_composition&quot;</span><span class="p">],</span>
+                    <span class="n">Molecular_weight</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;molecular_weight&quot;</span><span class="p">],</span>
+                    <span class="n">Monoisotopic_mass</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;monoisotopic_mass&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+
+                <span class="n">detection</span> <span class="o">=</span> <span class="n">Detection</span><span class="p">(</span>
+                    <span class="n">Precursor_MZ</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;precursor_mz&quot;</span><span class="p">],</span>
+                    <span class="n">Neutral_mass</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;neutral_mass&quot;</span><span class="p">],</span>
+                    <span class="n">Ionisation_mode</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;ion_mode&quot;</span><span class="p">],</span>
+                    <span class="n">Adduct</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;adduct&quot;</span><span class="p">],</span>
+                    <span class="n">MS_level</span><span class="o">=</span><span class="s2">&quot;MS2&quot;</span><span class="p">,</span>
+                    <span class="n">Num_Peaks</span><span class="o">=</span><span class="n">scan</span><span class="p">[</span><span class="s2">&quot;num_peaks&quot;</span><span class="p">],</span>
+                    <span class="n">RT</span><span class="o">=</span><span class="n">scan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">),</span>
+                    <span class="n">CCS</span><span class="o">=</span><span class="n">scan</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ccs&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+
+                <span class="n">annotation</span> <span class="o">=</span> <span class="n">Annotation</span><span class="p">(</span><span class="n">lipid</span><span class="o">=</span><span class="n">lipid</span><span class="p">,</span> <span class="n">detection</span><span class="o">=</span><span class="n">detection</span><span class="p">)</span>
+
+                <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lipid</span><span class="p">)</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">detection</span><span class="p">)</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+                <span class="n">detections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">detection</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">mz</span><span class="p">,</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="n">scan</span><span class="p">[</span><span class="s2">&quot;fragments&quot;</span><span class="p">]:</span>
+                    <span class="n">fragment</span> <span class="o">=</span> <span class="n">Fragment</span><span class="p">(</span>
+                        <span class="n">detection</span><span class="o">=</span><span class="n">detection</span><span class="p">,</span>
+                        <span class="n">MZ</span><span class="o">=</span><span class="n">mz</span><span class="p">,</span>
+                        <span class="n">Intensity</span><span class="o">=</span><span class="n">intensity</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span>
+
+            <span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">detection_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">detection</span><span class="o">.</span><span class="n">Detection_ID</span> <span class="k">for</span> <span class="n">detection</span> <span class="ow">in</span> <span class="n">detections</span><span class="p">]</span>
+
+            <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MS2 integration completed: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">)</span><span class="si">}</span><span class="s2"> scans inserted.&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during MS2 integration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">backup_path</span> <span class="o">=</span> <span class="n">backup_database</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="n">append_history</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
+                <span class="s2">&quot;row_file&quot;</span><span class="p">:</span> <span class="n">file_row_name</span><span class="p">,</span>
+                <span class="s2">&quot;inserted&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;ms_level&quot;</span><span class="p">:</span> <span class="s2">&quot;MS2&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ionisation_mode&quot;</span><span class="p">:</span> <span class="n">scans</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;ion_mode&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;num_rows&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">),</span>
+                <span class="s2">&quot;detection_ids&quot;</span><span class="p">:</span> <span class="n">detection_ids</span><span class="p">,</span>
+                <span class="s2">&quot;integrator&quot;</span><span class="p">:</span> <span class="n">integrator</span><span class="p">,</span>
+                <span class="s2">&quot;backup&quot;</span><span class="p">:</span> <span class="n">backup_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scans were committed but post-integration housekeeping failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">PostIntegrationError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Scans were committed but backup/history logging failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">detection_ids</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Lilia CHALES.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

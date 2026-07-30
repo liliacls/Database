@@ -46,11 +46,12 @@ affiché à la place.
 Une colonne ``Delete`` (case à cocher) est ajoutée en tête du tableau affiché via
 ``st.data_editor``. Les colonnes ``Annotation_ID``, ``Detection_ID``, ``Lipid_ID``,
 ``Precursor_MZ``, ``Ionisation_mode``, ``Adduct``, ``Neutral_mass``, ``Molecular_weight``,
-``Monoisotopic_mass`` et ``MS_level`` sont verrouillées (``disabled``). Restent donc modifiables :
+``Monoisotopic_mass``, ``MS_level`` et ``Num_Peaks`` sont verrouillées (``disabled``). Restent
+donc modifiables :
 
 - ``Lipid_name``, ``Lipid_category``, ``Lipid_class``, ``Lipid_subclass`` (``EDITABLE_LIPID_FIELDS``) ;
 - ``Formula`` ;
-- ``Num_Peaks``, ``RT``, ``CCS`` (``EDITABLE_DETECTION_FIELDS``).
+- ``RT``, ``CCS`` (``EDITABLE_DETECTION_FIELDS``).
 
 ``Precursor_MZ``, ``Ionisation_mode`` et ``Adduct`` ne sont pas éditables ici car les modifier
 nécessiterait de recalculer ``Neutral_mass`` (dérivée uniquement de ces deux dernières colonnes),
@@ -152,6 +153,9 @@ Fonctions internes
        puis retire l'entrée de l'historique.
    * - ``_history_del(entry: dict, index: int) -> None``
      - Boîte de dialogue de confirmation pour la suppression d'un import entier.
+   * - ``_label(i: int) -> str``
+     - Formate une entrée de l'historique des imports (nom de fichier, date, nombre de
+       lignes, intégrateur) pour l'afficher dans le sélecteur d'import à supprimer.
 
 Dépendances internes
 ----------------------

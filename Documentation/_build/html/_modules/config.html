@@ -80,30 +80,41 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">streamlit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">st</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">event</span>
 
-<span class="c1"># Define the project root directory</span>
+<span class="c1"># Définit le répertoire racine du projet</span>
 <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
 
-<span class="c1"># Database path</span>
+<span class="c1"># Chemin de la base de données</span>
 <span class="n">DB_FILE</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;BacLipidDB.db&quot;</span>
 <span class="n">DB_PATH</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sqlite:///</span><span class="si">{</span><span class="n">DB_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<span class="c1"># History file path</span>
+<span class="c1"># Chemin du fichier d&#39;historique</span>
 <span class="n">HISTORY_PATH</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;history.json&quot;</span>
 
-<span class="c1"># Custom adducts file path</span>
+<span class="c1"># Chemin du fichier des adduits personnalisés</span>
 <span class="n">ADDUCTS_PATH</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;adducts.json&quot;</span>
 
-<span class="c1"># Directory where database snapshots are stored (one per import)</span>
+<span class="c1"># Répertoire où sont stockés les sauvegardes de la base de données</span>
 <span class="n">BACKUP_DIR</span> <span class="o">=</span> <span class="n">PROJECT_ROOT</span> <span class="o">/</span> <span class="s2">&quot;backups&quot;</span>
 
-<span class="c1"># Number of most recent snapshots to keep in /backups</span>
+<span class="c1"># Nombre de sauvegardes à conserver dans le dossier /backups</span>
 <span class="n">BACKUP_COUNT</span> <span class="o">=</span> <span class="mi">20</span>
 
 <div class="viewcode-block" id="get_engine">
 <a class="viewcode-back" href="../api.html#config.get_engine">[docs]</a>
 <span class="nd">@st</span><span class="o">.</span><span class="n">cache_resource</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create and cache the SQLAlchemy engine for the SQLite database connection.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Crée et met en cache le moteur SQLAlchemy pour la connexion à la base de données SQLite.</span>
+
+<span class="sd">    Grâce à ``st.cache_resource``, le moteur n&#39;est instancié qu&#39;une seule fois par</span>
+<span class="sd">    session Streamlit puis réutilisé, évitant de rouvrir une connexion à chaque rerun.</span>
+<span class="sd">    La fonction `enable_foreign_key` est attaché à ``connect`` pour activer la pragma SQLite</span>
+<span class="sd">    ``foreign_keys`` (désactivée par défaut) afin que les contraintes de clé étrangère</span>
+<span class="sd">    soient bien appliquées sur chaque nouvelle connexion.</span>
+
+<span class="sd">    :return: moteur SQLAlchemy connecté à la base de données du projet (voir :data:`DB_PATH`).</span>
+<span class="sd">    :rtype: sqlalchemy.engine.Engine</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">DB_PATH</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@event</span><span class="o">.</span><span class="n">listens_for</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="s2">&quot;connect&quot;</span><span class="p">)</span>

@@ -134,7 +134,8 @@ directement depuis BacLipidDB via <code class="xref py py-func docutils literal 
 <code class="xref py py-func docutils literal notranslate"><span class="pre">st.dataframe()</span></code>. Les colonnes numériques suivantes sont formatées via
 <code class="docutils literal notranslate"><span class="pre">st.column_config.NumberColumn</span></code> :</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Intensity</span></code> : 6 décimales</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">MZ</span></code>, <code class="docutils literal notranslate"><span class="pre">Intensity</span></code> : 6 décimales</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code> : 8 décimales</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">RT</span></code>, <code class="docutils literal notranslate"><span class="pre">CCS</span></code> : 4 décimales</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Molecular_weight</span></code> : 0 décimale</p></li>
 </ul>
@@ -145,7 +146,7 @@ est affiché à la place.</p>
 <h2>Full view<a class="headerlink" href="#full-view" title="Link to this heading"></a></h2>
 <section id="importation-des-donnees">
 <h3>Importation des données<a class="headerlink" href="#importation-des-donnees" title="Link to this heading"></a></h3>
-<p>La fonction <code class="docutils literal notranslate"><span class="pre">_load_data(_engine)</span></code> s’appuie sur <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">_load_data(_engine)</span></code> s’appuie sur <a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a>
 (requête SQLAlchemy commune sur <code class="docutils literal notranslate"><span class="pre">Annotation</span></code>, avec chargement des relations avec les tables
 <code class="docutils literal notranslate"><span class="pre">lipid</span></code> et <code class="docutils literal notranslate"><span class="pre">detection</span></code>, partagée avec les pages <strong>3_Export</strong> et <strong>5_Management</strong> pour éviter de
 dupliquer cette requête). Cette fonction ne conserve que les colonnes :
@@ -180,7 +181,7 @@ dupliquer cette requête). Cette fonction ne conserve que les colonnes :
 <p>Chaque ligne du tableau <strong>Full view</strong> est colorée selon le fichier d’import (<code class="docutils literal notranslate"><span class="pre">History</span></code>)
 auquel appartient sa <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> :</p>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code> charge l’historique des imports depuis <code class="docutils literal notranslate"><span class="pre">history.json</span></code>
+<li><p><a class="reference internal" href="api.html#utils.history.load_history" title="utils.history.load_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></a> charge l’historique des imports depuis <code class="docutils literal notranslate"><span class="pre">history.json</span></code>
 (<code class="docutils literal notranslate"><span class="pre">config.HISTORY_PATH</span></code>, lu indirectement par <code class="docutils literal notranslate"><span class="pre">load_history</span></code>) ;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">_batch_map(history)</span></code> associe chaque <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> à l’indice du lot
 d’import auquel il appartient (champ <code class="docutils literal notranslate"><span class="pre">detection_ids</span></code> de chaque entrée de l’historique) ;</p></li>
@@ -416,7 +417,7 @@ carbone (<code class="docutils literal notranslate"><span class="pre">C</span> <
 </section>
 <section id="history">
 <h2>History<a class="headerlink" href="#history" title="Link to this heading"></a></h2>
-<p>Affiche, via <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.DataFrame()</span></code> construit à partir de <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code>,
+<p>Affiche, via <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.DataFrame()</span></code> construit à partir de <a class="reference internal" href="api.html#utils.history.load_history" title="utils.history.load_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></a>,
 la liste des imports passés : nom de fichier, date (<code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.to_datetime()</span></code>), niveau MS, mode
 d’ionisation, nombre de lignes insérées et nom de l’intégrateur. Si
 l’historique est vide, un message <code class="docutils literal notranslate"><span class="pre">st.info(&quot;No</span> <span class="pre">imports</span> <span class="pre">recorded</span> <span class="pre">yet.&quot;)</span></code> est affiché à la place.</p>
@@ -435,7 +436,7 @@ l’historique est vide, un message <code class="docutils literal notranslate"><
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_load_data(_engine:</span> <span class="pre">Engine)</span> <span class="pre">-&gt;</span> <span class="pre">pd.DataFrame</span></code></p></td>
-<td><p>Charge la vue jointe complète via <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code> et n’en
+<td><p>Charge la vue jointe complète via <a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a> et n’en
 conserve que certaines colonnes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_formula(formula:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">dict</span></code></p></td>
@@ -465,8 +466,8 @@ nombre d’or conjugué (<em>golden angle</em>) plutôt que via une palette fig�
 <section id="dependances-internes">
 <h2>Dépendances internes<a class="headerlink" href="#dependances-internes" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></p></li>
-<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></p></li>
+<li><p><a class="reference internal" href="api.html#utils.data_access.load_database" title="utils.data_access.load_database"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.data_access.load_database()</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#utils.history.load_history" title="utils.history.load_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.history.load_history()</span></code></a></p></li>
 <li><p><a class="reference internal" href="api.html#module-config" title="config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a> (<code class="docutils literal notranslate"><span class="pre">get_engine</span></code>, <code class="docutils literal notranslate"><span class="pre">PROJECT_ROOT</span></code> importés directement ; <code class="docutils literal notranslate"><span class="pre">HISTORY_PATH</span></code> est
 utilisé indirectement, à l’intérieur de <code class="docutils literal notranslate"><span class="pre">load_history</span></code>)</p></li>
 </ul>

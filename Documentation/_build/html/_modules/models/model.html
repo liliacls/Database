@@ -86,11 +86,12 @@
 <div class="viewcode-block" id="Base">
 <a class="viewcode-back" href="../../api.html#models.model.Base">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Declarative base class for all BacLipidDB ORM models.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Classe de base déclarative pour tous les modèles ORM de BacLipidDB.</span>
 
-<span class="sd">    All mapped classes (:class:`Detection`, :class:`Fragment`, :class:`Lipid`,</span>
-<span class="sd">    :class:`Annotation`) inherit from this class so SQLAlchemy can collect</span>
-<span class="sd">    their metadata and generate the corresponding database tables.</span>
+<span class="sd">    Toutes les classes mappées (:class:`Detection`, :class:`Fragment`, :class:`Lipid`,</span>
+<span class="sd">    :class:`Annotation`) héritent de cette classe afin que SQLAlchemy puisse collecter</span>
+<span class="sd">    leurs métadonnées et générer les tables de la base de données correspondantes.</span>
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
     
@@ -98,29 +99,30 @@
 <div class="viewcode-block" id="Detection">
 <a class="viewcode-back" href="../../api.html#models.model.Detection">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Detection</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single MS1 or MS2 detection (ion observed in a run).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Une détection MS1 ou MS2 unique (ion observé lors d&#39;une analyse).</span>
 
-<span class="sd">    Stores the precursor m/z, ionisation mode, adduct, retention time and</span>
-<span class="sd">    CCS. Linked to zero or more :class:`Fragment` rows when ``MS_level`` is</span>
-<span class="sd">    &quot;MS2&quot;, and to one :class:`Annotation`.</span>
+<span class="sd">    Stocke le m/z du précurseur, le mode d&#39;ionisation, l&#39;adduit, le temps de</span>
+<span class="sd">    rétention et la CCS. Liée à zéro ou plusieurs lignes :class:`Fragment` quand</span>
+<span class="sd">    ``MS_level`` vaut &quot;MS2&quot;, et à une :class:`Annotation`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;Detection&quot;</span>
     <span class="n">Detection_ID</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">Precursor_MZ</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>       <span class="c1"># m/z of the ion (Da) - called &quot;precursor&quot; for consistency with MS2, but in MS1 it&#39;s not a true precursor since there is no fragmentation</span>
-    <span class="n">MS_level</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>           <span class="c1"># &quot;MS1&quot; (precursor only) or &quot;MS2&quot; (with fragment spectrum)</span>
-    <span class="n">Ionisation_mode</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>      <span class="c1"># &quot;Positive&quot; or &quot;Negative&quot;</span>
-    <span class="n">Adduct</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>               <span class="c1"># precursor adduct</span>
-    <span class="n">Num_Peaks</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>   <span class="c1"># number of fragment (MS2 only)</span>
-    <span class="n">Neutral_mass</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>     <span class="c1"># neutral mass derived from Precursor_MZ and Adduct (Da)</span>
-    <span class="n">RT</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>          <span class="c1"># retention time (minutes)</span>
-    <span class="n">CCS</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>         <span class="c1"># collision cross section (Ų)</span>
+    <span class="n">Precursor_MZ</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>       <span class="c1"># m/z de l&#39;ion (Da), appelé &quot;précurseur&quot; par cohérence avec MS2, mais en MS1 ce n&#39;est pas un véritable précurseur puisqu&#39;il n&#39;y a pas de fragmentation</span>
+    <span class="n">MS_level</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>           <span class="c1"># &quot;MS1&quot; (précurseur seul) ou &quot;MS2&quot; (avec spectre de fragments)</span>
+    <span class="n">Ionisation_mode</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>      <span class="c1"># &quot;Positive&quot; ou &quot;Negative&quot;</span>
+    <span class="n">Adduct</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>               <span class="c1"># adduit du précurseur</span>
+    <span class="n">Num_Peaks</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>   <span class="c1"># nombre de fragments (MS2 uniquement)</span>
+    <span class="n">Neutral_mass</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>     <span class="c1"># masse neutre dérivée de Precursor_MZ et de l&#39;adduit (Da)</span>
+    <span class="n">RT</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>          <span class="c1"># temps de rétention (minutes)</span>
+    <span class="n">CCS</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>         <span class="c1"># section efficace de collision (Å²)</span>
 
-    <span class="c1"># Relationship 1→N: a detection can be associated with several fragments (MS2 only)</span>
+    <span class="c1"># Relation 1→N : une détection peut être associée à plusieurs fragments (MS2 uniquement)</span>
     <span class="n">fragments</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Fragment&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;detection&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Relationship 1→1: a detection is associated with a single annotation</span>
+    <span class="c1"># Relation 1→1 : une détection est associée à une seule annotation</span>
     <span class="n">annotation</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">&quot;Annotation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;detection&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -131,19 +133,20 @@
 <div class="viewcode-block" id="Fragment">
 <a class="viewcode-back" href="../../api.html#models.model.Fragment">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Fragment</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A fragment ion peak (m/z, intensity) belonging to an MS2 spectrum.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Un pic d&#39;ion fragment (m/z, intensité) appartenant à un spectre MS2.</span>
 
-<span class="sd">    Each row is attached to the :class:`Detection` it was measured in.</span>
+<span class="sd">    Chaque ligne est rattachée à la :class:`Detection` dans laquelle elle a été mesurée.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;Fragment&quot;</span>
     <span class="n">Fragment_ID</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">Detection_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;Detection.Detection_ID&quot;</span><span class="p">))</span>
 
-    <span class="n">MZ</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>          <span class="c1"># m/z of the fragment ion (Da)</span>
-    <span class="n">Intensity</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>   <span class="c1"># fragment peak intensity</span>
+    <span class="n">MZ</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>          <span class="c1"># m/z de l&#39;ion fragment (Da)</span>
+    <span class="n">Intensity</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>   <span class="c1"># intensité du pic de fragment</span>
 
-    <span class="c1"># Relationship N→1: a fragment is attached to a single detection</span>
+    <span class="c1"># Relation N→1 : un fragment est rattaché à une seule détection</span>
     <span class="n">detection</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">&quot;Detection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;fragments&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -154,25 +157,26 @@
 <div class="viewcode-block" id="Lipid">
 <a class="viewcode-back" href="../../api.html#models.model.Lipid">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Lipid</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A lipid entity identified by name, formula and LIPID MAPS classification.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Une entité lipidique identifiée par son nom, sa formule et sa classification LIPID MAPS.</span>
 
-<span class="sd">    Independent of any given detection; linked to the :class:`Detection` it</span>
-<span class="sd">    was identified in through a single :class:`Annotation`.</span>
+<span class="sd">    Indépendante de toute détection donnée ; liée à la :class:`Detection` dans</span>
+<span class="sd">    laquelle elle a été identifiée via une seule :class:`Annotation`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;Lipid&quot;</span>
     <span class="n">Lipid_ID</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">Lipid_name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>
-    <span class="n">Lipid_category</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>  <span class="c1"># LIPID MAPS category</span>
-    <span class="n">Lipid_class</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>     <span class="c1"># LIPID MAPS class</span>
-    <span class="n">Lipid_subclass</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>  <span class="c1"># LIPID MAPS subclass</span>
+    <span class="n">Lipid_category</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>  <span class="c1"># catégorie LIPID MAPS</span>
+    <span class="n">Lipid_class</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>     <span class="c1"># classe LIPID MAPS</span>
+    <span class="n">Lipid_subclass</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>  <span class="c1"># sous-classe LIPID MAPS</span>
     <span class="n">Formula</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>
-    <span class="n">FA_composition</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>  <span class="c1"># fatty acyl composition</span>
-    <span class="n">Molecular_weight</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>     <span class="c1"># average molecular weight (Da)</span>
-    <span class="n">Monoisotopic_mass</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>    <span class="c1"># monoisotopic mass (Da)</span>
+    <span class="n">FA_composition</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>  <span class="c1"># composition en acides gras</span>
+    <span class="n">Molecular_weight</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>     <span class="c1"># masse moléculaire moyenne (Da)</span>
+    <span class="n">Monoisotopic_mass</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>    <span class="c1"># masse monoisotopique exacte (Da)</span>
 
-    <span class="c1"># Relationship 1→1: a lipid is associated with a single annotation</span>
+    <span class="c1"># Relation 1→1 : un lipide est associé à une seule annotation</span>
     <span class="n">annotation</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">&quot;Annotation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;lipid&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -183,9 +187,10 @@
 <div class="viewcode-block" id="Annotation">
 <a class="viewcode-back" href="../../api.html#models.model.Annotation">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Annotation</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Join table linking one :class:`Lipid` to one :class:`Detection`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Table de jointure liant un :class:`Lipid` à une :class:`Detection`.</span>
 
-<span class="sd">    Represents the identification of a detected ion as a given lipid.</span>
+<span class="sd">    Représente l&#39;identification d&#39;un ion détecté comme un lipide donné.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;Annotation&quot;</span>
@@ -195,10 +200,10 @@
         <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;Detection.Detection_ID&quot;</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 
-    <span class="c1"># Relationship N→1: an annotation is attached to a single lipid</span>
+    <span class="c1"># Relation N→1 : une annotation est rattachée à un seul lipide</span>
     <span class="n">lipid</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">&quot;Lipid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;annotation&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Relationship N→1: an annotation is attached to a single detection</span>
+    <span class="c1"># Relation N→1 : une annotation est rattachée à une seule détection</span>
     <span class="n">detection</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">&quot;Detection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;annotation&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

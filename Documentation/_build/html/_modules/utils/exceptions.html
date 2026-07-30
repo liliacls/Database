@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>utils.monoisotopic &mdash; BacLipidAPP 1.0.0 documentation</title>
+  <title>utils.exceptions &mdash; BacLipidAPP 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
@@ -66,7 +66,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">utils.monoisotopic</li>
+      <li class="breadcrumb-item active">utils.exceptions</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -75,33 +75,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for utils.monoisotopic</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">molmass</span><span class="w"> </span><span class="kn">import</span> <span class="n">Formula</span>
-
-<div class="viewcode-block" id="monoisotopic_mass">
-<a class="viewcode-back" href="../../api.html#utils.monoisotopic.monoisotopic_mass">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">monoisotopic_mass</span><span class="p">(</span><span class="n">formula</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+  <h1>Source code for utils.exceptions</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="PostIntegrationError">
+<a class="viewcode-back" href="../../api.html#utils.exceptions.PostIntegrationError">[docs]</a>
+<span></span><span class="k">class</span><span class="w"> </span><span class="nc">PostIntegrationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calcule la masse monoisotopique du lipide à partir de sa formule chimique.</span>
-<span class="sd">    Utilise molmass.Formula.monoisotopic_mass pour le calcul.</span>
-<span class="sd">    Retourne None sans lever d&#39;exception si la formule est nulle, vide ou invalide.</span>
+<span class="sd">    Erreur levée lors de l&#39;echec de création d&#39;une sauvegarde ou de l&#39;écriture de l&#39;historique.</span>
+<span class="sd">    Ce n&#39;est pas un échec d&#39;intégration, les données sont déjà stockées dans la base de données.</span>
 
-<span class="sd">    :param formula: formule chimique</span>
-<span class="sd">    :type formula: str or None</span>
-<span class="sd">    :return: masse monoisotopique arrondie à 8 décimales, ou None si invalide.</span>
-<span class="sd">    :rtype: float or None</span>
+<span class="sd">    :param message: message décrivant l&#39;échec de la sauvegarde ou de l&#39;écriture de l&#39;historique.</span>
+<span class="sd">    :type message: str</span>
+<span class="sd">    :param detection_ids: identifiants des ``Detection`` déjà validées (commit) en base avant l&#39;échec.</span>
+<span class="sd">    :type detection_ids: list[int]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">formula</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">Formula</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">monoisotopic_mass</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">detection_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detection_ids</span> <span class="o">=</span> <span class="n">detection_ids</span></div>
 
 </pre></div>
 

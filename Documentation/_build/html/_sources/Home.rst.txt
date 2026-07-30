@@ -40,7 +40,7 @@ présentent chacun un module et pointent vers sa page (``st.page_link``) :
 Aperçu de la base de données
 ------------------------------
 
-La fonction ``statistics()`` (mise en cache via ``st.cache_data(ttl=60)``)
+La fonction ``_statistics()`` (mise en cache via ``st.cache_data(ttl=60)``)
 interroge la base de données via une session SQLAlchemy et retourne :
 
 - le nombre de détections ``MS1`` (``Detection.MS_level == "MS1"``) ;
@@ -62,7 +62,7 @@ Fonctions internes
 
    * - Fonction
      - Description
-   * - ``statistics() -> dict | None``
+   * - ``_statistics() -> dict | None``
      - Calcule et met en cache le nombre de détections ``MS1``/``MS2`` et la
        taille du fichier de base de données. Retourne ``None`` en cas d'erreur.
 

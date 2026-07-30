@@ -97,21 +97,20 @@
     <span class="n">file_row_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Insert MS1 annotation data into the database.</span>
-<span class="sd">    For each row of the DataFrame, creates and inserts a record into the three tables: Detection, Lipid and Annotation.</span>
+<span class="sd">    Insère des données d&#39;annotation MS1 dans la base de données.</span>
+<span class="sd">    Pour chaque ligne du DataFrame, crée et insère un enregistrement dans les trois tables : Detection, Lipid et Annotation.</span>
 
-<span class="sd">    :param df: DataFrame containing the columns Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass</span>
-<span class="sd">               and optionally RT and CCS.</span>
+<span class="sd">    :param df: DataFrame contenant les colonnes Lipid_Name, Formula, Precursor_MZ, Neutral_mass, Adduct, Molecular_weight, Monoisotopic_mass, MS_level, Ionisation_mode, Num_Peaks, Lipid_category, Lipid_class, Lipid_subclass et éventuellement RT et CCS.</span>
 <span class="sd">    :type df: pandas.DataFrame</span>
-<span class="sd">    :param filename: name of the file being integrated.</span>
+<span class="sd">    :param filename: nom du fichier en cours d&#39;intégration.</span>
 <span class="sd">    :type filename: str</span>
-<span class="sd">    :param integrator: name of the person performing the integration.</span>
+<span class="sd">    :param integrator: nom de la personne réalisant l&#39;intégration.</span>
 <span class="sd">    :type integrator: str</span>
-<span class="sd">    :param file_row_name: name of the file that provided the annotations.</span>
+<span class="sd">    :param file_row_name: nom du fichier ayant fourni les annotations.</span>
 <span class="sd">    :type file_row_name: str</span>
-<span class="sd">    :raises Exception: on insertion error no row is committed (automatic ROLLBACK) and the error is logged.</span>
-<span class="sd">    :raises PostIntegrationError: if the rows were committed successfully but the post-commit</span>
-<span class="sd">        backup or history logging failed - the data is already in the database.</span>
+<span class="sd">    :raises Exception: en cas d&#39;erreur d&#39;insertion, aucune ligne n&#39;est validée (ROLLBACK automatique) et l&#39;erreur est journalisée.</span>
+<span class="sd">    :raises PostIntegrationError: si les lignes ont été validées (commit) avec succès, les données sont intégrées en base.</span>
+<span class="sd">                                  L&#39;erreur indique un problème lors de la création de la sauvegarde ou lors de l&#39;écriture de l&#39;historique.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting integration - </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows to insert.&quot;</span><span class="p">)</span>
     <span class="n">detections</span> <span class="o">=</span> <span class="p">[]</span>

@@ -125,7 +125,7 @@ présentent chacun un module et pointent vers sa page (<code class="docutils lit
 </section>
 <section id="apercu-de-la-base-de-donnees">
 <h2>Aperçu de la base de données<a class="headerlink" href="#apercu-de-la-base-de-donnees" title="Link to this heading"></a></h2>
-<p>La fonction <code class="docutils literal notranslate"><span class="pre">statistics()</span></code> (mise en cache via <code class="docutils literal notranslate"><span class="pre">st.cache_data(ttl=60)</span></code>)
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">_statistics()</span></code> (mise en cache via <code class="docutils literal notranslate"><span class="pre">st.cache_data(ttl=60)</span></code>)
 interroge la base de données via une session SQLAlchemy et retourne :</p>
 <ul class="simple">
 <li><p>le nombre de détections <code class="docutils literal notranslate"><span class="pre">MS1</span></code> (<code class="docutils literal notranslate"><span class="pre">Detection.MS_level</span> <span class="pre">==</span> <span class="pre">&quot;MS1&quot;</span></code>) ;</p></li>
@@ -151,7 +151,7 @@ des encadrés (<code class="docutils literal notranslate"><span class="pre">st.c
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">statistics()</span> <span class="pre">-&gt;</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_statistics()</span> <span class="pre">-&gt;</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
 <td><p>Calcule et met en cache le nombre de détections <code class="docutils literal notranslate"><span class="pre">MS1</span></code>/<code class="docutils literal notranslate"><span class="pre">MS2</span></code> et la
 taille du fichier de base de données. Retourne <code class="docutils literal notranslate"><span class="pre">None</span></code> en cas d’erreur.</p></td>
 </tr>
