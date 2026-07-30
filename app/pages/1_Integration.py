@@ -426,6 +426,13 @@ else:
         "Adduct":           st.column_config.TextColumn(disabled=True),
     }
 
+if ms_level != "MS2":
+    st.caption(
+        "➖ You can delete a row here, but rows added with the editor's **+** button cannot be "
+        "validated : Formula, Precursor_MZ and Adduct are locked and cannot be filled in manually. "
+        "To add a lipid, correct your source file and re-upload it instead.",
+    )
+
 df_edited = st.data_editor(
     st.session_state[DF_COMPLETE],
     width="stretch",
