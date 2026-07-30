@@ -161,6 +161,9 @@ try:
             caption_values = df["Detection_ID"].map(id_caption).values
             last_batch_id = len(history) - 1 if history else None
 
+            batch_filenames = {i: e.get("filename", "-") for i, e in enumerate(history)}
+            df["Source_file"] = pd.Series(caption_values).map(batch_filenames).fillna("Unknown")
+
             def _group(batch_id: float) -> str:
                 """
                 Classe l'index de lot d'une ligne dans un groupe d'import, utilisé pour
@@ -321,7 +324,7 @@ try:
 
                 st.subheader("Mass error table")
                 df_error = (
-                    df_plot[["Lipid_name", "Formula", "Neutral_mass", "Monoisotopic_mass", "Delta (Da)", "Error (ppm)"]]
+                    df_plot[["Lipid_name", "Formula", "Neutral_mass", "Monoisotopic_mass", "Delta (Da)", "Error (ppm)", "Source_file"]]
                     .sort_values("Error (ppm)", key=lambda s: s.abs(), ascending=False)
                     .reset_index(drop=True)
                 )
