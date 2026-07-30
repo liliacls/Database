@@ -175,6 +175,14 @@ dupliquer cette requête). Cette fonction ne conserve que les colonnes :
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Avant affichage, la page ajoute deux colonnes supplémentaires à ce DataFrame, absentes de
+<code class="docutils literal notranslate"><span class="pre">_load_data</span></code> : <code class="docutils literal notranslate"><span class="pre">Source_file</span></code> (nom du fichier importé correspondant au lot d’import de la
+ligne, voir ci-dessous) et <code class="docutils literal notranslate"><span class="pre">Import_group</span></code> (voir <a class="reference internal" href="#groupe-d-import">Groupe d’import</a>). Ces deux colonnes sont
+donc visibles dans le tableau <strong>Full view</strong> affiché à l’utilisateur, en plus des 17 colonnes de
+<code class="docutils literal notranslate"><span class="pre">_load_data</span></code>.</p>
+</div>
 </section>
 <section id="colorisation-par-lot-d-import">
 <h3>Colorisation par lot d’import<a class="headerlink" href="#colorisation-par-lot-d-import" title="Link to this heading"></a></h3>
@@ -185,6 +193,9 @@ auquel appartient sa <code class="docutils literal notranslate"><span class="pre
 (<code class="docutils literal notranslate"><span class="pre">config.HISTORY_PATH</span></code>, lu indirectement par <code class="docutils literal notranslate"><span class="pre">load_history</span></code>) ;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">_batch_map(history)</span></code> associe chaque <code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> à l’indice du lot
 d’import auquel il appartient (champ <code class="docutils literal notranslate"><span class="pre">detection_ids</span></code> de chaque entrée de l’historique) ;</p></li>
+<li><p>la colonne <code class="docutils literal notranslate"><span class="pre">Source_file</span></code> est construite à partir de ce même indice de lot, via un
+dictionnaire <code class="docutils literal notranslate"><span class="pre">{indice:</span> <span class="pre">nom</span> <span class="pre">de</span> <span class="pre">fichier}</span></code> dérivé de l’historique (<code class="docutils literal notranslate"><span class="pre">&quot;Unknown&quot;</span></code> si la
+<code class="docutils literal notranslate"><span class="pre">Detection_ID</span></code> n’a pas de lot correspondant) ;</p></li>
 <li><p>la fonction <code class="docutils literal notranslate"><span class="pre">_row_color(row)</span></code> applique, via <code class="docutils literal notranslate"><span class="pre">df.style.apply(...,</span> <span class="pre">axis=1)</span></code>, une couleur de
 fond calculée par <code class="docutils literal notranslate"><span class="pre">_color(index)</span></code> à chaque ligne selon son lot.</p></li>
 </ul>
@@ -371,7 +382,8 @@ survol affiche <code class="docutils literal notranslate"><span class="pre">Lipi
 l’erreur relative <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code>), toujours en fonction de <code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code> et coloré par
 <code class="docutils literal notranslate"><span class="pre">Import_group</span></code>. Le survol affiche <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Lipid_class</span></code> et <code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">(Da)</span></code>.</p>
 <p>Ce graphique est suivi d’un tableau <strong>Mass error table</strong> listant <code class="docutils literal notranslate"><span class="pre">Lipid_name</span></code>, <code class="docutils literal notranslate"><span class="pre">Formula</span></code>,
-<code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">(Da)</span></code> et <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code>, trié par valeur
+<code class="docutils literal notranslate"><span class="pre">Neutral_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Monoisotopic_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">Delta</span> <span class="pre">(Da)</span></code>, <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code> et <code class="docutils literal notranslate"><span class="pre">Source_file</span></code>
+(nom du fichier d’import, voir <a class="reference internal" href="#colorisation-par-lot-d-import">Colorisation par lot d’import</a>), trié par valeur
 absolue de <code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">(ppm)</span></code> décroissante, pour faire ressortir en premier les annotations dont la
 masse mesurée s’écarte le plus de la masse théorique.</p>
 </section>

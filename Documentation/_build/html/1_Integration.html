@@ -257,8 +257,14 @@ n’apparaît pas dans ce tableau : il reste uniquement dans
 <code class="docutils literal notranslate"><span class="pre">st.session_state[&quot;ms2&quot;]</span></code> et n’est utilisé qu’en interne, à l’étape 5,
 pour associer chaque ligne éditée au scan correspondant par position.</p>
 <p>Le nombre de lignes est figé pour MS2 (<code class="docutils literal notranslate"><span class="pre">num_rows=&quot;fixed&quot;</span></code>, un scan = une
-ligne) et modifiable pour MS1 (<code class="docutils literal notranslate"><span class="pre">num_rows=&quot;dynamic&quot;</span></code>, ajout/suppression de
+ligne) et modifiable pour MS1 (<code class="docutils literal notranslate"><span class="pre">num_rows=&quot;dynamic&quot;</span></code>, suppression de
 lignes possible).</p>
+<p>Pour MS1, un <code class="docutils literal notranslate"><span class="pre">st.caption</span></code> rappelle que la suppression de ligne est
+possible mais pas l’ajout. Les lignes créées via le bouton <strong>+</strong> de
+l’éditeur ne peuvent pas être validées car <code class="docutils literal notranslate"><span class="pre">Formula</span></code>, <code class="docutils literal notranslate"><span class="pre">Precursor_MZ</span></code> et
+<code class="docutils literal notranslate"><span class="pre">Adduct</span></code> sont verrouillés (colonnes calculées non saisissables
+manuellement). Pour ajouter un lipide, il faut corriger le fichier source
+et le recharger (étape 2).</p>
 <p>Le bouton <strong>Validate data</strong> revérifie l’absence de cellules vides dans
 <code class="docutils literal notranslate"><span class="pre">NON_EMPTY_COLUMNS</span></code> sur les données éditées avant de les stocker dans
 <code class="docutils literal notranslate"><span class="pre">df_validated</span></code>. Une fois validées, un résumé est affiché : métriques
