@@ -1,7 +1,7 @@
 # BacLipidAPP Project
 
 L'application web locale Streamlit **BacLipidAPP** est développée afin d'interagir de différentes manières avec la base de données relationnelle SQLite **BacLipidDB**.
-L'objectif est de centraliser les annotations lipidomiques réalisées dans l'équipe 1 "Analyse et modélisation" de l'Institu CARMeN (Chimie organique, Bioorganique, Réactivité et Analyse) et de l'équipde BRICS (Biofilms, Résistance, Interactions Cellules-Surfaces) du Laboratoire PBS (Polymères, Biopolymères, Surfaces). 
+L'objectif est de centraliser les annotations lipidomiques réalisées dans l'équipe 1 "Analyse et modélisation" de l'Institut CARMeN (Chimie organique, Bioorganique, Réactivité et Analyse) et de l'équipe BRICS (Biofilms, Résistance, Interactions Cellules-Surfaces) du Laboratoire PBS (Polymères, Biopolymères, Surfaces). 
 **BacLipidAPP** est composée de 5 modules qui permettent d'ajouter, de visualiser, de modifier et de supprimer les données dans 
 **BacLipidDB**.
 
@@ -19,6 +19,7 @@ BacLipidDB/
 ├── 📄 README.md
 ├── 📄 requirements.txt
 ├── 📁 app/
+│       ├── 📄 _bootstrap.py
 │       ├── 📄 Home.py
 │       └── 📁 pages/
 │           ├── 📄 1_Integration.py
@@ -76,9 +77,10 @@ Pages de l'application web Streamlit accessibles depuis le navigateur.
 
 | Fichier | Rôle |
 |---|---|
+| `_bootstrap.py` | Ajoute la racine du projet à `sys.path` (importé par `Home.py` et toutes les pages, pour que les imports absolus `config`, `models`, `utils` fonctionnent quel que soit le répertoire depuis lequel Streamlit est lancé) |
 | `Home.py` | Page d'accueil, présente les cinq modules de l'application |
 | `1_Integration.py` | Permet d'importer un fichier d'annotations et de l'intégrer dans la base de données **BacLipidDB** |
-| `2_BacLipidDB.py` | Permet de visualiser le contenu des tables ou une vue complète de la base de données |
+| `2_BacLipidDB.py` | Permet de visualiser le contenu des tables ou une vue complète de la base de données **BacLipidDB** |
 | `3_Export.py` | Permet de filtrer les données et de les exporter en CSV (MS1) ou en MSP (MS2) compatible avec le logiciel MZmine |
 | `4_Resources.py` | Fournit les fichiers modèles pour l'intégration, un guide des colonnes attendues et la gestion des adduits |
 | `5_Management.py` | Permet d'éditer ou de supprimer des enregistrements déjà intégrés |
@@ -117,7 +119,7 @@ Scripts à lancer en ligne de commande pour initialiser ou réinitialiser la bas
 
 | Fichier | Rôle |
 |---|---|
-| `init_db.py` | Initialise la base de données en créeant toutes les tables et leurs relations à partir de `models/model.py` (à lancer une seule fois) |
+| `init_db.py` | Initialise la base de données en créant toutes les tables et leurs relations à partir de `models/model.py` (à lancer une seule fois) |
 | `reset_db.py` | Supprime tous les enregistrements sans supprimer les tables, et vide `history.json` |
 
 ---
@@ -141,6 +143,30 @@ Pour mettre à jour l'environnement après une modification de `environment.yml`
 conda env update -f environment.yml --prune
 ```
 
+## Notes spécifiques Windows (PowerShell)
+
+### 1. Initialiser conda pour PowerShell (une seule fois)
+```powershell
+conda init powershell
+```
+**Fermer la fenêtre PowerShell et en réouvrir une nouvelle**
+
+### 2. Autoriser l'exécution de scripts
+Windows peut bloquer l'exécution des scripts PowerShell, pour vérifier, taper :
+```powershell
+Get-ExecutionPolicy
+```
+Si le résultat est `Restricted`, il faut autoriser l'exécution :
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+**Fermer et réouvrir à nouveau le terminal** pour que le changement prenne effet.
+
+### 3. Vérifier que l'activation fonctionne
+```powershell
+conda activate lipid_database
+```
+
 ### Option 2 - Avec pip
 Nécessite Python 3.12 déjà installé. Dans un environnement virtuel dédié :
 ```bash
@@ -156,7 +182,7 @@ pip install -r requirements.txt
 ```bash
 python scripts/init_db.py
 ```
-Si la base existe déjà, ce script ne fait rien. Pour vider une base existante sans supprimer les tables, voir `scripts/reset_db.py` :
+Pour vider une base existante sans supprimer les tables, voir `scripts/reset_db.py` :
 ```bash
 python scripts/reset_db.py
 ```
@@ -179,7 +205,7 @@ Ces fichiers/dossiers ne sont pas versionnés (voir `.gitignore`) et sont créé
 |---|---|---|
 | `history.json` | Module 1 (Intégration) | Historique des imports |
 | `adducts.json` | Module 4 (Ressources) | Adduits ajoutés par l'utilisateur |
-| `backups/` | Modules 1 et 5 | Sauvegardes horodatés de `BacLipidDB.db` avant chaque intégration/modification |
+| `backups/` | Modules 1 et 5 | Sauvegardes horodatées de `BacLipidDB.db` avant chaque intégration/modification |
 
 ---
 
@@ -224,13 +250,13 @@ open Documentation/_build/html/index.html       # macOS
 start Documentation/_build/html/index.html      # Windows
 ```
 
-### Générer la doc en PDF
-Nécessite une distribution LaTeX installée sur la machine (`latexmk`, `pdflatex`). Depuis le dossier `Documentation/` :
-```bash
-cd Documentation
-make latexpdf
-```
-Le PDF est généré dans `Documentation/_build/latex/` (un seul fichier regroupant `index.rst` et toutes les pages liées via les toctrees).
+---
+
+# **Environnement de test**
+
+L'application a été testée sur :
+- **Windows 11** 23H2 (build 10.0.22631)
+- **Linux Mint** 22.2 (Zara)
 
 ---
 
@@ -239,3 +265,4 @@ Le PDF est généré dans `Documentation/_build/latex/` (un seul fichier regroup
 Ce projet est distribué sous licence [MIT](LICENSE).
 
 ---
+
