@@ -173,8 +173,15 @@ Workflow
    pour associer chaque ligne éditée au scan correspondant par position.
 
    Le nombre de lignes est figé pour MS2 (``num_rows="fixed"``, un scan = une
-   ligne) et modifiable pour MS1 (``num_rows="dynamic"``, ajout/suppression de
+   ligne) et modifiable pour MS1 (``num_rows="dynamic"``, suppression de
    lignes possible).
+
+   Pour MS1, un ``st.caption`` rappelle que la suppression de ligne est
+   possible mais pas l'ajout. Les lignes créées via le bouton **+** de
+   l'éditeur ne peuvent pas être validées car ``Formula``, ``Precursor_MZ`` et
+   ``Adduct`` sont verrouillés (colonnes calculées non saisissables
+   manuellement). Pour ajouter un lipide, il faut corriger le fichier source
+   et le recharger (étape 2).
 
    Le bouton **Validate data** revérifie l'absence de cellules vides dans
    ``NON_EMPTY_COLUMNS`` sur les données éditées avant de les stocker dans
