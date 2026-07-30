@@ -61,7 +61,14 @@ dupliquer cette requête). Cette fonction ne conserve que les colonnes :
      - DataFrame complet : une ligne par ``Annotation``, avec en plus ``Annotation_ID`` et
        ``Lipid_ID``
    * - ``_load_data(engine)``
-     - Le même DataFrame, restreint aux 17 colonnes listées ci-dessus 
+     - Le même DataFrame, restreint aux 17 colonnes listées ci-dessus
+
+.. note::
+   Avant affichage, la page ajoute deux colonnes supplémentaires à ce DataFrame, absentes de
+   ``_load_data`` : ``Source_file`` (nom du fichier importé correspondant au lot d'import de la
+   ligne, voir ci-dessous) et ``Import_group`` (voir `Groupe d'import`_). Ces deux colonnes sont
+   donc visibles dans le tableau **Full view** affiché à l'utilisateur, en plus des 17 colonnes de
+   ``_load_data``.
 
 Colorisation par lot d'import
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,6 +80,9 @@ auquel appartient sa ``Detection_ID`` :
   (``config.HISTORY_PATH``, lu indirectement par ``load_history``) ;
 - ``_batch_map(history)`` associe chaque ``Detection_ID`` à l'indice du lot
   d'import auquel il appartient (champ ``detection_ids`` de chaque entrée de l'historique) ;
+- la colonne ``Source_file`` est construite à partir de ce même indice de lot, via un
+  dictionnaire ``{indice: nom de fichier}`` dérivé de l'historique (``"Unknown"`` si la
+  ``Detection_ID`` n'a pas de lot correspondant) ;
 - la fonction ``_row_color(row)`` applique, via ``df.style.apply(..., axis=1)``, une couleur de
   fond calculée par ``_color(index)`` à chaque ligne selon son lot.
 
@@ -232,7 +242,8 @@ l'erreur relative ``Error (ppm)``), toujours en fonction de ``Neutral_mass`` et 
 ``Import_group``. Le survol affiche ``Lipid_name``, ``Lipid_class`` et ``Delta (Da)``.
 
 Ce graphique est suivi d'un tableau **Mass error table** listant ``Lipid_name``, ``Formula``,
-``Neutral_mass``, ``Monoisotopic_mass``, ``Delta (Da)`` et ``Error (ppm)``, trié par valeur
+``Neutral_mass``, ``Monoisotopic_mass``, ``Delta (Da)``, ``Error (ppm)`` et ``Source_file``
+(nom du fichier d'import, voir `Colorisation par lot d'import`_), trié par valeur
 absolue de ``Error (ppm)`` décroissante, pour faire ressortir en premier les annotations dont la
 masse mesurée s'écarte le plus de la masse théorique.
 
